@@ -1,0 +1,475 @@
+---
+title: 'Verhuisfrequenties voorspellen'
+author: trond
+
+output:
+  bookdown::pdf_book
+
+---
+
+
+```{r settings, include=FALSE, cache=FALSE}
+
+## general settings
+library(cbsodataR)
+library(data.table)
+library(ggplot2)
+library(dlm)
+library(xts)
+library(forecast)
+library(tseries)
+library(gridExtra)
+library(mFilter)
+library(viridis)
+library(forecastHybrid)
+library(rmarkdown)
+library(knitr)
+library(parallel)
+library(methods)
+
+## set global rchunk options
+opts_chunk$set(fig.path='../figs/freq--',
+               cache.path='../cache/freq-',
+#               fig.show='hold',
+               results='hide',
+               message=FALSE,
+               warning=FALSE,
+               echo=FALSE,
+               par=TRUE  )
+#options(formatR.arrow=TRUE, width=68, digits=4) # tune details of base graphics (http://yihui.name/knitr/hooks)
+#knit_hooks$set(par=function(before, options, envir){
+#if (before && options$fig.show!='none') par(mar=c(4,4,.1,.1),cex.lab=.95,cex.axis=.9,mgp=c(2,.7,0),tcl=-.3)
+#}, crop=hook_pdfcrop)
+#options(scipen = 999) # disable scientific notation
+```
+
+```{r read-data}
+load('../data/cbs_mig_data.RData')
+```
+
+```{r data-wrangling}
+
+## merge quarterly pop data with gdp data
+freq_dt_qu <- bev_dt_hf[,
+                        .(Perioden,
+                        (as.numeric(TussenGemeentenVerhuisdePersonen_9) +
+                         as.numeric(BinnenGemeentenVerhuisdePersonen_10)),
+                        as.numeric(BevolkingAanEindVanGekozenPeriode_8)
+                        )
+                        ][,
+                          year := substr(as.character(Perioden), 1, 4)
+                          ]
+                
+setnames(freq_dt_qu, c('quarter', 'moves', 'pop_ep', 'year'))
+
+## calculate frequency
+freq_dt_qu[, freq := 1000*moves/pop_ep]
+
+## transform to long
+freq_dt_qu <- melt(freq_dt_qu[grepl('kwartaal', as.character(quarter)), -'year'], id.vars = 'quarter')[, value := as.numeric(value)]
+
+## create time series 
+y_qu <-  ts(freq_dt_qu[variable == 'freq', value],
+            start = c(1995, 1),
+            frequency = 4         
+         )
+```
+
+#Introduction
+
+```{r freq-plot}
+ggplot(freq_dt_qu[variable %in% c('freq')], aes(quarter, value, group = 1)) +
+    geom_line() +
+    facet_wrap(~variable, scales = 'free', ncol = 2) +
+    theme_bw() +
+    geom_smooth(method = 'loess') +
+    theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+    scale_x_discrete(breaks = freq_dt_qu[grepl('1e kwartaal', as.character(quarter)), unique(quarter)], labels = 1995:2018)
+```
+
+```{r freq-cycle-plot}
+
+ggplot(data.table(quarter = time(y_qu),
+                  trend = as.numeric(hpfilter(stl(y_qu, t.window=5, s.window="periodic")$time.series[,2])$trend),
+                  cycle = as.numeric(hpfilter(stl(y_qu, t.window=5, s.window="periodic")$time.series[,2])$cycle)), aes(quarter, trend)) +
+#    geom_line() +
+    geom_line(aes(y = cycle)) + 
+#    geom_smooth(method = 'lm') +
+    theme_bw()
+
+```
+
+#Models
+
+## Local level
+$$
+\begin{aligned}
+ y_{t} &= \mu_{t} + gamma_{1,t} + \epsilon_{t} & \epsilon_{t} \sim N(0,\sigma_{\epsilon}^{2}) \\
+ \mu_{t} &= \mu_{t-1} + \eta_{t-1} & \eta_{t} \sim N(0, \sigma_{\eta}^{2}) \\
+ \gamma_{1,t} &= -\gamma_{1,t-1} -\gamma_{2,t-1}-\gamma_{3,t-1} + \omega_{t} & \omega_{t} \sim N(0, \sigma_{\omega}^{2}) \\
+ \gamma_{2,t} &= \gamma_{1,t-1} \\
+ \gamma_{3,t} &= \gamma_{2,t-1} \\
+\end{aligned}
+$$
+
+## Local trend
+$$
+\begin{aligned}
+ y_{t} &= \mu_{t} + \nu_{t} + gamma_{1,t} + \epsilon_{t} & \epsilon_{t} \sim N(0,\sigma_{\epsilon}^{2}) \\
+ \mu_{t} &= \mu_{t-1} + \eta_{t} & \eta_{t} \sim N(0, \sigma_{\eta}^{2}) \\
+ \gamma_{1,t} &= -\gamma_{1,t-1} -\gamma_{2,t-1}-\gamma_{3,t-1} + \omega_{t} & \omega_{t} \sim N(0, \sigma_{\omega}^{2}) \\
+ \nu_{t} &= \nu_{t-1} + \zeta_{t-1} & \zeta_{t} \sim N(0, \sigma_{\zeta}^{2}) 
+\end{aligned}
+$$
+
+
+## Local trend and fourier seasonality
+$$
+\begin{aligned}
+ y_{t} &= \mu_{t} + \nu_{t} + c_{t} + \epsilon_{t} & \epsilon_{t} \sim N(0,\sigma_{\epsilon}^{2}) \\
+ \mu_{t} &= \mu_{t-1} + \eta_{t} & \eta_{t} \sim N(0, \sigma_{\eta}^{2}) \\
+ \nu_{t} &= \nu_{t-1} + \zeta_{t} & \zeta_{t} \sim N(0, \sigma_{\zeta}^{2}) \\
+ c_{t} &= \rho \lbrack \cos(\lambda_{c}) c_{t-1} + sin(\lambda_{c}) c_{t-1}^{*} \rbrack + \kappa_{t} & \kappa_{t} \sim N(0, \sigma_{c}^{2}(1-\rho^{2}))\\
+ c_{t}^{*} &= \rho \lbrack -\sin(\lambda_{c}) c_{t-1} + \cos(\lambda_{c}) c_{t-1}^{*} \rbrack & \kappa_{t}^{*} \sim N(0, \sigma_{c}^{2}(1-\rho^{2}))\\
+\end{aligned}
+$$
+
+
+## Local trend and AR(2)
+$$
+\begin{aligned}
+ y_{t} &= \mu_{t} + \nu_{t} + gamma_{1,t} + \epsilon_{t} & \epsilon_{t} \sim N(0,\sigma_{\epsilon}^{2}) \\
+ \mu_{t} &= \phi_{1} \mu_{t-1} + \phi_{2} \mu_{t-2} + \varepsilon_{t} & \varepsilon_{t} \sim N(0, \sigma_{\varepsilon}^{2}) \\
+ \gamma_{1,t+1} &= -\gamma_{1,t} -\gamma_{2,t}-\gamma_{3,t}-\gamma_{4,t} + \omega_{t} & \omega_{t} \sim N(0, \sigma_{\omega}^{2}) \\
+ \nu_{t+1} &= \nu_{t} + \zeta_{t} & \zeta_{t} \sim N(0, \sigma_{\zeta}^{2}) 
+\end{aligned}
+$$
+
+
+
+```{r dlm-functions}
+
+level0 <- y_qu[1]
+slope0 <- mean(diff(y_qu))
+
+mod_mle <- function(par, type){
+    if (type == 'local_level') {
+        dlm <- dlmModPoly(1) + dlmModSeas(4)
+        diag(W(dlm))[1:2] <- exp(par[1:2])
+        V(dlm) <- exp(par[3])
+    } else if (type == 'local_trend') {
+        dlm <- dlmModPoly(2, m0 = c(level0, slope0), C0 = 2 * diag(2)) +
+            dlmModSeas(4)
+        diag(W(dlm))[1:3] <- exp(par[1:3])
+        V(dlm) <- exp(par[4])
+    } else if (type == 'lt_fourier') {
+        dlm <- dlmModPoly(2, m0 = c(level0, slope0), C0 = 2 * diag(2)) +
+            dlmModTrig(s = 4)
+        diag(W(dlm))[1:3] <- exp(par[1:3])
+        V(dlm) <- exp(par[4])
+    } else if (type == 'lt_arma') {
+       dlm <- dlmModPoly(2, m0 = c(level0, slope0), C0 = 2 * diag(2)) +
+            dlmModARMA(ar=ARtransPars(par[5:6]), sigma2 = exp(par[7])) +
+            dlmModSeas(4)
+        diag(W(dlm))[c(1:2, 5)] <- exp(par[2:4])
+        V(dlm) <- exp(par[1])  
+    } else if (type == 'lt_arma_2') {
+        dlm <- dlmModPoly(2) +
+            dlmModSeas(4)  +
+            dlmModARMA(ar=par[5:6], sigma2 = exp(par[7]))
+        V(dlm) <- exp(par[1])
+        diag(W(dlm))[1:3] <- exp(par[2:4])
+    }
+    return(dlm)
+}
+
+rmse <- function(error) {
+    sqrt(mean(error^2))
+}
+
+mape <- function(y_true, y_pred) {
+    mean(abs((y_true - y_pred) / y_true))
+}
+
+smooth_plot_dt <- function(mod) {
+    freq_smooth <- dlmSmooth(freq_filt_full[[mod]])
+    if (mod == 'lt_arma') {
+        tc <- dropFirst(freq_smooth$s[,1] + freq_smooth$s[,3])
+        s <- dropFirst(freq_smooth$s[,5])    
+    } else {
+        tc <- dropFirst(freq_smooth$s[,1])
+        s <- dropFirst(freq_smooth$s[,3])    
+    }
+    
+    return(melt(data.table(quarter = time(y_qu),
+                           mod = mod,
+                           data = y_qu,
+                           trend_cycle = tc,
+                           seasonal = s), id.vars = c('mod', 'quarter')
+                )
+           )
+}
+
+fore_plot_dt <- function(mod, plot = 'level') {
+    freq_fore <- dlmForecast(freq_filt_full[[mod]], nAhead = 8)
+    if (plot == 'level') {
+        ## forecast level
+        fore <- freq_fore$f
+        fsd <- sqrt(unlist(freq_fore$Q))
+        pl <- fore + qnorm(0.05, sd = fsd)
+        pu <- fore + qnorm(0.95, sd = fsd)
+    } else if (plot == 'trend'){
+        ## forecast trend
+        fore <- freq_fore$a[,1]
+        fsd <- sapply(freq_fore$R, function(x) sqrt(x[1,1]))
+        pl <- fore + qnorm(0.05, sd = fsd)
+        pu <- fore + qnorm(0.95, sd = fsd)
+    }
+    dt <- data.table(quarter = c(time(y_qu), time(freq_fore$f)),
+                     mod = mod,
+                     data = c(y_qu, rep(NA, length(freq_fore$f))),
+                     forecast = c(rep(NA, length(y_qu)), fore))
+    ## reshape data table to long and add confidence interval
+    dt_long <- melt(dt, id.vars = c('quarter', 'mod'))[!is.na(value) & variable == 'forecast', forecast_pl := as.numeric(pl)][!is.na(value) & variable == 'forecast', forecast_pu := as.numeric(pu)]
+    return(dt_long)
+}
+
+### Gibbs sampler for a Bayesian Analysis of the Output gap
+
+mod_gibbs <- function(y, a.y, b.y, a.theta, b.theta, shape.y, rate.y,
+                      shape.theta, rate.theta,                       
+                     dV = 1e-7, m0 = rep(0,7),
+                     C0 = diag(x=c(rep(1e7,2), rep(1,2), rep(1e7,3))),
+                     n.sample = 1, thin = 0, save.states = FALSE)
+{
+    mod <- dlmModPoly(2, dV = dV, dW = rep(1,2)) +
+        dlmModARMA(ar = rep(0,2), sigma2 = 1) +
+        dlmModSeas(4)
+    mod$m0 <- m0
+    mod$C0 <- C0
+    p <- 7 # dim of state space
+    r <- 4 # number of unknown variances
+    nobs <- NROW(y)
+    if ( is.numeric(thin) && (thin <- as.integer(thin)) >= 0 )
+    {
+        every <- thin + 1
+        mcmc <- n.sample * every
+    }
+    else
+        stop("\"thin\" must be a nonnegative integer")
+    ## check hyperpriors for precision(s) of 'theta'
+    msg1 <- "Either \"a.y\" and \"b.y\" or \"shape.y\" and \"rate.y\" must be specified"
+    msg2 <- "Unexpected length of \"shape.y\" and/or \"rate.y\""
+    msg3 <- "Unexpected length of \"a.y\" and/or \"b.y\""    
+    msg4 <- paste("Either \"a.theta\" and \"b.theta\" or \"shape.theta\"",
+                  "and \"rate.theta\" must be specified")
+    msg5 <- "Unexpected length of \"shape.theta\" and/or \"rate.theta\""
+    msg6 <- "Unexpected length of \"a.theta\" and/or \"b.theta\""
+    if (!hasArg(a.y)) 
+        if (!hasArg(shape.y)) 
+            stop(msg1)
+        else if (!hasArg(rate.y)) 
+            stop(msg1)
+        else {
+            if (!all(c(length(shape.y), length(rate.y)) == 1)) 
+                warning(msg2)
+        }
+    else if (!hasArg(b.y)) 
+        stop(msg1)
+    else {
+        if (!all(c(length(a.y), length(b.y)) == 1)) 
+            warning(msg3)
+        shape.y <- a.y^2/b.y
+        rate.y <- a.y/b.y
+    }
+    if (is.null(a.theta))
+        if (is.null(shape.theta)) stop(msg4)
+        else
+            if (is.null(rate.theta)) stop(msg4)
+            else
+            {
+                ## check length of shape.theta and rate.theta
+                if (!all(c(length(shape.theta), length(rate.theta)) %in% c(1,r)))
+                    warning(msg5)
+            }
+    else
+        if (is.null(b.theta)) stop(msg4)
+        else
+        {
+            if (!all(c(length(a.theta), length(b.theta)) %in% c(1,r)))
+                warning(msg6)
+            shape.theta <- a.theta^2 / b.theta
+            rate.theta <- a.theta / b.theta
+        }
+    shape.theta <- shape.theta + 0.5 * nobs
+    theta <- matrix(0, nobs + 1, p)
+    if ( save.states )
+        gibbsTheta <- array(0, dim = c(nobs + 1, p, n.sample))
+    gibbsV <- vector("numeric", n.sample) 
+    gibbsPhi <- matrix(0, nrow = n.sample, ncol = 2)
+    gibbsVars <- matrix(0, nrow = n.sample, ncol = r)
+    AR2support <- function(u)
+    {
+        ## stationarity region for AR(2) parameters
+        (sum(u) < 1) && (diff(u) < 1) && (abs(u[2]) < 1)
+    }
+    ARfullCond <- function(u)
+    {
+        ## log full conditional density for AR(2) parameters
+        mod$GG[3:4,3] <- u
+        -dlmLL(y, mod) + sum(dnorm(u, sd = c(2,1) * 0.33, log=TRUE))
+    }
+    it.save <- 0
+    for (it in 1:mcmc)
+    {
+        ## generate AR parameters
+        mod$GG[3:4,3] <- arms(mod$GG[3:4,3],
+                              ARfullCond, AR2support, 1)
+        ## generate states - FFBS
+        modFilt <- dlmFilter(y, mod, simplify=TRUE)
+        theta[] <- dlmBSample(modFilt)       
+        ## generate V ...... ?
+        y.center <- y - tcrossprod(theta[-1, , drop = FALSE], 
+            mod$FF)
+        SSy <- drop(crossprod(y.center))
+        mod$V[] <- 1/rgamma(1, shape = shape.y, rate = rate.y + 
+            0.5 * SSy) 
+        ## generate W
+        theta.center <- theta[-1,-c(4, 6, 7),drop=FALSE] -
+            (theta[-(nobs + 1),,drop=FALSE] %*% t(mod$GG))[,-c(4, 6, 7)]
+        SStheta <- drop(sapply( 1 : 4, function(i)
+            crossprod(theta.center[,i])))
+        diag(mod$W)[c(1:3, 5)] <-
+            1 / rgamma(4, shape = shape.theta,
+                       rate = rate.theta + 0.5 * SStheta)
+        ## save current iteration, if appropriate
+        if ( !(it %% every) )
+        {
+            it.save <- it.save + 1
+            if ( save.states )
+                gibbsTheta[,,it.save] <- theta
+            gibbsV[it.save] <- diag(mod$V)
+            gibbsPhi[it.save,] <- mod$GG[3:4,3]
+            gibbsVars[it.save,] <- diag(mod$W)[c(1:3, 5)]
+        }
+    }
+    if ( save.states )
+        return(list(phi = gibbsPhi, dW = gibbsVars, dV = gibbsV, theta = gibbsTheta))
+    else
+        return(list(phi = gibbsPhi, dW = gibbsVars, dV = gibbsV))
+}
+
+test <- mod_gibbs(y_qu, a.y = 1, b.y = 1000, a.theta=1, b.theta=1000, n.sample = 1, thin = 1, save.states = TRUE)
+
+    
+
+```
+
+
+```{r estimate-models}
+fit_full <- list()
+freq_fit_full <- list()
+freq_filt_full <- list()
+for (mod in c('local_level', 'local_trend', 'lt_fourier', 'lt_arma', 'lt_arma_2')) {
+    if (mod == 'local_level') {
+        fit_full[[mod]] <- dlmMLE(y_qu, parm=rep(0, 3), type = mod, build=mod_mle)
+    }
+    if (mod == 'local_trend' | mod == 'lt_fourier') {
+        fit_full[[mod]] <- dlmMLE(y_qu, parm=rep(0, 4), type = mod, build=mod_mle)
+    }
+    if (mod == 'lt_arma' | mod == 'lt_arma_2') {
+        fit_full[[mod]] <- dlmMLE(y_qu, parm=c(-3, -3, -4, -5, 1, 0, -2), type = mod, build=mod_mle)
+    }    
+    freq_fit_full[[mod]] <- mod_mle(fit_full[[mod]]$par, type = mod)
+    freq_filt_full[[mod]] <- dlmFilter(y_qu, freq_fit_full[[mod]])
+}
+```
+
+```{r diagnosis}
+freq_filt <- dlmFilter(y_qu, freq_fit_full[['lt_arma']])
+
+## diagnosis
+tsdiag(freq_filt)
+
+## check whether errors are normal distributed
+qqnorm(residuals(freq_filt)$res)
+qqline(residuals(freq_filt)$res)
+
+```
+
+
+
+```{r oos-dt}
+#system.time(
+oo_fore <- mclapply(c('local_level', 'local_trend', 'lt_fourier', 'lt_arma'),
+                    function(mod){
+                        tmp <- rbindlist(lapply(seq(2012.25, 2016, by = 0.25),
+                                                function(end_yr) {
+                                                    y_sub <- window(y_qu, 1995.00, end_yr)
+                                                    fit <- dlmMLE(y_sub, parm=fit_full[[mod]]$par, type = mod, build=mod_mle)
+                                                    freq_fit <- mod_mle(fit$par, type = mod)
+                                                    ##freq_fit <- mod_gibbs(gibbs_output[1:3])
+                                                    freq_filt <- dlmFilter(y_sub,freq_fit)
+                                                    freq_smooth <- dlmSmooth(freq_filt)
+                                                    freq_fore <- dlmForecast(freq_filt, nAhead = 8)$f
+                                                    return(data.table(no = end_yr,
+                                                                      model = mod,
+                                                                      t = c(end_yr, as.numeric(time(freq_fore))),
+                                                                      f = c(window(y_qu, end_yr, end_yr), as.numeric(freq_fore)),
+                                                                      rmse = rmse(window(y_qu, end_yr+0.25) - freq_fore),
+                                                                      mape = mape(window(y_qu, end_yr+0.25), freq_fore)
+
+                                                                      )
+                                                           )
+                                                }
+                                                )
+                                         )
+                    }
+                  )
+#)
+    
+oo_fore <- rbindlist(oo_fore)[, ':=' (mean_rmse = mean(rmse), mean_mape = mean(mape)), by = model]
+```
+
+```{r oo-rmse-plot}
+ggplot(oo_fore, aes(no, mape)) +
+    geom_point() +
+    geom_line() +
+    geom_line(aes(y = mean_mape), col = 'blue') + 
+    facet_wrap(~model, nrow = 1) +
+    theme_bw() +
+    ggtitle('MLE')
+```
+
+```{r oo-forecast-plot}
+ggplot(data.table(t = as.numeric(time(window(y_qu, 2010))), window(y_qu, 2010)), aes(t, V2)) +
+    geom_line(col = 'grey') +
+    theme_bw() +
+    geom_line(data = oo_fore, aes(t, f, col = model), size = 0.5) +
+    scale_x_continuous(breaks = seq(1995, 2018)) +
+    scale_colour_viridis( discrete = T) +
+    facet_wrap(~no) +
+    ggtitle('MLE')
+```
+
+```{r forecast-dt}
+fore_dt <- fore_plot_dt('lt_arma')
+
+smooth_dt <- rbindlist(
+    lapply(c('local_level', 'local_trend', 'lt_fourier', 'lt_arma'),
+           function(x) smooth_plot_dt(x))
+)
+```
+
+```{r forecast-plot}
+ggplot(smooth_dt[variable != 'data'], aes(quarter, value)) +
+    geom_line() +
+    facet_wrap(mod~variable, scales = 'free', ncol = 4) +
+    theme_bw()
+
+ggplot(fore_dt, aes(quarter, value, group = variable)) +
+    geom_line(aes(col = variable)) +
+    geom_ribbon(data = fore_dt[quarter > 2018 & variable == 'forecast'],
+                aes(x = quarter, ymin = forecast_pl, ymax = forecast_pu), alpha = 0.2) +
+    theme_bw()
+```
