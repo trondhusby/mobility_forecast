@@ -35,18 +35,18 @@ library(forecastHybrid)
 
 if (!file.exists('../data/cbs_mig_data.RData')) {
     ## get names of tables from CBS api
-    cbs_dt <- data.table(get_table_list(Language="nl"))
+    cbs_dt <- data.table(cbs_get_table_list(Language="nl"))
     ## find prognose-related tables
     cbs_dt[grepl('bevolkingsontwikkeling', Title), .(Identifier, Title, ShortTitle, Modified)]
     ## dowload data on population (including moves) and gdp
-    bev_dt <- data.table(get_data('37556'))
-    bbp_dt <- data.table(get_data('82262NED'))   
-    bev_dt_hf <- data.table(get_data('37943ned'))
-    bbp_dt_hf <- data.table(get_data('82601NED'))
-    woon_dt <- data.table(get_data('82235NED'))[, lapply(.SD, function(x) as.numeric(as.character(x)))]
-    woon_dt_hf <- data.table(get_data('83906NED'))
-    #woon_v_dt_qu <- data.table(get_data('81955NED'))
-    banen_dt <- data.table(get_data('83599NED'))
+    bev_dt <- data.table(cbs_get_data('37556'))
+    bbp_dt <- data.table(cbs_get_data('82262NED'))   
+    bev_dt_hf <- data.table(cbs_get_data('37943ned'))
+    bbp_dt_hf <- data.table(cbs_get_data('82601NED'))
+    woon_dt <- data.table(cbs_get_data('82235NED'))[, lapply(.SD, function(x) as.numeric(as.character(x)))]
+    woon_dt_hf <- data.table(cbs_get_data('83906NED'))
+    #woon_v_dt_qu <- data.table(cbs_get_data('81955NED'))
+    banen_dt <- data.table(cbs_get_data('83599NED'))
     save(bev_dt, bbp_dt, bev_dt_hf, bbp_dt_hf, woon_dt, woon_dt_hf, banen_dt, file = '../data/cbs_mig_data.RData')
 } else {
     load('../data/cbs_mig_data.RData')
@@ -886,10 +886,10 @@ ggplot(data.table(time(ystar), ystar, smoothed), aes(V1, ystar)) +
 
 ## retrieve Prognose bevolking; geslacht en leeftijd, 2017-2060
 if(!file.exists('data/mov_dt.RData')) {
-    bev_progn_dt <- data.table(get_data('83597NED')) # population (forecast)
-    bev_dt <- data.table(get_data('7461bev')) # population (historic)
-    mv_dt <- data.table(get_data('60048ned')) # moves
-    bbp_dt <- data.table(get_data('82601NED')) # gdp
+    bev_progn_dt <- data.table(cbs_get_data('83597NED')) # population (forecast)
+    bev_dt <- data.table(cbs_get_data('7461bev')) # population (historic)
+    mv_dt <- data.table(cbs_get_data('60048ned')) # moves
+    bbp_dt <- data.table(cbs_get_data('82601NED')) # gdp
     save(bev_progn_dt, bev_dt, mv_dt, bbp_dt, file = 'data/mov_dt.RData')
 } else {
     load(file= 'data/mov_dt.RData')

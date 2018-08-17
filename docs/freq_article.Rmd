@@ -10,22 +10,22 @@ output:
 
 ```{r settings, include=FALSE, cache=FALSE}
 
+
+
 ## general settings
 library(cbsodataR)
 library(data.table)
 library(ggplot2)
 library(dlm)
 library(xts)
-library(forecast)
 library(tseries)
 library(gridExtra)
-library(mFilter)
 library(viridis)
-library(forecastHybrid)
 library(rmarkdown)
 library(knitr)
 library(parallel)
 library(methods)
+library(mFilter)
 
 ## set global rchunk options
 opts_chunk$set(fig.path='../figs/freq--',
@@ -44,8 +44,10 @@ opts_chunk$set(fig.path='../figs/freq--',
 ```
 
 ```{r read-data}
+
 load('../data/cbs_mig_data.RData')
 ```
+
 
 ```{r data-wrangling}
 
@@ -73,11 +75,12 @@ y_qu <-  ts(freq_dt_qu[variable == 'freq', value],
             start = c(1995, 1),
             frequency = 4         
          )
-```
+```    
 
 #Introduction
 
 ```{r freq-plot}
+
 ggplot(freq_dt_qu[variable %in% c('freq')], aes(quarter, value, group = 1)) +
     geom_line() +
     facet_wrap(~variable, scales = 'free', ncol = 2) +
@@ -85,7 +88,7 @@ ggplot(freq_dt_qu[variable %in% c('freq')], aes(quarter, value, group = 1)) +
     geom_smooth(method = 'loess') +
     theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
     scale_x_discrete(breaks = freq_dt_qu[grepl('1e kwartaal', as.character(quarter)), unique(quarter)], labels = 1995:2018)
-```
+``` 
 
 ```{r freq-cycle-plot}
 
@@ -148,7 +151,6 @@ $$
 
 
 ```{r dlm-functions}
-
 level0 <- y_qu[1]
 slope0 <- mean(diff(y_qu))
 
@@ -190,6 +192,8 @@ rmse <- function(error) {
 mape <- function(y_true, y_pred) {
     mean(abs((y_true - y_pred) / y_true))
 }
+
+
 
 smooth_plot_dt <- function(mod) {
     freq_smooth <- dlmSmooth(freq_filt_full[[mod]])
@@ -234,7 +238,6 @@ fore_plot_dt <- function(mod, plot = 'level') {
     return(dt_long)
 }
 
-### Gibbs sampler for a Bayesian Analysis of the Output gap
 
 mod_gibbs <- function(y, a.y, b.y, a.theta, b.theta, shape.y, rate.y,
                       shape.theta, rate.theta,                       
@@ -328,12 +331,12 @@ mod_gibbs <- function(y, a.y, b.y, a.theta, b.theta, shape.y, rate.y,
         ## generate states - FFBS
         modFilt <- dlmFilter(y, mod, simplify=TRUE)
         theta[] <- dlmBSample(modFilt)       
-        ## generate V ...... ?
+        ## generate V
         y.center <- y - tcrossprod(theta[-1, , drop = FALSE], 
             mod$FF)
         SSy <- drop(crossprod(y.center))
-        mod$V[] <- 1/rgamma(1, shape = shape.y, rate = rate.y + 
-            0.5 * SSy) 
+        mod$V[] <- 1/rgamma(1, shape=a.y+length(y)/2, rate=b.y+SSy/2
+	                )
         ## generate W
         theta.center <- theta[-1,-c(4, 6, 7),drop=FALSE] -
             (theta[-(nobs + 1),,drop=FALSE] %*% t(mod$GG))[,-c(4, 6, 7)]
@@ -359,14 +362,18 @@ mod_gibbs <- function(y, a.y, b.y, a.theta, b.theta, shape.y, rate.y,
         return(list(phi = gibbsPhi, dW = gibbsVars, dV = gibbsV))
 }
 
-test <- mod_gibbs(y_qu, a.y = 1, b.y = 1000, a.theta=1, b.theta=1000, n.sample = 1, thin = 1, save.states = TRUE)
+out_gibbs <- mod_gibbs(y_qu, a.y = 1, b.y = 1, a.theta=1, b.theta=1, n.sample = 100, thin = 1, save.states = TRUE)
 
-    
+mcmcMean(out_gibbs$phi)
+apply(out_gibbs$phi, 2, quantile, probs = c(.05, .95))
+mcmcMean(out_gibbs$dV)
+mcmcMean(out_gibbs$dW)
 
 ```
 
 
 ```{r estimate-models}
+
 fit_full <- list()
 freq_fit_full <- list()
 freq_filt_full <- list()
@@ -378,14 +385,16 @@ for (mod in c('local_level', 'local_trend', 'lt_fourier', 'lt_arma', 'lt_arma_2'
         fit_full[[mod]] <- dlmMLE(y_qu, parm=rep(0, 4), type = mod, build=mod_mle)
     }
     if (mod == 'lt_arma' | mod == 'lt_arma_2') {
-        fit_full[[mod]] <- dlmMLE(y_qu, parm=c(-3, -3, -4, -5, 1, 0, -2), type = mod, build=mod_mle)
+        fit_full[[mod]] <- dlmMLE(y_qu, parm=c(-0.5, -0.5, -0.4, -0.4, -0.5, -4, -2), type = mod, build=mod_mle)
     }    
     freq_fit_full[[mod]] <- mod_mle(fit_full[[mod]]$par, type = mod)
     freq_filt_full[[mod]] <- dlmFilter(y_qu, freq_fit_full[[mod]])
 }
+
 ```
 
 ```{r diagnosis}
+
 freq_filt <- dlmFilter(y_qu, freq_fit_full[['lt_arma']])
 
 ## diagnosis
@@ -394,6 +403,7 @@ tsdiag(freq_filt)
 ## check whether errors are normal distributed
 qqnorm(residuals(freq_filt)$res)
 qqline(residuals(freq_filt)$res)
+
 
 ```
 
