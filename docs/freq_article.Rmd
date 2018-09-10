@@ -167,9 +167,9 @@ $$
 ## Local trend and AR(2)
 $$
 \begin{aligned}
- y_{t} &= \mu_{t} + \nu_{t} + gamma_{1,t} + \epsilon_{t} & \epsilon_{t} \sim N(0,\sigma_{\epsilon}^{2}) \\
+ y_{t} &= \mu_{t} + \nu_{t} + \gamma_{1,t} + \epsilon_{t} & \epsilon_{t} \sim N(0,\sigma_{\epsilon}^{2}) \\
  \mu_{t} &= \phi_{1} \mu_{t-1} + \phi_{2} \mu_{t-2} + \varepsilon_{t} & \varepsilon_{t} \sim N(0, \sigma_{\varepsilon}^{2}) \\
- \gamma_{1,t+1} &= -\gamma_{1,t} -\gamma_{2,t}-\gamma_{3,t}-\gamma_{4,t} + \omega_{t} & \omega_{t} \sim N(0, \sigma_{\omega}^{2}) \\
+ \gamma_{1,t+1} &= -\gamma_{1,t} -\gamma_{2,t}-\gamma_{3,t} + \omega_{t} & \omega_{t} \sim N(0, \sigma_{\omega}^{2}) \\
  \nu_{t+1} &= \nu_{t} + \zeta_{t} & \zeta_{t} \sim N(0, \sigma_{\zeta}^{2}) 
 \end{aligned}
 $$
