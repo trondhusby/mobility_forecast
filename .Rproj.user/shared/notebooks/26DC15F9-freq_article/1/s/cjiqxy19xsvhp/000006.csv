@@ -1,0 +1,11 @@
+"0","ggplot(os_fore[model %in% c('local_trend', 'lt_arma_gibbs', 'local_level')], aes(no, rmse)) +
+    geom_point() +
+    geom_line() +
+    geom_line(aes(y = total_rmse), col = 'blue') + 
+    facet_wrap(~model, nrow = 1) +
+    theme_bw() +
+    ggtitle('Out-of-sample RMSE')
+ggsave('../figs/out_os_sample_rmse.png')
+"
+"2","Saving 7.29 x 4.5 in image
+"

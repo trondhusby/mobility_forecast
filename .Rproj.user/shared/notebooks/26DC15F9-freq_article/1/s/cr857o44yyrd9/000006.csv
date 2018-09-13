@@ -1,0 +1,83 @@
+"0","system.time(
+    os_fore <- rbindlist(lapply(c('local_level', 'local_trend', 'lt_fourier', 'lt_arma', 'lt_arma_gibbs'),
+                                  function(model) {
+                                      tmp <- rbindlist(lapply(seq(2012.25, 2016, by = 0.25),
+                                                                function(end_yr) {
+                                                                    y_sub <- window(y_qu, 1995.00, end_yr)
+                                                                    if (model == 'lt_arma_gibbs') {
+                                                                        fit_os <- gibbs_est(y_sub, a.theta=1, b.theta=100, n.sample = 10000, thin = 2, save.states = TRUE)
+                                                                        out_par <- c(mcmcMean(fit_os$dV[-(1:burn)], sd = F),
+                                                                                     mcmcMean(fit_os$dW[-(1:burn), c(1:2, 4)], sd = F),
+                                                                                     mcmcMean(fit_os$phi[-(1:burn), ], sd = F),
+                                                                                     mcmcMean(fit_os$dW[-(1:burn), 3], sd = F)
+                                                                                     )
+                                                                        freq_fit_os <- freq_mod(as.numeric(out_par), model)
+                                                                    }
+                                                                    if (model == 'lt_arma') {
+                                                                        fit_os <- dlmMLE(y_sub, parm=c(rep(-2,4), 1, 0, -1), type = model, build=freq_mod)
+                                                                        freq_fit_os <- freq_mod(fit_os$par, model)
+                                                                    }
+                                                                    else if (model %in% c('local_level', 'local_trend', 'lt_fourier')) {
+                                                                        fit_os <- dlmMLE(y_sub, parm=fit[[model]]$par, type = model, build=freq_mod)
+                                                                        freq_fit_os <- freq_mod(fit_os$par, model)
+                                                                    }
+                                        #print(paste(model, end_yr, fit_os$convergence))
+                                                                    freq_filt_os <- dlmFilter(y_sub, freq_fit_os)
+                                                                    freq_smooth <- dlmSmooth(freq_filt_os)
+                                                                    freq_fore <- dlmForecast(freq_filt_os, nAhead = 8)$f
+                                                                    return(data.table(no = end_yr,
+                                                                                      model = model,
+                                                                                      t = c(end_yr, as.numeric(time(freq_fore))),
+                                                                                      f = c(window(y_qu, end_yr, end_yr), as.numeric(freq_fore)),
+                                                                                      rmse = rmse(window(y_qu, end_yr+0.25) - freq_fore),
+                                                                                      mape = mape(window(y_qu, end_yr+0.25), freq_fore)
+                                                                                      )
+                                                                           )
+                                                                }
+                                                                )
+                                                       )
+                                  }
+                                  )
+                         )
+)
+"
+"2","a numerically singular 'V' has been slightly perturbed to make it nonsingular"
+"2","a numerically singular 'V' has been slightly perturbed to make it nonsingular"
+"2","a numerically singular 'V' has been slightly perturbed to make it nonsingular"
+"2","a numerically singular 'V' has been slightly perturbed to make it nonsingular"
+"2","a numerically singular 'V' has been slightly perturbed to make it nonsingular"
+"2","a numerically singular 'V' has been slightly perturbed to make it nonsingular"
+"2","a numerically singular 'V' has been slightly perturbed to make it nonsingular"
+"2","a numerically singular 'V' has been slightly perturbed to make it nonsingular"
+"2","a numerically singular 'V' has been slightly perturbed to make it nonsingular"
+"2","a numerically singular 'V' has been slightly perturbed to make it nonsingular"
+"2","a numerically singular 'V' has been slightly perturbed to make it nonsingular"
+"2","a numerically singular 'V' has been slightly perturbed to make it nonsingular"
+"2","a numerically singular 'V' has been slightly perturbed to make it nonsingular"
+"2","a numerically singular 'V' has been slightly perturbed to make it nonsingular"
+"2","a numerically singular 'V' has been slightly perturbed to make it nonsingular"
+"2","a numerically singular 'V' has been slightly perturbed to make it nonsingular"
+"2","a numerically singular 'V' has been slightly perturbed to make it nonsingular"
+"2","a numerically singular 'V' has been slightly perturbed to make it nonsingular"
+"2","a numerically singular 'V' has been slightly perturbed to make it nonsingular"
+"2","a numerically singular 'V' has been slightly perturbed to make it nonsingular"
+"2","a numerically singular 'V' has been slightly perturbed to make it nonsingular"
+"2","a numerically singular 'V' has been slightly perturbed to make it nonsingular"
+"2","a numerically singular 'V' has been slightly perturbed to make it nonsingular"
+"2","a numerically singular 'V' has been slightly perturbed to make it nonsingular"
+"2","a numerically singular 'V' has been slightly perturbed to make it nonsingular"
+"2","a numerically singular 'V' has been slightly perturbed to make it nonsingular"
+"2","a numerically singular 'V' has been slightly perturbed to make it nonsingular"
+"2","a numerically singular 'V' has been slightly perturbed to make it nonsingular"
+"2","a numerically singular 'V' has been slightly perturbed to make it nonsingular"
+"2","a numerically singular 'V' has been slightly perturbed to make it nonsingular"
+"1","    user "
+"1","  system "
+"1"," elapsed "
+"1","
+"
+"1","24305.98 "
+"1","    4.44 "
+"1","24315.88 "
+"1","
+"

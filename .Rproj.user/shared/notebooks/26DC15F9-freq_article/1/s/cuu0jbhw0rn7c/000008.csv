@@ -1,0 +1,12 @@
+"0","ggplot(data.table(t = as.numeric(time(window(y_qu, 2010))), window(y_qu, 2010)), aes(t, V2)) +
+    geom_line(col = 'grey') +
+    theme_bw() +
+    geom_line(data = os_fore[model %in% c('local_trend', 'lt_arma_gibbs', 'local_level')], aes(t, f, col = model), size = 0.5) +
+    scale_x_continuous(breaks = seq(1995, 2018)) +
+    scale_colour_viridis( discrete = T) +
+    facet_wrap(~no) +
+    ggtitle('Out-of-sample predictions')
+ggsave('../figs/out_of_sample_predictions.png')
+"
+"2","Saving 7.29 x 4.5 in image
+"

@@ -1,0 +1,55 @@
+"0","library(cbsodataR)
+library(data.table)
+library(ggplot2)
+library(dlm)
+"
+"2","
+Attaching package: ‘dlm’
+
+"
+"2","The following object is masked from ‘package:ggplot2’:
+
+    %+%
+
+"
+"0","library(xts)"
+"2","Loading required package: zoo
+"
+"2","
+Attaching package: ‘zoo’
+
+"
+"2","The following objects are masked from ‘package:base’:
+
+    as.Date, as.Date.numeric
+
+"
+"2","
+Attaching package: ‘xts’
+
+"
+"2","The following objects are masked from ‘package:data.table’:
+
+    first, last
+
+"
+"0","library(tseries)"
+"2","
+    ‘tseries’ version: 0.10-45
+
+    ‘tseries’ is a package for time series analysis and computational finance.
+
+    See ‘library(help=""tseries"")’ for details.
+
+"
+"0","library(gridExtra)"
+"0","library(viridis)"
+"2","Loading required package: viridisLite
+"
+"0","library(rmarkdown)"
+"0","library(knitr)"
+"0","library(parallel)"
+"0","library(methods)"
+"0","library(mFilter)"
+"2","Error in library(mFilter) : there is no package called â€˜mFilterâ€™
+"
