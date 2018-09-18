@@ -72,25 +72,6 @@ y_qu <-  ts(freq_dt_qu[variable == 'freq', value],
             frequency = 4         
             )
 
-par(mar=c(0,0,0,0))
-plot(0,0,xlim=c(0,28),ylim=c(0,1),
-       xaxt="n",yaxt="n",bty="n",xlab="",ylab="",type="n")
-i <- 1
-for(j in 1:20)
-{
-  test <- (6+j):26
-  train <- 1:(5+j)
-  arrows(0,1-j/20,27,1-j/20,0.05)
-  points(train,rep(1-j/20,length(train)),pch=19,col="blue")
-  if(length(test) >= i)
-    points(test[i], 1-j/20, pch=19, col="red")
-  if(length(test) >= i)
-    points(test[-i], rep(1-j/20,length(test)-1), pch=19, col="gray")
-  else
-    points(test, rep(1-j/20,length(test)), pch=19, col="gray")
-}
-text(28,.95,"time")
-
 ```    
 
 #Introduction
@@ -116,7 +97,7 @@ ggplot(freq_dt_qu[variable %in% c('freq')], aes(quarter, value, group = 1)) +
 ``` 
 
 ```{r freq-cycle-plot}
-ggplot(data.table(quarter = time(y_qu),
+ ggplot(data.table(quarter = time(y_qu),
                   trend = as.numeric(hpfilter(stl(y_qu, t.window=5, s.window="periodic")$time.series[,2])$trend),
                   cycle = as.numeric(hpfilter(stl(y_qu, t.window=5, s.window="periodic")$time.series[,2])$cycle)), aes(quarter, trend)) +
 #    geom_line() +
@@ -216,10 +197,10 @@ for (mod in c('local_level', 'local_trend', 'lt_fourier', 'lt_arma')) {
 #out_gibbs <- dlmGibbsDIG(y_qu, freq_mod(rep(1, 4), 'local_trend'), a.y=1, b.y=100, a.theta=1, b.theta=100, n.sample = 1000, thin = 1)
 
 system.time(
-    out_gibbs <- gibbs_est(y_qu, a.theta=1, b.theta=100, n.sample = 10000, thin = 2, save.states = TRUE)
+    out_gibbs <- gibbs_est(y_qu, a.theta=1, b.theta=100, n.sample = 10, thin = 1, save.states = TRUE)
 )
 
-burn <- 5000
+burn <- 1
 out_par <- c(mcmcMean(out_gibbs$dV[-(1:burn)], sd = F), 
              mcmcMean(out_gibbs$dW[-(1:burn), c(1:2, 4)], sd = F), 
              mcmcMean(out_gibbs$phi[-(1:burn), ], sd = F), 
@@ -231,9 +212,9 @@ out_par <- c(mcmcMean(out_gibbs$dV[-(1:burn)], sd = F),
 freq_fit[['lt_arma_gibbs']] <- freq_mod(as.numeric(out_par), 'lt_arma_gibbs')
 freq_filt[['lt_arma_gibbs']] <- dlmFilter(y_qu, freq_fit[['lt_arma_gibbs']])
 
-plot(ergMean(out_gibbs$dW[-(1:burn),4]))
-plot(ergMean(out_gibbs$dV[-(1:burn)]))
-plot(ergMean(out_gibbs$phi[,2]))
+#plot(ergMean(out_gibbs$dW[-(1:burn),4]))
+#plot(ergMean(out_gibbs$dV[-(1:burn)]))
+#plot(ergMean(out_gibbs$phi[,2]))
 
 filt_dt <- melt(data.table(t= time(y_qu),
                       data = y_qu,
