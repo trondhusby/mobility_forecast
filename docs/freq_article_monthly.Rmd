@@ -23,7 +23,7 @@ library(rmarkdown)
 library(knitr)
 library(parallel)
 library(methods)
-#library(mFilter)
+library(mFilter)
 
 ## set global rchunk options
 opts_chunk$set(fig.path='../figs/freq--',
@@ -42,13 +42,14 @@ opts_chunk$set(fig.path='../figs/freq--',
 ```
 
 ```{r read-data}
-load('../data/cbs_mig_data.RData')
+#load('../data/cbs_mig_data.RData')
+bev_dt_hf <- data.table(cbs_get_data('37943ned'))
 ```
 
 
 ```{r data-wrangling}
 ## merge quarterly pop data with gdp data
-freq_dt_qu <- bev_dt_hf[,
+freq_dt <- bev_dt_hf[,
                         .(Perioden,
                         (as.numeric(TussenGemeentenVerhuisdePersonen_9) +
                          as.numeric(BinnenGemeentenVerhuisdePersonen_10)),
@@ -58,18 +59,18 @@ freq_dt_qu <- bev_dt_hf[,
                           year := substr(as.character(Perioden), 1, 4)
                           ]
                 
-setnames(freq_dt_qu, c('quarter', 'moves', 'pop_ep', 'year'))
+setnames(freq_dt, c('month', 'moves', 'pop_ep', 'year'))
 
 ## calculate frequency
-freq_dt_qu[, freq := 1000*moves/pop_ep]
+freq_dt[, freq := 1000*moves/pop_ep]
 
 ## transform to long
-freq_dt_qu <- melt(freq_dt_qu[grepl('KW', as.character(quarter)), -'year'], id.vars = 'quarter')[, value := as.numeric(value)]
+freq_dt <- melt(freq_dt[grepl('MM', as.character(month)), -'year'], id.vars = 'month')[, value := as.numeric(value)]
 
 ## create time series 
-y_qu <-  ts(freq_dt_qu[variable == 'freq', value],
+y_m <-  ts(freq_dt[variable == 'freq', value],
             start = c(1995, 1),
-            frequency = 4         
+            frequency = 12         
             )
 
 ```    
@@ -87,22 +88,24 @@ The frequency of mobility, defined as the sum of intra- and inter-municipal move
 * An important advantage of state space models is modularity: a basic model can easily be extended with other components, and different models can be compared by analysing their fit with the data. This paper develops four state space models for a two-year forecast of the frequency of mobility. Our data is quarterly, covering the period 1995 (first quarter) to 2018 (second quarter). 
 
 ```{r freq-plot}
-ggplot(freq_dt_qu[variable %in% c('freq')], aes(quarter, value, group = 1)) +
+ggplot(freq_dt[variable %in% c('freq')], aes(month, value, group = 1)) +
     geom_line() +
     facet_wrap(~variable, scales = 'free', ncol = 2) +
     theme_bw() +
     geom_smooth(method = 'loess') +
     theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
-    scale_x_discrete(breaks = freq_dt_qu[grepl('1e kwartaal', as.character(quarter)), unique(quarter)], labels = 1995:2018)
+    scale_x_discrete(breaks = freq_dt[grepl('MM01', as.character(month)), unique(month)], labels = 1995:2018)
+
 ``` 
 
 ```{r freq-cycle-plot}
- ggplot(data.table(quarter = time(y_qu),
-                  trend = as.numeric(hpfilter(stl(y_qu, t.window=5, s.window="periodic")$time.series[,2])$trend),
-                  cycle = as.numeric(hpfilter(stl(y_qu, t.window=5, s.window="periodic")$time.series[,2])$cycle)), aes(quarter, trend)) +
-#    geom_line() +
+
+ggplot(data.table(month = time(y_m),
+                  trend = as.numeric(hpfilter(stl(y_m, t.window=10, s.window="periodic")$time.series[,2])$trend),
+                  cycle = as.numeric(hpfilter(stl(y_m, t.window=10, s.window="periodic")$time.series[,2])$cycle)), aes(month, trend)) +
+    geom_line() +
     geom_line(aes(y = cycle)) + 
-#    geom_smooth(method = 'lm') +
+    geom_smooth(method = 'lm') +
     theme_bw()
 
 ```
@@ -160,31 +163,33 @@ source('../src/freq_dlm_fn.R')
 ```
 
 ```{r estimate-models-mle}
-level0 <- y_qu[1]
-slope0 <- mean(diff(y_qu))
+## initial level of 
+level0 <- y_m[1]
+slope0 <- mean(diff(y_m))
 
 fit <- list()
 freq_fit <- list()
 freq_filt <- list()
 
-for (mod in c('local_level', 'local_trend', 'lt_fourier', 'lt_arma')) {
-    if (mod == 'local_level') {
-        fit[[mod]] <- dlmMLE(y_qu, parm=rep(-1, 3), type = mod, build=freq_mod)
+for (mod in c('local_level', 'local_trend', 'lt_smooth', 'lt_fourier', 'lt_arma')[5]) {
+    if (mod == 'local_level' | mod == 'lt_smooth') {
+        fit[[mod]] <- dlmMLE(y_m, parm=rep(-1, 3), type = mod, build=freq_mod)
     }
     if (mod == 'local_trend' | mod == 'lt_fourier') {
-        fit[[mod]] <- dlmMLE(y_qu, parm=rep(-4, 4), type = mod, build=freq_mod)
+        fit[[mod]] <- dlmMLE(y_m, parm=rep(-4, 4), type = mod, build=freq_mod)
     }
     if (mod == 'lt_arma_fourier') {
-        fit[[mod]] <- dlmMLE(y_qu, parm=c(rep(-0.1, 4), 1, 0, -1), type = mod, build=freq_mod)
+        fit[[mod]] <- dlmMLE(y_m, parm=c(rep(-0.1, 4), 1, 0, -1), type = mod, build=freq_mod)
     }
     if (mod == 'lt_arma' | mod == 'lt_arma_2') {
-        fit[[mod]] <- dlmMLE(y_qu, parm=c(rep(-0.5, 4), 1, 0, -1), type = mod, build=freq_mod)
+        ##fit[[mod]] <- dlmMLE(y_m, parm=c(rep(-0.5, 4), 1, 0, -1), type = mod, build=freq_mod)
+        fit[[mod]] <- dlmMLE(y_m, parm=c(rep(-0.5, 4), 1, 0, 1, 1, -1), type = mod, build=freq_mod)        
     }
     if (fit[[mod]]$convergence != 0) {
         print(paste0(mod, ' did not converge'))
     }
     freq_fit[[mod]] <- freq_mod(fit[[mod]]$par, type = mod)
-    freq_filt[[mod]] <- dlmFilter(y_qu, freq_fit[[mod]])
+    freq_filt[[mod]] <- dlmFilter(y_m, freq_fit[[mod]])
 }
 
 ```
@@ -194,67 +199,68 @@ for (mod in c('local_level', 'local_trend', 'lt_fourier', 'lt_arma')) {
 
 
 
-#out_gibbs <- dlmGibbsDIG(y_qu, freq_mod(rep(1, 4), 'local_trend'), a.y=1, b.y=100, a.theta=1, b.theta=100, n.sample = 1000, thin = 1)
+out_gibbs <- dlmGibbsDIG(y_m, freq_mod(rep(1, 4), 'local_trend'), a.y=1, b.y=100, a.theta=1, b.theta=100, n.sample = 100, thin = 1)
 
 system.time(
-    out_gibbs <- gibbs_est(y_qu, a.theta=1, b.theta=100, n.sample = 10, thin = 1, save.states = TRUE)
+    out_gibbs <- gibbs_est(y_m, a.theta=1, b.theta=100, n.sample = 10, thin = 1, save.states = TRUE)
 )
 
-burn <- 1
+burn <- 500
 out_par <- c(mcmcMean(out_gibbs$dV[-(1:burn)], sd = F), 
              mcmcMean(out_gibbs$dW[-(1:burn), c(1:2, 4)], sd = F), 
              mcmcMean(out_gibbs$phi[-(1:burn), ], sd = F), 
              mcmcMean(out_gibbs$dW[-(1:burn), 3], sd = F)
              )
 
-
 ## add parameters to dlm model
 freq_fit[['lt_arma_gibbs']] <- freq_mod(as.numeric(out_par), 'lt_arma_gibbs')
-freq_filt[['lt_arma_gibbs']] <- dlmFilter(y_qu, freq_fit[['lt_arma_gibbs']])
+freq_filt[['lt_arma_gibbs']] <- dlmFilter(y_m, freq_fit[['lt_arma_gibbs']])
 
-plot(ergMean(out_gibbs$dW[-(1:burn),4]))
-#plot(ergMean(out_gibbs$dV[-(1:burn)]))
+plot(ergMean(out_gibbs$dW[,4]))
+plot(ergMean(out_gibbs$dV))
 plot(ergMean(out_gibbs$phi[,2]))
 
-filt_dt <- melt(data.table(t= time(y_qu),
-                      data = y_qu,
+filt_dt <- melt(data.table(t= time(y_m),
+                      data = y_m,
                       local_level = freq_filt[['local_level']]$f,
                       local_trend = freq_filt[['local_trend']]$f,
-                      lt_arma = freq_filt[['lt_arma']]$f,
+#                      lt_arma = freq_filt[['lt_arma']]$f,
                       lt_arma_gibbs = freq_filt[['lt_arma_gibbs']]$f,
 #                      lt_arma_2 = freq_filt[['lt_arma_fourier']]$f,
-                      lt_fourier = freq_filt[['lt_fourier']]$f
+                      lt_smooth = freq_filt[['lt_smooth']]$f
                       ), id.vars = 't')
 
 
-lapply(c('local_level', 'local_trend', 'lt_fourier', 'lt_arma_gibbs', 'lt_arma'),
-       function(x) mape(dropFirst(freq_filt[[x]]$f), dropFirst(y_qu))
+lapply(c('local_level', 'local_trend', 'lt_fourier', 'lt_smooth', 'lt_arma_gibbs'),
+       function(x) mape(dropFirst(freq_filt[[x]]$f), dropFirst(y_m))
        )
 
-ggplot(filt_dt[variable %in% c('lt_arma_gibbs', 'lt_arma_2')], aes(t, value)) +
+ggplot(filt_dt[variable %in% c('local_trend', 'lt_smooth', 'lt_arma_gibbs')], aes(t, value)) +
     geom_line(aes(col = variable)) +
     geom_line(data = filt_dt[variable == 'data'], aes(t, value), col = 'grey') +
     theme_bw()
 
 
-gibbs_state_dt <- melt(data.table(apply(out_gibbs$theta[-1,-c(4, 6, 7),], 3, rowSums))[,t := time(y_qu)], id.vars = 't')
+gibbs_state_dt <- melt(data.table(apply(out_gibbs$theta[-1,-c(4, 6, 7),], 3, rowSums))[,t := time(y_m)], id.vars = 't')
 
 ggplot(gibbs_state_dt, aes(t, value)) +
     geom_point(size = 1, col = 'grey', alpha = 0.1) +
-    geom_point(data=data.table(value = y_qu, t = time(y_qu)), aes(t, value),
+    geom_point(data=data.table(value = y_m, t = time(y_m)), aes(t, value),
               col = 'blue') + 
     theme_bw()
+
+plot(dlmForecast(freq_filt[['lt_smooth']], 8)$f)
 
 ```
 
 ```{r diagnosis}
 
 ## diagnosis
-tsdiag(freq_filt[['lt_arma_gibbs']])
+tsdiag(freq_filt[['lt_arma']])
 
 ## check whether errors are normal distributed
-qqnorm(residuals(freq_filt[['lt_arma_gibbs']])$res)
-qqline(residuals(freq_filt[['lt_arma_gibbs']])$res)
+qqnorm(residuals(freq_filt[['lt_arma']])$res)
+qqline(residuals(freq_filt[['lt_arma']])$res)
 
 ```
 
@@ -263,11 +269,11 @@ qqline(residuals(freq_filt[['lt_arma_gibbs']])$res)
 ```{r os-dt}
 
 system.time(
-    os_fore <- rbindlist(lapply(c('local_level', 'local_trend', 'lt_fourier', 'lt_arma', 'lt_arma_gibbs'),
+    os_fore <- rbindlist(lapply(c('local_level', 'local_trend', 'lt_fourier', 'lt_arma', 'lt_smooth'),
                                   function(model) {
                                       tmp <- rbindlist(lapply(seq(2012.25, 2016, by = 0.25),
                                                                 function(end_yr) {
-                                                                    y_sub <- window(y_qu, 1995.00, end_yr)
+                                                                    y_sub <- window(y_m, 1995.00, end_yr)
                                                                     if (model == 'lt_arma_gibbs') {
                                                                         fit_os <- gibbs_est(y_sub, a.theta=1, b.theta=100, n.sample = 10000, thin = 2, save.states = TRUE)
                                                                         out_par <- c(mcmcMean(fit_os$dV[-(1:burn)], sd = F),
@@ -292,9 +298,9 @@ system.time(
                                                                     return(data.table(no = end_yr,
                                                                                       model = model,
                                                                                       t = c(end_yr, as.numeric(time(freq_fore))),
-                                                                                      f = c(window(y_qu, end_yr, end_yr), as.numeric(freq_fore)),
-                                                                                      rmse = rmse(window(y_qu, end_yr+0.25) - freq_fore),
-                                                                                      mape = mape(window(y_qu, end_yr+0.25), freq_fore)
+                                                                                      f = c(window(y_m, end_yr, end_yr), as.numeric(freq_fore)),
+                                                                                      rmse = rmse(window(y_m, end_yr+0.25) - freq_fore),
+                                                                                      mape = mape(window(y_m, end_yr+0.25), freq_fore)
                                                                                       )
                                                                            )
                                                                 }
@@ -307,7 +313,7 @@ system.time(
 
 ## attach rmse and mape across all submodels
 mean_values <- os_fore[,
-                       .(window(y_qu, no+0.25, no+2), f[t>no]),
+                       .(window(y_m, no+0.25, no+2), f[t>no]),
                        by = c('no', 'model')
                        ][,
                          .(rmse(as.numeric(V1) - as.numeric(V2)),
@@ -315,6 +321,7 @@ mean_values <- os_fore[,
                          by = model]
 setnames(mean_values, 2:3, c('total_rmse', 'total_mape'))
 os_fore <- merge(os_fore, mean_values, by = 'model')
+
 ```
 
 ```{r oo-rmse-plot}
@@ -325,11 +332,11 @@ ggplot(os_fore[model %in% c('local_trend', 'lt_arma_gibbs', 'local_level')], aes
     facet_wrap(~model, nrow = 1) +
     theme_bw() +
     ggtitle('Out-of-sample RMSE')
-#ggsave('../figs/out_os_sample_rmse.png')
+ggsave('../figs/out_os_sample_rmse.png')
 ```
 
 ```{r oo-forecast-plot}
-ggplot(data.table(t = as.numeric(time(window(y_qu, 2010))), window(y_qu, 2010)), aes(t, V2)) +
+ggplot(data.table(t = as.numeric(time(window(y_m, 2010))), window(y_m, 2010)), aes(t, V2)) +
     geom_line(col = 'grey') +
     theme_bw() +
     geom_line(data = os_fore[model %in% c('local_trend', 'lt_arma_gibbs', 'local_level')], aes(t, f, col = model), size = 0.5) +
@@ -364,7 +371,7 @@ ggplot(smooth_dt[mod == 'lt_arma_gibbs'], aes(quarter, value)) +
     scale_colour_viridis(discrete = T)  + 
     theme_bw() +
     ggtitle('Decomposition of quarterly frequency of moves')
-#ggsave('../figs/mov_freq.png')
+ggsave('../figs/mov_freq.png')
 
 ggplot(fore_dt[quarter > 2012], aes(quarter, value, group = variable)) +
     geom_line(aes(col = variable)) +
