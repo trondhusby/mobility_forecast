@@ -73,6 +73,13 @@ y_m <-  ts(freq_dt[variable == 'freq', value],
             frequency = 12         
             )
 
+
+ar_test <- auto.arima(diff(y_m, 1))
+
+adf.test(diff(y_m, 1), alternative = "stationary")
+
+plot(forecast(ar_test), include = 12)
+
 ```    
 
 #Introduction
@@ -88,6 +95,7 @@ The frequency of mobility, defined as the sum of intra- and inter-municipal move
 * An important advantage of state space models is modularity: a basic model can easily be extended with other components, and different models can be compared by analysing their fit with the data. This paper develops four state space models for a two-year forecast of the frequency of mobility. Our data is quarterly, covering the period 1995 (first quarter) to 2018 (second quarter). 
 
 ```{r freq-plot}
+
 ggplot(freq_dt[variable %in% c('freq')], aes(month, value, group = 1)) +
     geom_line() +
     facet_wrap(~variable, scales = 'free', ncol = 2) +
@@ -163,6 +171,7 @@ source('../src/freq_dlm_fn.R')
 ```
 
 ```{r estimate-models-mle}
+
 ## initial level of 
 level0 <- y_m[1]
 slope0 <- mean(diff(y_m))
@@ -192,11 +201,16 @@ for (mod in c('local_level', 'local_trend', 'lt_smooth', 'lt_fourier', 'lt_arma'
     freq_filt[[mod]] <- dlmFilter(y_m, freq_fit[[mod]])
 }
 
+ggplot(data.table(log(freq_filt[[mod]]$f), t = time(y_m)), aes(t, V1)) +
+    geom_line() +
+    theme_bw()
+
+                                                                             
+
 ```
 
 
 ```{r estimate-models-gibbs, cache = TRUE}
-
 
 
 out_gibbs <- dlmGibbsDIG(y_m, freq_mod(rep(1, 4), 'local_trend'), a.y=1, b.y=100, a.theta=1, b.theta=100, n.sample = 100, thin = 1)
