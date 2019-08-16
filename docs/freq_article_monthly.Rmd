@@ -342,15 +342,15 @@ rf_fit <- rbindlist(lapply(c('dlm1', 'dlm2', 'arima', 'naive', 'hw'),
 
 #Introduction
 
-Long-term projections of internal migration are key inputs to regional-level demographic population forecasts. The long-term projections rely on the identification of a long-term trend in data, thus filtering out short-run fluctuations due to the business cycle. However, such detrending analyses are complicated if there is no clear trend in the data, if business cycles themselves stretch into the medium- to long run or if the data point represent the top or the bottom of the cycle [see e.g @canova1998detrending and @hamilton2018you]. Therefore is occassionally informative to analyse the short- to medium dynamics of demographic components, forecasting along the business cycle. This paper develops a state space model for short-to medium term univariate forecast of monthly frequency of mobility in the Netherlands.
+Long-term projections of internal migration are key inputs to regional-level demographic population forecasts. The long-term projections rely on the identification of a long-term trend in data, thus filtering out short-run fluctuations due to the business cycle. However, such detrending analyses are complicated if there is no clear trend in the data, if business cycles themselves stretch into the medium- to long run or if the data point represent the top or the bottom of the cycle [see e.g @canova1998detrending and @hamilton2018you]. Therefore it is informative to analyse the short- to medium dynamics of demographic components, forecasting along the business cycle. This paper develops a state space model for short-to medium term univariate forecast of monthly frequency of mobility in the Netherlands.
 
-As is the case in most developed countries, the main driver of regional-level population change in the Netherlands is migration (external and domestic). Due to the close relation between migration decisions and labour- and housing market conditions, time series of internal migration flows often move along the business cycle. 
+As is the case in most developed countries, the main driver of regional-level population change in the Netherlands is migration (external and domestic). Due to the close relation between migration decisions and labour- and housing market conditions, time series of internal migration flows often move along the business cycle. However, the volume of internal migration may also be affected by a myriad other factors. For example, a recent change to the Dutch student finance system seems to have caused a decrease in mobility for an otherwise very mobile group.\footnote{https://www.cbs.nl/nl-nl/nieuws/2018/04/studenten-gaan-minder-op-kamers} Finding the precise determinants of changes to migration flows can be very complicated. This justifies the use of univariate forecasting techniques, which make use of basic time series patterns to form a forecast [see e.g. @zietz2014us].
 
 Forecasting in general entails decomposing a time series into elements such as trend, cycle and seasonality. One popular type of model used for this purpose are Dynamic Linear Models (DLM), which is a type of State Space models [@petris2009dynamic; @durbin2012time]. As the name suggests, DLMs are linear models with a Gaussian error structure, where the relevant inferences are carried out using the Kalman filter. Unknown parameters of the model are be estimated by either maximum likelihood or Bayesian techniques.
 
-In this paper we focus on the national-level frequency of mobility, defined as the sum of intra- and inter-municipal moves per 1000 inhabitants, representing a rough measure of the intensity of internal migration in the Netherlands. Data from the Statistics Netherlands allow us to calculate monthly time series of the frequency of mobility, from January 1995 to October 2018, meaning we have in total 286 observations at our disposal.
+In this paper we focus on the national-level frequency of mobility, defined as the sum of intra- and inter-municipal moves per 1000 inhabitants, representing a rough measure of the intensity of internal migration in the Netherlands. Data from the Statistics Netherlands allow us to calculate monthly time series of the frequency of mobility, from January 1995 to December 2018, meaning we have in total 288 observations at our disposal.
 
-In this paper I firstly show the time series data and discuss its patterns. Next I present the model, discuss its elements and the estimated parameters. Finally I use the model for a series of out-of-sample forecasts along a peak of the business cycle, showing model performance for the separate forecasts. In order to assess the performance, the prediction accuracy of the DLM model is compared to that from forecasts obtained with three other models.
+In this paper I firstly show the time series data and discuss its patterns. Next I present the model, discuss its elements and the estimated parameters. Finally I use the model for a series of out-of-sample forecasts around a peak in the time series. In order to assess the performance, the prediction accuracy of the DLM model is compared to that from forecasts obtained with three other popular models for univariate forecasting.
 
 # Data
 
@@ -645,17 +645,18 @@ grid.arrange(
 
 In this section we present the results of the evaluation of forecasting accuracy of the two models described in the previous sections. Evaluating forecasting accuracy is thus akin to common out-of-sample testing, where a model is estimated on a training data set and evaluated on an independent test data set. In order to control for effects arising from the composition of the training data, we carry out the evaluation using a cross validation approach [see e.g. @Hastie2009]. Due to the serial autocorrelation in time-series, we can not partition the data randomly. More precisely, in time-series cross validation the test data can not contain observations occuring prior to the observations in the training data. The approach chosen here is the evaluation over a \textit{rolling forecasting origin} [@tashman2000out], where we succesively extend the training data and produce forecasts. The last point of the training data in each iteration is referred to as the \textit{origin} $T$, since the origin on which the forecast is based rolls forward in time. From the origin forecasts are generated for time periods $T+1$, $T+2$, ..., $T+N$. 
 
-This procedure is shown in Figure \@ref(fig:rolling-forecast-example) [@hyndman2018forecasting]. The movement along the x-axis illustrates how the origins (red dots) are "rolling" forward in time, where the model is estimated on the training data (blue and red dots) and evaluated on the test data (grey dots). The model perfomance is then evaluated by averaging the prediction errors over the forecast horizon (number of grey dots). 
+This procedure is shown in Figure \@ref(fig:rolling-forecast-example) [@hyndman2018forecasting]. The movement along the x-axis illustrates how the origins (blue dots with red border) are "rolling" forward in time, where the model is estimated on the training data (blue and red dots) and evaluated on the test data (grey dots). The model perfomance is then evaluated by averaging the prediction errors over the forecast horizon (grey dots with black border). 
 
 
-```{r rolling-forecast-example, fig.cap = "Illustration of rolling forecasting origin: training data (blue), origin (red) and test data (grey)"}
+```{r rolling-forecast-example, fig.cap = "Illustration of rolling forecasting origin: training data (blue), origin (red), forecast horizion (black) and test data (grey)"}
 
-plot_dt <- rbindlist(lapply(2:9,
+plot_dt <- rbindlist(lapply(2:6,
                  function(x)
                      data.table(mod = x,
                                 origin = c(rep(NA, x-1), x, rep(NA, 10-x)),
                                 train = c(seq(1, x), rep(NA, 10 - x)),
-                                test = c(rep(NA, x), seq(x+1, 10))
+                                test = c(rep(NA, x), seq(x+1, 10)),
+                                horizon = c(rep(NA, x), seq(x+1, x+2), rep(NA, 10 - x -2))
                                 )
                  )
           )
@@ -665,8 +666,9 @@ pal <- brewer.pal(3, name = 'Set1')
 ggplot(plot_dt, aes(mod, train)) +
     coord_flip() + 
     geom_point(col = pal[2], size = 4) +
-    geom_point(aes(y = test), col = 'grey', size = 4) +
-    geom_point(aes(y = origin), col = pal[1], size = 4) +
+    geom_point(aes(y = test), colour = 'grey', size = 4) +
+    geom_point(aes(y = horizon), shape = 21, colour = 'black', fill = 'grey', size = 4, stroke = 2) +
+    geom_point(aes(y = origin), shape = 21, fill = pal[2], colour = pal[1], size = 4, stroke = 2) +
     theme_bw() +
     theme(
         axis.text.x=element_blank(),
@@ -806,7 +808,10 @@ Next we zoom in on the forecasting performance around and after the changepoint.
 
 In this study we have developed a DLM...
 
-Need to write this still...
+* The DLMs outperform, on average, other models on the longer forecast horizon. 
+* Differences particularly visible in forecasts from March 2017 onwars.
+* DLMs appear to offer a middle ground between naïve and ARIMA/Holt-Winters
+* Difference DLMs: although DLM2 is clearly better within-sample, difference in terms of forecasting performance is not particularly big.
 
 
 <!-- ```{r roll-fore-dlm, fig.cap = "Rolling forecast of DLM model"} -->
