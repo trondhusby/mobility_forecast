@@ -1,0 +1,591 @@
+\documentclass[final, 12pt, aspectratio=169, xcolor={dvipsnames}]{beamer}
+\usepackage{lmodern}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{graphicx} 
+\usepackage{textpos} % package for the positioning
+%\usepackage{xcolor}
+\usepackage{tcolorbox}
+\usepackage{tabularx}
+\usepackage{hanging}
+\usepackage{animate}
+\usepackage{caption}
+
+\title[PEARL]{The demographic projections of the Netherlands Environmental Assessment Agency (PBL) and Statistics Netherlands (CBS)}
+\subtitle[PEARL]{}
+\author[T. Husby]{Dr. Trond Grytli Husby\ }
+\institute[PBL]{
+  Netherlands Environmental Assesment Agency (PBL) \\[5ex]
+  \texttt{trond.husby@pbl.nl}
+}
+\date[\today]{Amsterdam 16 September, 2019}
+
+% set path to figures
+\newcommand*{\figs}{../figs}%
+
+% position the logo
+\addtobeamertemplate{background}{}{%
+  %\begin{textblock*}{100mm}(0.95\textwidth, 7cm)
+  %\begin{flushright}
+    \includegraphics[width=\paperwidth, height=\paperheight]{\figs/pbl_background.pdf}
+  %\end{flushright}
+    %\end{textblock*}}
+}
+
+% colour scheme and settings
+\setbeamercolor{title}{bg=white,fg=blue!35!black}
+\setbeamercolor{frametitle}{bg=,fg=PineGreen}
+\setbeamercolor{enumerate item}{fg=PineGreen}
+\setbeamercolor{itemize item}{fg=PineGreen}
+\setbeamertemplate{itemize item}[circle]
+\setbeamercolor{itemize subitem}{fg=PineGreen}
+\setbeamertemplate{itemize subitem}[triangle]
+\setbeamerfont{frametitle}{size=\normalsize}
+\addtobeamertemplate{frametitle}{\vspace*{1cm}}{\vspace*{0.0cm}}
+\setbeamertemplate{footnote}{\hangpara{2em}{1}\makebox[2em][l]{\insertfootnotemark}\footnotesize\insertfootnotetext\par}
+
+% miscellaneous
+\newcommand{\semitransp}[2][35]{\color{fg!#1}#2}
+\newcommand{\source}[1]{\caption*{\tiny Source: {#1}} }
+
+
+\begin{document}
+
+\beamertemplatenavigationsymbolsempty
+
+%--- the titlepage frame -------------------------%
+{
+  \setbeamertemplate{footline}{}
+
+  \begin{frame}
+    \titlepage
+  \end{frame}
+}
+
+
+%---  --------------------------------%
+
+\begin{frame}{Plan for the day}  
+  \begin{enumerate}
+  \item Population projections: definition, relevance
+  \item Uncertainty and scenarios
+  \item Projection of trend
+  \item The cohort-component model and growth components
+  \item The Regional population projections by CBS/PBL 2019 \href{https://themasites.pbl.nl/regionale-bevolkingsprognose/}{\beamergotobutton{Link}}
+  \item Accuracy of previous projections
+    \end{enumerate}
+\end{frame}
+
+
+%---  --------------------------------%
+\begin{frame}{Who am I}
+  \begin{itemize}
+  \item Norwegian, living in the Netherlands for 10 years 
+  \item PBL for 3.5 years
+  \item Working with the population projections for 1.5 year
+    \item Economist by training (VU Amsterdam)
+    \end{itemize}
+\end{frame}
+
+%---  --------------------------------%  
+
+\begin{frame}{Why am I working with this}
+  \noindent
+  \begin{minipage}[t]{0.48\linewidth}%
+    \begin{itemize}
+    \item It's my job...
+    \item Population change is important for economic questions
+    \item Challenging topic: large uncertainties
+    \item Population growth and migration is a never ending source of relevant research questions
+    \end{itemize}
+\end{minipage}%
+\hfill%
+\begin{minipage}[t]{0.48\linewidth}
+%  \vspace{-1cm}
+  \begin{figure}
+    \includegraphics[scale = 0.2]{\figs/{witch.png}}
+    \source{\url{https://img.clipartxtras.com/03843abee543e741be870c4ada22c760_free-to-use-public-domain-cauldron-clip-art-witch-cauldron-clipart_500-500.png}}
+  \end{figure}  
+\end{minipage}    
+  
+\end{frame}
+
+
+%--- Projections general --------------------------------%  
+\begin{frame}{Definition of projections}
+  \begin{itemize}
+  \item  Van Dale: \textit{statement about the probable course or the probable outcome or outcome of elections, competitions and the like.}
+  \item Projections $\neq$ forecast $\neq$ scenario studies
+  \item Projections are, almost by definition, wrong: population projections with no error are most likely result of coincidence 
+  \item Think of projections as an attempt of establishing the \textit{most probable} trajectory of population change 
+    \item Anyone working with population projections should have this in mind
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Why do we make demographic projections?}
+  \begin{itemize}
+  \item Population change is important in other settings: house prices and rent in Amsterdam are high because many people want to live in Amsterdam 
+  \item Policy makers use them: plans for new residential areas, schools, location of hospitals...
+    \item Economists use them: gdp growth = population growth + productivity growth
+  \item Important: normative (is population growth good or bad?) versus descriptive (what are the main drivers of population growth?) analysis 
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Why do we make (regional) demographic projections?}
+    \begin{minipage}[t]{0.48\linewidth}%
+      %\vspace{-1cm}
+      \begin{itemize}
+      \item National projections: population in the Netherlands is projected to grow
+      \item Population growth is not uniformly distributed: which regions will grow and which will decline?
+      \item What is the regional impact on population of trends in the components? Will the trends continue into the future (subjective)?
+  \end{itemize}
+ 
+\end{minipage}%
+\hfill%
+\begin{minipage}[t]{0.48\linewidth}
+%  \vspace{-1cm}
+       \begin{figure}
+        \includegraphics[trim={50cm 7cm 10cm 5cm},clip, angle = -90, scale = 0.05]{\figs/{20181123_105808.jpg}}        
+      \end{figure}
+
+\end{minipage}  
+\end{frame}
+
+\begin{frame}{Why do we make demographic projections?}
+  \begin{minipage}[t]{0.48\linewidth}%
+    %\vspace{-1cm}
+    \begin{figure}
+      \includegraphics[scale = 0.18]{\figs/{coventry_green.jpg}}
+      \source{\url{https://www.coventrytelegraph.net/news/coventry-news/revealed-swathes-green-belt-lost-10674329}}
+    \end{figure}
+\end{minipage}%
+\hfill%
+\begin{minipage}[t]{0.48\linewidth}
+  \small
+  Based on population projections from the UK ONS, the city council of Coventry is planning to develop its Green Belt. Not everyone is happy \\
+  \begin{quotation}
+    Population projections might have some
+value in projecting school numbers five years ahead (although recent experience in the Council
+might cast doubt on that) but projecting twenty years up to 2031 is completely unrealistic. \href{http://www.coventrysociety.org.uk/js/plugins/filemanager/files/information/Coventry_Local_Plan_2014_Response_-_final_with_corrections.pdf}{\beamergotobutton{Link}}     
+    \end{quotation}
+  
+\end{minipage}
+  
+\end{frame}
+
+\begin{frame}{Demography and projections}
+  \begin{itemize}
+  \item Demography: description of the past 
+  \item Projections: best guess of the future
+  \item Population and households:
+    \begin{itemize}
+    \item \textit{Amount}: number of households and people 
+    \item \textit{Composition}: distribution by gender, age, ethnicity/background, household position 
+    \item \textit{Spatial distribution}: world, country, region (province, COROP, municipality, neighbourhood)
+      \item \textit{Changes}: birth, death, immigration, emigration, departure or arrival, transitions between household positions
+    \end{itemize}
+    \item Cohort-component model: population change from trends in growth components
+  \end{itemize}
+\end{frame}
+
+
+\begin{frame}{The origins and definition of uncertainty}
+  \begin{itemize}
+  \item Typology: Unknown knowns; known unknowns; unknown unknowns.
+    \item Population projections only account for the first type
+  \item The cohort-component model is a book-keeping system; per definition no uncertainty
+  \item However, substantial uncertainty in the trend of the growth components
+    \item Incorporating uncertainty: create projection interval with possible outcomes (according to the model) 
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Uncertainty in the projections}
+  \begin{itemize}
+    \item Circularity: what you are trying to project might be affected by your projection
+    \item Self-fulfilling prophecy: building plans reflect projections, projection becomes true
+    \item ...or self-denying prophecy: policy makers do not like projection and restrict migration, projection is wrong
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Scenarios versus projection}
+  \begin{minipage}[t]{0.48\linewidth}%
+    \begin{itemize}
+    \item Scenario's are quantification of future \textit{story lines}, not necessarily the \textit{most likely} outcomes
+    \item A way to structure discussion of possible futures, for example about the impacts of climate change
+    \end{itemize}   
+\end{minipage}%
+\hfill%
+\begin{minipage}[t]{0.48\linewidth}
+  \vspace{-1cm}
+  \centering
+  \begin{figure}
+    \includegraphics[scale = 0.4]{\figs/{ssp_scenarios.png}}
+    \source{\url{https://climate4impact.eu/files/SSPs.png}}
+    \end{figure}
+\end{minipage}
+
+\end{frame}
+
+\begin{frame}{Projecting of growth components: requirements}
+  In order to make a \textit{quantitative} projection, the following two conditions need to be satisfied: 
+  \begin{enumerate}
+  \item Historic data of what we are projecting is available
+    \item We can reasonably assume that patterns and relationships from the past will (at least to some degree) extend into the future
+    \end{enumerate}
+\end{frame}
+
+\begin{frame}{Projecting growth components: models}
+    \begin{minipage}[t]{0.48\linewidth}%
+      Let's say we want to project internal migration frequency (moves per 1000 inhabitants) into the future. Three possible models:
+      \small
+      \begin{itemize}
+        \item $\text{frequency}_{t+1} = f(\text{frequency}_{t}, \text{frequency}_{t-1}, ...,\text{error}_{t})$ \\
+      \item $\text{frequency} = f(\text{housing-market}, \text{labour-market}, \text{month}, ...,\text{error})$ \\
+        \item $\text{frequency}_{t+1} = f(\text{frequency}_{t}, \text{housing-market}, \text{labour-market}, \text{month}, ...,\text{error}_{t})$
+        \end{itemize}
+\end{minipage}%
+\hfill%
+\begin{minipage}[t]{0.48\linewidth}
+  \vspace{-1cm}
+  \centering
+  \includegraphics[scale = 0.35]{\figs/{freq--freq-plot-1.pdf}}    
+\end{minipage}    
+
+\end{frame}
+
+\begin{frame}{Projecting growth components: time-series decomposition}
+    \begin{minipage}[t]{0.48\linewidth}%
+      \textbf{Trend + seasonal + cycle + error}
+      \small
+      \begin{itemize}
+      \item \textit{Trend}: a long-term increase or decrease in the data, does not have to be linear
+      \item \textit{Seasonal}: time series is affected by seasonal factors such as the time of the year or the day of the week. Seasonality is always of a fixed and known frequency.
+        \item \textit{Cycle}: data exhibit rises and falls that are not of a fixed frequency. Fluctuations are usually due to economic conditions
+        \end{itemize}
+     
+\end{minipage}%
+\hfill%
+\begin{minipage}[t]{0.48\linewidth}
+  \vspace{0cm}
+  \centering
+  \includegraphics[scale = 0.4]{\figs/{freq--dlm-smoothed-1.pdf}}    
+\end{minipage}    
+
+\end{frame}
+
+\begin{frame}{Identifying the trend}
+  \begin{minipage}[t]{0.48\linewidth}%
+    The fraction of within-municipality moves for some municipalities hosting an asylum-seeker centre. What is the fraction in 2028?
+\end{minipage}%
+\hfill%
+\begin{minipage}[t]{0.48\linewidth}
+  \vspace{-1cm}
+  \centering
+  \includegraphics[scale = 0.4]{\figs/{within_mun_fraction.png}}    
+\end{minipage}    
+\end{frame}
+
+\begin{frame}{Identifying the trend}
+  \begin{minipage}[t]{0.48\linewidth}%
+    {\semitransp{The fraction of within-municipality moves for some municipalities hosting an asylum-seeker centre. What is the fraction in 2028?}} Relatively small municipalities where a large proportion moved from another municipality and moved quickly to another municipality.
+\end{minipage}%
+\hfill%
+\begin{minipage}[t]{0.48\linewidth}
+  \vspace{-1cm}
+  \centering
+  \includegraphics[scale = 0.4]{\figs/{within_mun_fraction.png}}    
+\end{minipage}    
+\end{frame}
+
+\begin{frame}{Questions}
+  \begin{enumerate}
+  \item Is the large drop in within-municipality moves a trend, a cycle or noise?
+    \item How can we conceptually think about this? Which of the three models is most appropriate?
+  \item Which assumptions do we need to make in order to estimate the fraction of within-municipality moves in 2018?
+    \end{enumerate}
+
+\end{frame}
+
+\begin{frame}{Identifying the trend}
+  \begin{minipage}[t]{0.48\linewidth}%
+    One solution: impute the outliers with a regression model. Many other methods available
+  
+\end{minipage}%
+\hfill%
+\begin{minipage}[t]{0.48\linewidth}
+  \vspace{-1cm}
+  \centering
+  \includegraphics[scale = 0.4]{\figs/{within_mun_fraction_imputed.png}}    
+\end{minipage}    
+\end{frame}
+
+
+%--- Second half --------------------------------%
+
+\begin{frame}{Cohort-component model (national)}
+  
+    $P_{t+1} = P_{t} + B - D + I - $ \textit{E}
+    
+  \begin{description}
+  \item \textit{$P_{t}$}: population in $t$ \\
+  \item \textit{B}: births in the interval $(t, t+1 )$ \\
+  \item \textit{D}: deaths in the interval $(t, t+1 )$ \\
+  \item \textit{I}: immigration in the interval $(t, t+1 )$ \\
+  \item \textit{E}: emigration in the interval $(t, t+1 )$
+  \end{description}
+\vspace{1cm}
+  X typically calculated as $\frac{X_{t} + X_{t+1}}{2}$
+  
+\end{frame}
+
+\begin{frame}{Growth components}
+  \begin{minipage}[t]{0.48\linewidth}%
+    Cross-sectional (calendar year)
+    \begin{itemize}
+    \item Changes related to the business cycle
+    \item Fluctuations in birth rates
+      \item Stricter immigration policies
+    \item Enlargement of the EU (work-related migration)
+      \item War (asylum seekers)
+      \end{itemize}
+ 
+\end{minipage}%
+\hfill%
+\begin{minipage}[t]{0.48\linewidth}
+  Longitudinal (cohort)
+  \begin{itemize}
+  \item Structural changes
+  \item Average number of children from 3 to 2
+  \item People live longer
+      \end{itemize}
+\end{minipage}    
+\end{frame}
+
+\begin{frame}{Growth components at different scales}
+  \noindent
+\begin{minipage}[t]{0.48\linewidth}%
+
+  World: births and deaths \\
+  \semitransp{National: births, deaths, net migration} \\
+  \semitransp{Regional: births, deaths, net migration, arrivals and departures} \\
+  
+\end{minipage}%
+\hfill%
+\begin{minipage}[t]{0.48\linewidth}
+  \vspace{-1cm}
+  \begin{figure}
+    \includegraphics[scale = 0.1]{\figs/{Planet_Earth_8.jpg}}
+    \source{\url{http://4.bp.blogspot.com/-8pNWCR1SJhY/T83V8A2HzXI/AAAAAAAADuM/aRub2XdIBEo/s1600/Planet+Earth+8.jpg}}
+  \end{figure}
+\end{minipage}    
+
+\end{frame}
+
+\begin{frame}{Growth components at different scales}
+  \noindent
+\begin{minipage}[t]{0.48\linewidth}%
+
+  {\semitransp{World: births and deaths}} \\
+  {National: births, deaths, net migration} \\
+  \semitransp{Regional: births, deaths, net migration, arrivals and departures} \\
+  
+\end{minipage}%
+\hfill%
+\begin{minipage}[t]{0.48\linewidth}
+  \vspace{-1cm}
+  \begin{figure}
+    \includegraphics[scale = 0.1]{\figs/{migration_flows.png}}
+    \source{\url{http://www.slate.com/content/dam/slate/blogs/the_world_/2014/04/02/world_on_the_move_five_years_of_global_migration_in_one_chart/circular_plot_flows_between_world_regions_200510_1.png.CROP.cq5dam_web_1280_1280_png.png}}
+  \end{figure}
+\end{minipage}    
+  
+\end{frame}
+
+\begin{frame}{Growth components at different scales}
+  \noindent
+\begin{minipage}[t]{0.48\linewidth}%
+
+  {\semitransp{World: births and deaths}} \\
+  {\semitransp{National: births, deaths, net migration}} \\
+  {Regional: births, deaths, net migration, arrivals and departures} \\
+  
+\end{minipage}%
+\hfill%
+\begin{minipage}[t]{0.48\linewidth}
+  %\vspace{-1cm}
+  \begin{figure}
+    \includegraphics[scale = 0.09]{\figs/{touw_blok_adam.jpeg}}
+    \source{\url{https://i.ytimg.com/vi/68nvHI10BdA/maxresdefault.jpg}}
+  \end{figure}
+\end{minipage}    
+  
+\end{frame}
+
+\begin{frame}{Regional population projections}
+  \begin{minipage}[t]{0.48\linewidth}%
+    Top-down: disaggregate national numbers to the region \\
+    +: straight forward to implement \\
+    +: per definition consistent with national numbers \\
+    --: little/no insight into determinants of regional population change
+ 
+\end{minipage}%
+\hfill%
+\begin{minipage}[t]{0.48\linewidth}
+  Bottom-up: calculate regional numbers consistent with national numbers \\
+
+  +: insights into determinants of regional population change \\
+  --: heavy data and time requirements \\
+  --: extra step required to ensure consistency with national numbers \\
+\end{minipage}    
+\end{frame}
+
+\begin{frame}{Question}
+  \begin{enumerate}
+  \item In a parallel dimension, a (much smaller) earth is populated by 100 people in year \textit{t}. In \textit{t+15}, the maximum population aged 15 and above is 100. What else do we need to know in order to project the exact population in \textit{t+15}?
+  \item The population is evenly distributed between two countries: A and B. What do we need to know in order to project the population in A and B in \textit{t+15}?
+    \end{enumerate}
+\end{frame}
+
+%--- Regional CBS/PBL projections --------------------------------%
+\begin{frame}{Regional population projections}
+  \begin{itemize}
+  \item  Projections of population, households and demographic events in Dutch municipalities until 2040
+  \item Carried out every three years: most recent edition published last week!
+  \item Regional projections (PBL/CBS) are made consistent with the national projections (CBS)
+  \item The projections made with the cohort-component model PEARL (Projecting population Events at Regional Level)
+    \item Trends in components of population growth and transition rates between household positions are projected separately as inputs to the model
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Total fertility rate}
+  \begin{itemize}
+  \item TFR = average number of children per woman for each municipality
+  \item Regional variation due to
+    \begin{itemize}
+    \item share of singles among women in age group 20 - 40 (-)
+    \item share of votes for Christian parties (+)
+    \item share of people on social benefits (-)
+      \item building construction (+)
+    \end{itemize}
+    \item Changes in the share of single women and building construction affect projected TFR
+    \end{itemize}
+  
+  \end{frame}
+
+\begin{frame}{Total fertility rate in 2016 and 2035}
+  \noindent
+  \begin{minipage}[t]{0.48\linewidth}%
+    \begin{figure}
+    \includegraphics[scale = 0.4]{\figs/{tfr_2016_P2019.png}}
+    %\includegraphics[scale = 0.09]{\figs/{tfr_2035_P2019.png}}
+  \end{figure}
+
+\end{minipage}%
+\hfill%
+\begin{minipage}[t]{0.48\linewidth}
+  %\vspace{-1cm}
+  \begin{figure}
+    \includegraphics[scale = 0.4]{\figs/{tfr_2035_P2019.png}}
+    %\includegraphics[scale = 0.09]{\figs/{tfr_2035_P2019.png}}
+  \end{figure}
+\end{minipage}
+  
+  \end{frame}
+
+\begin{frame}{Immigration and emigration}
+  \begin{itemize}
+  \item Since 2015 asylum migration has declined, but total migration still grows. Primarily from EU countries, primarily for work, study or reuniting with family
+  \item Emigration often follows immigration in size (many return), but this time to a lesser extent
+  \item Assumption: the current high net migration is a cycle-effect, immigration will decrease and emigration will increase
+  \item Regional: concentration index of immigration and emigration
+    \item $CI_{r} = \frac{immigrants_{r} / \sum_{r} immigrants_{r}}{population_{r} / \sum_{r} population_{r}}$
+    \end{itemize}
+  \end{frame}
+
+\begin{frame}{Immigration and emigration}
+  \noindent
+  \begin{minipage}[t]{0.48\linewidth}%
+    \begin{figure}
+    \includegraphics[scale = 0.4]{\figs/{immigration_2016_P2019.png}}
+    %\includegraphics[scale = 0.09]{\figs/{tfr_2035_P2019.png}}
+  \end{figure}
+
+\end{minipage}%
+\hfill%
+\begin{minipage}[t]{0.48\linewidth}
+  %\vspace{-1cm}
+  \begin{figure}
+    \includegraphics[scale = 0.4]{\figs/{emigration_2016_P2019.png}}
+    %\includegraphics[scale = 0.09]{\figs/{tfr_2035_P2019.png}}
+  \end{figure}
+\end{minipage}
+  
+  \end{frame}
+
+\begin{frame}{Short-distance migration and the dwelling stock}
+\begin{itemize}
+    \item PEARL distinguishes long- and short distance migration (cut-off 35 km)
+      \item Long distance migration probability matrix extrapolated from past observations
+      \item Distribution of short-distance migration predicted with a spatial interaction model, with population at destination, distance between origin and destination and building construction at destination as explanatory variables.
+      \end{itemize}
+\end{frame}
+
+\begin{frame}{Short-distance migration and the dwelling stock}
+  \begin{itemize}
+  \item Strong relation between population growth and the number of dwellings: effect of new construction is particularly strong in municipalities with a shortage of housing
+  \item Short-distance migration in PEARL:
+    \begin{enumerate}
+    \item Potential moves estimated with spatial interaction model
+    \item Actual migration calculated by taking into account housing availability (potentially moving back to 1…)
+    \end{enumerate}
+  \item Building plans are obtained through a combination of desk research and consultation with municipalities and provinces
+  \end{itemize}
+  \href{http://www.pbl.nl/publicaties/pbl-cbs-regionale-bevolkings-en-huishoudensprognose-2016-2040-woningbouwveronderstellingen}{\beamergotobutton{Link}}
+\end{frame}
+
+\begin{frame}{How accurate were previous projections? \footnote{\tiny Population in 2017 according to the 2013 edition, \\ compared with the data.} \footnote{\tiny $error = \frac{actual - prediction}{actual} * 100$}}
+    \centering
+    \includegraphics[width = 0.4\textwidth, height = 0.7\textheight]{\figs/{regionale_prognose_accuracy.png}} 
+
+\end{frame}
+
+\begin{frame}{How accurate were previous projections?\footnote{\tiny Large: >100000 inhabitants}}
+  \centering
+  \includegraphics[width = 0.65\textwidth, height = 0.7\textheight]{\figs/{regionale_prognose_accuracy_split.png}}
+
+\end{frame}
+
+\begin{frame}{Explaining deviances}  
+  \begin{itemize}
+  \item  2012 was, in terms of the housing market, still very much a crisis year
+  \item Plans for future building by municipalities and provinces were likely pessimistic
+  \item The sour mood worked through the projections of short-distance migration into the population projections!
+    \item The deviations were larger in small municipalities (still PEARL did better than a naive forecast)
+  \end{itemize}
+  \href{http://www.pbl.nl/publicaties/evaluatie-pbl-cbs-regionale-bevolkings-en-huishoudensprognose}{\beamergotobutton{Link}}
+\end{frame}
+
+\begin{frame}{Questions}
+  \begin{itemize}
+  \item So...projections are, almost by definition, wrong. Why do we bother?
+  \item Municipalities and provinces base their building plans on them, should they? \href{https://www.gebiedsontwikkeling.nu/artikelen/het-noord-hollandse-sprookje-van-vraaggestuurde-woningbouw/}{\beamergotobutton{Link}}
+  \item An alternative is judgmental forecast: project developer decides what/where/how much should be built.
+  \item What can possibly go wrong here...?
+  \end{itemize}
+  \end{frame}
+
+\begin{frame}{Conclusions}  
+  \begin{itemize}
+  \item \textit{Prediction is difficult, especially about the future} Niels Bohr (?)
+  \item \textit{Essentially all models are wrong, but some are useful} George Box
+  \item Uncertainty is inherent in any projection, and projections are almost never exactly accurate.
+  \item Population projections are nevertheless useful for policy making. And it is not clear whether the alternative (judgmental forecast) is better.
+  \item Regional population projections of CBS/PBL: check out the link of page 2!
+
+    \end{itemize}
+\end{frame}
+
+
+\end{document}
+
+

@@ -182,6 +182,18 @@ fore_plot_fn <- function(md='dlm1', err.fn = NULL) {
         theme_bw()
 }
 
+filt_plot_dt <- function(dat) {
+    data.table(f = dat$f,
+                        pl = dat$f + qnorm(0.25) * residuals(dat)$sd,
+                        pu = dat$f - qnorm(0.25) * residuals(dat)$sd,
+           t = as.numeric(time(y_m)),
+           y = log(y_m),
+           m = mape(window(log(y_m), start = c(1998, 1)),
+                    window(dat$f, start = c(1998, 1))
+                    )
+           )
+}
+
 err_dt <- function(err_fn) {
     dt1 <- dcast(rf_fit, 'mod ~ type', value.var = err_fn)
     dt2 <- rbindlist(
