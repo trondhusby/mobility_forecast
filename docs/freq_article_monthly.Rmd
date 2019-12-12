@@ -31,6 +31,7 @@ library(mFilter)
 library(forecast)
 library(kableExtra)
 library(RColorBrewer)
+library(xlsx)
 
 ## set global rchunk options
 opts_chunk$set(fig.path='../figs/freq--',
@@ -123,13 +124,14 @@ y_m <-  ts(freq_dt[variable == 'freq', value],
 
 
 ## write to csv file
-if (!file.exists('../output/mobility_frequencies.csv')) {
-    write.table(freq_dt[variable == 'freq',
-                   .(time(y_m), value)],
-           '../output/mobility_frequencies.csv',
-           row.names = F, sep = ';', dec = '.')
+if (!file.exists('../data/mobility_frequencies.xlsx')) {
+    write.xlsx(freq_dt[variable == 'freq',
+                       .(time = time(y_m), frequency = value)],
+               '../data/mobility_frequencies.xlsx',
+               row.names = F
+               )
 }
-
+          
 ```    
 
 ```{r dlm-functions}
