@@ -188,7 +188,7 @@ filt_plot_dt <- function(dat) {
                         pu = dat$f - qnorm(0.25) * residuals(dat)$sd,
            t = as.numeric(time(y_m)),
            y = log(y_m),
-           m = mape(window(log(y_m), start = c(1998, 1)),
+           m = rmse(window(log(y_m), start = c(1998, 1)),
                     window(dat$f, start = c(1998, 1))
                     )
            )

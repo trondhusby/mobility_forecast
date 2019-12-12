@@ -45,12 +45,6 @@ opts_chunk$set(fig.path='../figs/freq--',
 ## set English date settings
 Sys.setlocale("LC_TIME", "C")
 
-#options(knitr.table.format = params$table_format)
-
-#options(formatR.arrow=TRUE, width=68, digits=4) # tune details of base graphics (http://yihui.name/knitr/hooks)
-#knit_hooks$set(par=function(before, options, envir){
-#if (before && options$fig.show!='none') par(mar=c(4,4,.1,.1),cex.lab=.95,cex.axis=.9,mgp=c(2,.7,0),tcl=-.3)
-#}, crop=hook_pdfcrop)
 options(scipen = 999) # disable scientific notation
 
 ## a couple of links
@@ -69,6 +63,9 @@ options(scipen = 999) # disable scientific notation
 ## cbs_dt[grepl('verhuisde', Title, ignore.case = T) & grepl('maand', Title, ignore.case = T), .(Identifier, Title, ShortTitle, Modified)]
 ##load('../data/cbs_mig_data.RData')
 bev_dt_hf <- data.table(cbs_get_data('37943ned'))
+#cbs_get_meta('81734NED')
+bev_dt_hist <- data.table(cbs_get_data('37556'))
+
 ##bev_dt_meta <- cbs_get_meta('84547NED')
 mig_dt_hf2 <- data.table(cbs_get_data('84547NED',
                                       RegioS="NL01  ", ## country-level
@@ -118,19 +115,20 @@ freq_dt <- melt(
                        value := as.numeric(value)
                        ]
 
-## write to csv file
-if (!file.exists('../output/mobility_frequencies.csv')) {
-    write.table(freq_dt[variable == 'freq',
-                   .(month, value)],
-           '../output/mobility_frequencies.csv',
-           row.names = F, sep = ';', dec = '.')
-}
-
 ## create time series object
 y_m <-  ts(freq_dt[variable == 'freq', value],
             start = c(1995, 1),
             frequency = 12         
             )
+
+
+## write to csv file
+if (!file.exists('../output/mobility_frequencies.csv')) {
+    write.table(freq_dt[variable == 'freq',
+                   .(time(y_m), value)],
+           '../output/mobility_frequencies.csv',
+           row.names = F, sep = ';', dec = '.')
+}
 
 ```    
 
@@ -205,15 +203,15 @@ for (mod in mods[7:8]) {
     freq_smooth[[mod]] <- dlmSmooth(freq_filt[[mod]])
 }
 
-##qqnorm(residuals(freq_filt[[mods[8]]])$res)
-##qqline(residuals(freq_filt[[mods[8]]])$res)
+qqnorm(residuals(freq_filt[[mods[8]]])$res)
+qqline(residuals(freq_filt[[mods[8]]])$res)
 
 #plot(apply(dropFirst(freq_filt[[mod]]$m)[, 1:2], 1, sum))
 
 ##checkresiduals(residuals(freq_filt[[mods[8]]])$res) 
 
 ## 
-##tsdiag(freq_filt[[mods[8]]])
+tsdiag(freq_filt[[mods[8]]])
 
 ## test for null hypothesis of independence
 ## https://robjhyndman.com/hyndsight/ljung-box-test/
@@ -353,7 +351,7 @@ rf_fit <- rbindlist(lapply(c('dlm1', 'dlm2', 'arima', 'naive', 'hw'),
 
 #Introduction
 
-Long-term projections of internal migration are key inputs to regional-level demographic population forecasts. The long-term projections rely on the identification of a long-term trend in data, thus filtering out short-run fluctuations due to the business cycle. However, such detrending analyses are complicated if there is no clear trend in the data, if business cycles themselves stretch into the medium- to long run or if the data point represent the top or the bottom of the cycle [see e.g @canova1998detrending and @hamilton2018you]. Therefore it is informative to analyse the short- to medium dynamics of demographic components, forecasting along the business cycle. This paper develops a state space model for short-to medium term univariate forecast of monthly frequency of mobility in the Netherlands.
+Long-term projections of internal migration are key inputs to regional-level demographic population forecasts. The long-term projections rely on the identification of a long-term trend in data, thus filtering out short-run fluctuations due to the business cycle. However, such detrending analyses are complicated if there is no clear trend in the data, if business cycles themselves stretch into the medium- to long run or if the data point represent the top or the bottom of the cycle [see e.g @canova1998detrending, @hamilton2018]. Therefore it is informative to analyse the short- to medium dynamics of demographic components, forecasting along the business cycle. This paper develops a state space model for short-to medium term univariate forecast of monthly frequency of mobility in the Netherlands.
 
 As is the case in most developed countries, the main driver of regional-level population change in the Netherlands is migration (external and domestic). Due to the close relation between migration decisions and labour- and housing market conditions, time series of internal migration flows often move along the business cycle. However, the volume of internal migration may also be affected by a myriad other factors. For example, a recent change to the Dutch student finance system seems to have caused a decrease in mobility for an otherwise very mobile group.\footnote{https://www.cbs.nl/nl-nl/nieuws/2018/04/studenten-gaan-minder-op-kamers} Finding the precise determinants of changes to migration flows can be very complicated. This justifies the use of univariate forecasting techniques, which make use of basic time series patterns to form a forecast [see e.g. @zietz2014us].
 
@@ -547,7 +545,7 @@ est_tbl <- data.table(par = c("$\\sigma_{v}^{2}$", "$\\sigma_{\\mu}^{2}$",
                       )
 
 knitr::kable(est_tbl,
-             booktabs = T, escape = F, digits = c(0, 8, 8),
+             booktabs = T, escape = F, digits = c(0, 6, 6),
              caption = 'Estimated variances and AR parameters'
              )
 #    kable_styling(latex_options = "hold_position", full_width = F)
@@ -574,7 +572,7 @@ p1 <- ggplot(filt_plot_dt(freq_filt[[mods[7]]]), aes(t, y)) +
     geom_line(col = brewer.pal(3, 'Set1')[2]) +
     geom_line(aes(y = f), col = 'red') +
     ##geom_ribbon(aes(ymin = pl, ymax = pu), fill = 'grey20', alpha = 0.2) +
-    geom_text(label = 'MAPE', x = 2014, y = 2.45, col = 'grey40') +
+    geom_text(label = 'RMSE', x = 2014, y = 2.45, col = 'grey40') +
     geom_text(aes(label = round(m, 4)), x = 2014, y = 2.4, col = 'grey40') +
     ylab('Log(Frequency of mobility)') +
     theme_bw() +
@@ -584,7 +582,7 @@ p1 <- ggplot(filt_plot_dt(freq_filt[[mods[7]]]), aes(t, y)) +
 p2 <- ggplot(filt_plot_dt(freq_filt[[mods[8]]]), aes(t, y)) +
     geom_line(col = brewer.pal(3, 'Set1')[2]) +
     geom_line(aes(y = f), col = 'red') +
-    geom_text(label = 'MAPE', x = 2014, y = 2.45, col = 'grey40') +
+    geom_text(label = 'RMSE', x = 2014, y = 2.45, col = 'grey40') +
     geom_text(aes(label = round(m, 4)), x = 2014, y = 2.4, col = 'grey40') +
     ylab('Log(Frequency of mobility)') +
     theme_bw() +
@@ -655,9 +653,9 @@ grid.arrange(
 
 # Cross validation: evaluation over a rolling forecasting origin
 
-In this section we present the results of the evaluation of forecasting accuracy of the two models described in the previous sections. Evaluating forecasting accuracy is thus akin to common out-of-sample testing, where a model is estimated on a training data set and evaluated on an independent test data set. In order to control for effects arising from the composition of the training data, we carry out the evaluation using a cross validation approach [see e.g. @Hastie2009]. Due to the serial autocorrelation in time-series, we can not partition the data randomly. More precisely, in time-series cross validation the test data can not contain observations occuring prior to the observations in the training data. The approach chosen here is the evaluation over a \textit{rolling forecasting origin} [@tashman2000out], where we succesively extend the training data and produce forecasts. The last point of the training data in each iteration is referred to as the \textit{origin} $T$, since the origin on which the forecast is based rolls forward in time. From the origin forecasts are generated for time periods $T+1$, $T+2$, ..., $T+N$. 
+In this section we present the results of the evaluation of forecasting accuracy of the two models described in the previous sections. Evaluating forecasting accuracy is thus akin to common out-of-sample testing, where a model is estimated on a training data set and evaluated on an independent test data set. In order to control for effects arising from the composition of the training data, we carry out the evaluation using a cross validation approach [see e.g. @Hastie2009]. Due to the serial autocorrelation and potential non-stationarity in the data, practitioners generally choose a test set that does not contain observations occuring prior to the observations in the training data [@bergmeir2018].  The approach chosen here is the evaluation over a \textit{rolling forecasting origin} [@tashman2000out], where we succesively extend the training data and produce forecasts. The last point of the training data in each iteration is referred to as the \textit{origin} $T$, since the origin on which the forecast is based rolls forward in time. From the origin forecasts are generated for time periods $T+1$, $T+2$, ..., $T+N$. 
 
-This procedure is shown in Figure \@ref(fig:rolling-forecast-example) [see also @hyndman2018forecasting]. The movement along the x-axis illustrates how the origins (blue dots with red border) are "rolling" forward in time, where the model is estimated on the training data (blue and red dots) and evaluated on the test data (grey dots). The model perfomance is then evaluated by averaging the prediction errors over the forecast horizon (grey dots with black border). 
+This procedure is shown in Figure \@ref(fig:rolling-forecast-example) [see also @hyndman2018forecasting]. The movement along the x-axis illustrates how the origins (blue dots with red border) are "rolling" forward in time, where the model is estimated on the training data (blue and red dots). The model perfomance is then evaluated by averaging the prediction errors over the forecast horizon (grey dots with black border). The length of the forecasting horizon can be increased by including additional observations in the test sample.
 
 
 ```{r rolling-forecast-example, fig.cap = "Illustration of rolling forecasting origin: training data (blue), origin (red), forecast horizion (black) and test data (grey)"}
@@ -694,7 +692,7 @@ ggplot(plot_dt, aes(mod, train)) +
 
 ```
 
-We evaluate forecasting performance on three time horizons - $N=6$, $N=12$ and $N=18$ - meaning that, for each origing, we calculate three indicators of accuracy; one for a half year forecast, one for a year and one for one and a half year. In order to assess the performance around the changepoint of the trend-cycle in March 2017 from Figure \@ref(fig:dlm-smoothed), we apply the following strategy: firstly, since we forecast 18 months ahead and the last observation is on December 2018, the last possible origin is June 2017. Secondly, we make sure the first origin is far enough away from March 2017 that the models do not pick up the changepoint, but close enough so that the forecast of the changepoint is evaluated. Although several options are available, we opt for Janary 2016, yielding in total 18 forecasting origins: T = January 2016, February 2016, ..., July 2017.
+We evaluate forecasting performance on three time horizons - $N=6$, $N=12$ and $N=18$ - meaning that, for each origin, we calculate three indicators of accuracy; one for a half year forecast, one for a year and one for one and a half year. In order to assess the performance around the changepoint of the trend-cycle in March 2017 from Figure \@ref(fig:dlm-smoothed), we apply the following strategy: firstly, since we forecast 18 months ahead and the last observation is on December 2018, the last possible origin is June 2017. Secondly, we make sure the first origin is far enough away from March 2017 that the models do not pick up the changepoint, but close enough so that the forecast of the changepoint is evaluated. Although several options are available, we opt for Janary 2016, yielding in total 18 forecasting origins: T = January 2016, February 2016, ..., July 2017.
 
 In order to ensure independence between the test and training sample, we recalibrate the DLM models before each origin forecast. The resulting mean and standard deviations, shown in Table \@ref(tab:par-comparison), reveal that the choice of training data has very limited effect on the estimated parameters. In fact, the estimated parameters are more sensitive to the initial values for the maximum likelihood estimation than to the amount of data. This gives us confidence that there is enough data to estimate the DLM, even on the first origin.
 
@@ -726,7 +724,7 @@ roll_pars <- rbindlist(lapply(1:n_fore,
 setnames(roll_pars, c('Parameter', 'DLM1 Mean', 'DLM1 SD', 'DLM2 Mean', 'DLM2 SD'))
 
 knitr::kable(roll_pars,
-             booktabs = T, escape = F, digits = c(0, 8, 8, 8, 8),
+             booktabs = T, escape = F, digits = c(0, 4, 4, 4, 4),
              caption = 'Mean and standard deviation of the estimated parameters')
 ```
 
@@ -775,6 +773,11 @@ out <- rbindlist(list(err_dt('rmse_6')[-c(26:27)],
                      N := factor(N, levels = c(paste0('N=', c(6, 12, 18))))
                      ]
 
+library(stringr)
+
+unlist(str_split(as.character(out$Origin), '[[:digit:]]{4} '))
+
+
 setnames(out, c('Origin', 'ARIMA', 'DLM1', 'DLM2', 'Holt-Winters', 'Naïve', 'N'))
 
 ggplot(melt(out, id.vars = c('Origin', 'N')),
@@ -785,7 +788,8 @@ ggplot(melt(out, id.vars = c('Origin', 'N')),
     theme_bw() +
     ylab('RMSE') + 
     scale_colour_brewer(palette = 'Set1') +
-    scale_x_discrete(breaks = unique(out$Origin)[seq(1, 25, by = 3)])
+    scale_x_discrete(breaks = unique(out$Origin)[seq(1, 25, by = 3)]) +
+    theme(legend.position = 'bottom')
 
 ```
 
