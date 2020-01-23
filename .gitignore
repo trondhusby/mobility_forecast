@@ -1,2 +1,9 @@
+*.RData
 *.Rdata
 *.Rds
+*.RDs
+*.rdb
+*.rdx
+*__packages*
+*.Rhistory
+

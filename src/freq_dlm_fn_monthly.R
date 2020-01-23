@@ -58,7 +58,14 @@ freq_mod <- function(par, type, init_level, init_slope) {
         V(dlm) <- exp(par[1])
         diag(W(dlm))[c(2:4, 6, 8:ncol(W(dlm)))] <- 0
         diag(W(dlm))[c(1, 5, 7)] <- exp(par[2:4])
-    }        
+    } else if (type == 'lt_reg_wn') {
+        dlm <- dlmModPoly(2, m0 = c(init_level, init_slope), C0 = 2 * diag(2)) +            
+            dlmModTrig(s=12, q = 2) +
+            dlmModReg(w_m)
+        V(dlm) <- exp(par[1])
+        diag(W(dlm))[c(2:4, 6)] <- 0
+        diag(W(dlm))[c(1, 5, 7:8)] <- exp(par[c(2:5)])
+    }
     return(dlm)
 }
 
@@ -80,9 +87,9 @@ smooth_plot_dt <- function(mod) {
            )
 }
 
-fore_plot_dt <- function(freq_fore, plot = 'dlm') {
+fore_plot_dt <- function(freq_fore, plot = 'DLM2') {
      ## time period of forecast
-    if (grepl('dlm', plot)) {
+    if (grepl('DLM', plot)) {
         tf <- time(freq_fore$f)[1] - 1/12
     } else {
         tf <- time(freq_fore$mean)[1] - 1/12
@@ -94,75 +101,192 @@ fore_plot_dt <- function(freq_fore, plot = 'dlm') {
                              format = '%Y-%m-%d'
                              )
     y <- window(y_m, end = tf)
-    if (grepl('dlm', plot)) {
+    if (grepl('DLM', plot)) {
         ## forecast level
         fore <- exp(freq_fore$f)
         fore_t <- time(freq_fore$f)
         fsd <- exp(sqrt(unlist(freq_fore$Q)))
         pl <- fore + qnorm(0.05, sd = fsd)
         pu <- fore + qnorm(0.95, sd = fsd)
-    } else {     
+    } else {
         fore <- exp(freq_fore$mean)
         fore_t <- time(freq_fore$mean)
-        pl <- exp(freq_fore$lower)
-        pu <- exp(freq_fore$upper)
+        pl <- exp(freq_fore$lower[,2])
+        pu <- exp(freq_fore$upper[,2])
     }
     dt <- data.table(t = c(time(y), fore_t),
                      mod = paste(year(tf_year_month), months(tf_year_month)),
                      type = plot,
-                     data = c(y, rep(NA, length(fore))),
-                     forecast = c(rep(NA, length(y)), fore)
-                     )
-    ## reshape data table to long and add confidence interval
-    dt_long <- melt(dt, id.vars = c('t', 'mod', 'type'))[t > max(time(y)) & variable == 'forecast', forecast_pl := as.numeric(pl)][t > max(time(y)) & variable == 'forecast', forecast_pu := as.numeric(pu)][!is.na(value)]
-    return(dt_long)
+                     #data = c(y, rep(NA, length(fore))),
+                     forecast = c(rep(NA, length(y)), as.numeric(fore)),
+                     forecast_pl = c(rep(NA, length(y)), as.numeric(pl)),
+                     forecast_pu = c(rep(NA, length(y)), as.numeric(pu))
+                     )    
+    return(dt)
 }
 
 
-roll_fore_fn <- function(begin, end, periods, mod, cores, pars=NULL) {
-    mclapply(time(y_m)[begin:end],
-                     function(x) {
-                         y <- log(window(y_m, end = x))
-                         level0 <- y[1]
-                         slope0 <- mean(diff(y))
-                         if (mod == 'dlm1') {
-                             fit <- dlmMLE(log(y_m),
-                                           par=c(-18, -9, -12, -6, -0.5, -0.4),
-                                           type = 'lt_arma2', build=freq_mod,
-                                           init_level = level0, init_slope = slope0,
-                                           lower = c(-Inf, rep(-Inf,7)))
-                             mod <- freq_mod(fit$par, type = 'lt_arma2',
-                                             init_level = level0, init_slope = slope0)
-                             filt <- dlmFilter(y, mod)
-                             return(list(fit$par,
+## dlmForecast2 <- function (mod, nAhead = 1, method = c("plain", "svd"), sampleNew = FALSE) 
+## {
+##     method <- match.arg(method)
+##     if (class(mod) == "dlmFiltered") {
+##         modFuture <- mod$mod
+##         lastObsIndex <- NROW(mod$m)
+##         modFuture$C0 <- with(mod, dlmSvd2var(U.C[[lastObsIndex]], 
+##             D.C[lastObsIndex, ]))
+##         if (is.ts(mod$m) & 2 > 3) {
+##             print('came here 1')
+##             ##modFuture$m0 <- window(mod$m, start = end(mod$m))
+##             modFuture$m0 <- window(mod$m, start = time(filt_mod$m)[nrow(filt_mod$m)])
+##             }
+##         else {
+##                 print('came here 2')
+##             modFuture$m0 <- window(mod$m, start = lastObsIndex)
+##             tsp(modFuture$m0) <- NULL
+##         }
+##         mod <- modFuture
+##     }
+##     if (!(is.null(mod$JFF) && is.null(mod$JV) && is.null(mod$JGG) && 
+##         is.null(mod$JW))) 
+##         stop("dlmForecast only works with constant models")
+##     ytsp <- tsp(mod$m0)
+##     p <- length(mod$m0)
+##     m <- nrow(mod$FF)
+##     a <- rbind(mod$m0, matrix(0, nAhead, p))
+##     R <- vector("list", nAhead + 1)
+##     R[[1]] <- mod$C0
+##     f <- matrix(0, nAhead, m)
+##     Q <- vector("list", nAhead)
+##     for (it in 1:nAhead) {
+##         a[it + 1, ] <- mod$GG %*% a[it, ]
+##         R[[it + 1]] <- mod$GG %*% R[[it]] %*% t(mod$GG) + mod$W
+##         f[it, ] <- mod$FF %*% a[it + 1, ]
+##         Q[[it]] <- mod$FF %*% R[[it + 1]] %*% t(mod$FF) + mod$V
+##     }
+##     a <- a[-1, , drop = FALSE]
+##     R <- R[-1]
+##     if (sampleNew) {
+##         newStates <- vector("list", sampleNew)
+##         newObs <- vector("list", sampleNew)
+##         newS <- matrix(0, nAhead, p)
+##         newO <- matrix(0, nAhead, m)
+##         tmp <- La.svd(mod$V, nu = 0)
+##         Ut.V <- tmp$vt
+##         D.V <- sqrt(tmp$d)
+##         tmp <- La.svd(mod$W, nu = 0)
+##         Ut.W <- tmp$vt
+##         D.W <- sqrt(tmp$d)
+##         for (i in 1:sampleNew) {
+##             tmp <- La.svd(R[[1]], nu = 0)
+##             newS[1, ] <- crossprod(tmp$vt, rnorm(p, sd = sqrt(tmp$d))) + 
+##                 a[1, ]
+##             newO[1, ] <- crossprod(Ut.V, rnorm(m, sd = D.V)) + 
+##                 mod$FF %*% newS[1, ]
+##             if (nAhead > 1) 
+##                 for (it in 2:nAhead) {
+##                   newS[it, ] <- crossprod(Ut.W, rnorm(p, sd = D.W)) + 
+##                     mod$GG %*% newS[it - 1, ]
+##                   newO[it, ] <- crossprod(Ut.V, rnorm(m, sd = D.V)) + 
+##                     mod$FF %*% newS[it, ]
+##                 }
+##             newStates[[i]] <- newS
+##             newObs[[i]] <- newO
+##         }
+##         if (!is.null(ytsp)) {
+##             a <- ts(a, start = ytsp[2] + 1/ytsp[3], frequency = ytsp[3])
+##             f <- ts(f, start = ytsp[2] + 1/ytsp[3], frequency = ytsp[3])
+##             newStates <- lapply(newStates, function(x) ts(x, 
+##                 start = ytsp[2] + 1/ytsp[3], frequency = ytsp[3]))
+##             newObs <- lapply(newObs, function(x) ts(x, start = ytsp[2] + 
+##                 1/ytsp[3], frequency = ytsp[3]))
+##         }
+##         ans <- list(a = a, R = R, f = f, Q = Q, newStates = newStates, 
+##             newObs = newObs)
+##     }
+##     else {
+##         if (!is.null(ytsp)) {
+##             a <- ts(a, start = ytsp[2] + 1/ytsp[3], frequency = ytsp[3])
+##             f <- ts(f, start = ytsp[2] + 1/ytsp[3], frequency = ytsp[3])
+##         }
+##         ans <- list(a = a, R = R, f = f, Q = Q)
+##     }
+##     return(ans)
+## }
+
+roll_fore_fn <- function(begin_f, end_f, periods, mod, cores, pars=NULL) {
+    mclapply(seq(begin_f, end_f),
+           function(x) {
+                 ## y <- log(window(y_m, end = x)) ## why the f does this not work?
+                 y <- ts(log(y_m[1:x]), start = c(1995, 1), frequency = 12)
+                 level0 <- y[1]
+                 slope0 <- mean(diff(y))
+                 if (mod == 'DLM0') {
+                     tryCatch({
+                         fit <- dlmMLE(y,
+                                       par=rep(-4, 4),
+                                       type = 'local_trend', build=freq_mod,
+                                       init_level = level0, init_slope = slope0,
+                                       lower = c(-Inf, rep(-Inf,7))
+                                       )
+                         mdl <- freq_mod(fit$par, type = 'local_trend',
+                                         init_level = level0, init_slope = slope0)
+                         filt[[x]] <- dlmFilter(y, mdl)
+                         return(list(fit$par,
                                      dlmForecast(filt, nAhead = periods)
                                      )
-                                )                    
-                         } else if (mod == 'dlm2') {
-                             fit <- dlmMLE(log(y_m),
-                                           par=c(-18, -9, -12, -6, -0.5, -0.4, 0.1, 0.1),
-                                           type = 'lt_arma3', build=freq_mod,
-                                           init_level = level0, init_slope = slope0,
-                                           lower = c(-Inf, rep(-Inf,7)))
-                             mod <- freq_mod(fit$par, type = 'lt_arma3',
-                                             init_level = level0, init_slope = slope0)
-                             filt <- dlmFilter(y, mod)
-                             return(list(fit$par,
-                                     dlmForecast(filt, nAhead = periods)
-                                     )
-                                    )
-                           } else if (mod == 'arima') {
-                             fit <- Arima(y, order=c(2,1,5), seasonal=c(2,1,1))
-                             return(forecast(fit, periods))
-                         } else if (mod == 'tbats') {
-                             fit <- tbats(y, use.parallel = F)
-                             return(forecast(fit, periods))
-                         } else if (mod == 'naive') {                             
-                             return(snaive(y, n_periods))
-                         } else if (mod == 'hw') {                             
-                             return(forecast(HoltWinters(y, seasonal = 'multiplicative'), periods))
-                         }
+                                )
                      },
+                     error = function(e) message(paste0('Error in dlm0:', e))
+                     )
+                 } else if (mod == 'DLM1') {
+                     tryCatch({
+                         fit <- dlmMLE(y,
+                                       par=c(-18, -9, -12, -6, -0.5, -0.4),
+                                       type = 'lt_arma2', build=freq_mod,
+                                       init_level = level0, init_slope = slope0,
+                                       lower = c(-Inf, rep(-Inf,7)))
+                         mdl <- freq_mod(fit$par, type = 'lt_arma2',
+                                         init_level = level0, init_slope = slope0)
+                         filt <- dlmFilter(y, mdl)
+                         return(list(fit$par,
+                                     dlmForecast(filt, nAhead = periods)
+                                     )
+                                )
+                     },
+                     error = function(e) message(paste0('Error in dlm1:', e))
+                     )
+                 } else if (mod == 'DLM2') {
+                     tryCatch({
+                         fit <- dlmMLE(y,
+                                       par=c(-18, -9, -12, -6, -0.5, -0.4, 0.1, 0.1),
+                                       type = 'lt_arma3', build=freq_mod,
+                                       init_level = level0, init_slope = slope0,
+                                       lower = c(-Inf, rep(-Inf,7)))
+                         mdl <- freq_mod(fit$par, type = 'lt_arma3',
+                                         init_level = level0, init_slope = slope0)
+                         filt <- dlmFilter(y, mdl)
+                         return(list(fit$par,
+                                     dlmForecast(filt, nAhead = periods)
+                                     )
+                                )
+                     },
+                     error = function(e) message(paste0('Error in dlm1:', e))
+                     )
+                 } else if (mod == 'ARIMA') {
+                     fit <- Arima(y, order=c(2,1,5), seasonal=c(2,1,1))
+                     return(forecast(fit, periods))
+                 } else if (mod == 'TBATS') {
+                     fit <- tbats(y, use.parallel = F)
+                     return(forecast(fit, periods))
+                 } else if (mod == 'ETS') {
+                     fit <- ets(y)
+                     return(forecast(fit, periods))
+                 } else if (mod == 'Naïve') {
+                     return(snaive(y, periods))
+                 } else if (mod == 'Holt-Winters') {
+                     return(forecast(HoltWinters(y, seasonal = 'multiplicative'), periods))
+                 }
+             },
              mc.cores = cores
              )
 }
@@ -183,13 +307,13 @@ fore_plot_fn <- function(md='dlm1', err.fn = NULL) {
 }
 
 filt_plot_dt <- function(dat) {
-    data.table(f = dat$f,
-                        pl = dat$f + qnorm(0.25) * residuals(dat)$sd,
-                        pu = dat$f - qnorm(0.25) * residuals(dat)$sd,
+    data.table(f = exp(dat$f),
+                        pl = exp(dat$f) + exp(qnorm(0.25) * residuals(dat)$sd),
+                        pu = exp(dat$f) - exp(qnorm(0.25) * residuals(dat)$sd),
            t = as.numeric(time(y_m)),
-           y = log(y_m),
-           m = rmse(window(log(y_m), start = c(1998, 1)),
-                    window(dat$f, start = c(1998, 1))
+           y = y_m,
+           m = rmse(window(y_m, start = c(1998, 1)),
+                    window(exp(dat$f), start = c(1998, 1))
                     )
            )
 }
@@ -198,20 +322,21 @@ err_dt <- function(err_fn) {
     dt1 <- dcast(rf_fit, 'mod ~ type', value.var = err_fn)
     dt2 <- rbindlist(
         list(dt1,
-             data.frame(rbind(c(paste('Mean', strsplit(err_fn, split = '_')[[1]][2], sep = ' N='),
-                                apply(dt1[,-1], 2, mean)
+             data.frame(rbind(c(paste0('N=', strsplit(err_fn, split = '_')[[1]][2]),
+                                round(apply(dt1[,-1], 2, mean), 4)
                                 ),
-                              c(paste('SD', strsplit(err_fn, split = '_')[[1]][2], sep = ' N='),
-                                apply(dt1[,-1], 2, sd)
+                              c('',
+                                paste0('(', round(apply(dt1[,-1], 2, sd), 4), ')')
                                 )
                               )
                         )
              )
-    )[,
-      lapply(.SD,
-             function(x) as.numeric(as.character(x))),
-      by = mod
-      ]
+    )
+    ## [,
+    ##   lapply(.SD,
+    ##          function(x) as.numeric(as.character(x))),
+    ##   by = mod
+    ##   ]
     setnames(dt2, 'mod', 'origin')
     return(dt2)
 }    
