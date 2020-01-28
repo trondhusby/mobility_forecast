@@ -51,6 +51,10 @@ freq_mod <- function(par, type, init_level, init_slope) {
         V(dlm) <- exp(par[1])
         diag(W(dlm))[c(2:4, 6, 8:ncol(W(dlm)))] <- 0
         diag(W(dlm))[c(1, 5, 7)] <- exp(par[2:4])
+        ## diag(W(dlm))[c(1, 3:4, 6, 8:ncol(W(dlm)))] <- 0
+        ## diag(W(dlm))[c(2, 5, 7)] <- exp(par[2:4])
+        ## diag(W(dlm))[c(3:4, 6, 8:ncol(W(dlm)))] <- 0
+        ## diag(W(dlm))[c(1, 2, 5, 7)] <- exp(par[2:5])
     } else if (type == 'lt_arma3') {
         dlm <- dlmModPoly(2, m0 = c(init_level, init_slope), C0 = 2 * diag(2)) +            
             dlmModTrig(s=12, q = 2) +
@@ -58,6 +62,10 @@ freq_mod <- function(par, type, init_level, init_slope) {
         V(dlm) <- exp(par[1])
         diag(W(dlm))[c(2:4, 6, 8:ncol(W(dlm)))] <- 0
         diag(W(dlm))[c(1, 5, 7)] <- exp(par[2:4])
+        ## diag(W(dlm))[c(1, 3:4, 6, 8:ncol(W(dlm)))] <- 0
+        ## diag(W(dlm))[c(2, 5, 7)] <- exp(par[2:4])
+        ## diag(W(dlm))[c(3:4, 6, 8:ncol(W(dlm)))] <- 0
+        ## diag(W(dlm))[c(1, 2, 5, 7)] <- exp(par[2:5])
     } else if (type == 'lt_reg_wn') {
         dlm <- dlmModPoly(2, m0 = c(init_level, init_slope), C0 = 2 * diag(2)) +            
             dlmModTrig(s=12, q = 2) +

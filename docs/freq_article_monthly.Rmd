@@ -22,17 +22,13 @@ library(dlm)
 library(xts)
 library(tseries)
 library(gridExtra)
-library(viridis)
 library(rmarkdown)
 library(knitr)
 library(parallel)
-##library(methods)
-library(mFilter)
 library(forecast)
 library(kableExtra)
-library(RColorBrewer)
 library(xlsx)
-
+library(wesanderson)
 
 ## set global rchunk options
 opts_chunk$set(fig.path='../figs/freq--',
@@ -58,6 +54,7 @@ options(scipen = 999) # disable scientific notation
 ## http://gradientdescending.com/state-space-models-for-time-series-analysis-and-the-dlm-package/
 ## https://nwfsc-timeseries.github.io/atsa-labs/sec-dlm-forecasting-with-a-univariate-dlm.html
 ## https://towardsdatascience.com/state-space-model-and-kalman-filter-for-time-series-prediction-basic-structural-dynamic-linear-2421d7b49fa6
+## http://people.duke.edu/~rnau/411arim3.htm
 ```
 
 ```{r read-data, cache = T}
@@ -140,8 +137,9 @@ freq_dt <- melt(
 
 setkey(freq_dt, variable, month)
 
-## create time series object: limit to December 2018
-y_m <-  ts(freq_dt[variable == 'freq', value],
+## create time series object: limit to December 2019
+y_m <-  ts(freq_dt[variable == 'freq' & as.numeric(substr(month, 1, 4)) <= 2019,
+                   value],
             start = c(1995, 1),
             frequency = 12         
            )
@@ -289,8 +287,6 @@ for (mod in mods[c(7:8)]) {
     freq_smooth[[mod]] <- dlmSmooth(freq_filt[[mod]])
 }
 
-dlmForecast(freq_filt[[mod]], nAhead = 2)
-
 ## expand.grid(1:3, c('A', 'B', 'C'), c('D', 'E', 'F'))
 
 ## dlmForecast(freq_filt[[1]], nAhead = 2)
@@ -307,7 +303,7 @@ dlmForecast(freq_filt[[mod]], nAhead = 2)
 ## checkresiduals(residuals(freq_filt[[mods[2]]])$res)
 
 ## 
-## tsdiag(freq_filt[[mods[2]]])
+## tsdiag(freq_filt[['lt_arma3']])
 
 ## test for null hypothesis of independence
 ## https://robjhyndman.com/hyndsight/ljung-box-test/
@@ -347,6 +343,7 @@ dlmForecast(freq_filt[[mod]], nAhead = 2)
 ```
 
 ```{r rolling-forecast, cache = TRUE}
+
 ## settings
 n_cores <- detectCores() - 1
 n_periods <- 18
@@ -404,7 +401,7 @@ rf_dt <- merge(rf_dt,
                data.table(t=round(as.numeric(time(y_m)), 3), actual_value=y_m),
                by = 't', all.x = T)
 
-## calculate prediction error
+## calculate forecast error
 rf_fit <- rbindlist(lapply(model_names,
                            function(x) {
                                rbindlist(lapply(1:n_fore,
@@ -446,9 +443,10 @@ rf_fit <- rbindlist(lapply(model_names,
                     )
 
 ## two-year ahead forecast to calculate yearly frequency
+two_y_origin <- 2016 + 11/12
 two_year_fore <- rbindlist(mclapply(c('DLM2', 'ETS'),
                                     function(x) {
-                                        orig <- round(2016 + 11/12, 3)
+                                        orig <- round(two_y_origin, 3)
                                         t_num <- round(as.numeric(time(y_m)), 3)
                                         out <- roll_fore_fn(begin_f = which(t_num == orig),
                                                             end_f = which(t_num == orig),
@@ -466,13 +464,13 @@ two_year_fore <- rbindlist(mclapply(c('DLM2', 'ETS'),
                                            year = floor(t)
                                        )][is.na(forecast),
                                           ':=' (
-                                             forecast = as.numeric(window(y_m, end = 2016 + 11/12)),
-                                             forecast_pl = as.numeric(window(y_m, end = 2016 + 11/12)),
-                                             forecast_pu = as.numeric(window(y_m, end = 2016 + 11/12))
+                                             forecast = as.numeric(window(y_m, end = two_y_origin)),
+                                             forecast_pl = as.numeric(window(y_m, end = two_y_origin)),
+                                             forecast_pu = as.numeric(window(y_m, end = two_y_origin))
                                           )]
 
 
-## add actual frequency
+## add observations
 two_year_fore <- merge(two_year_fore,
                        data.table(t=round(as.numeric(time(y_m)), 3),
                                   actual_value=y_m
@@ -483,17 +481,6 @@ two_year_fore <- merge(two_year_fore,
 ## ets_fore_info <- ets(window(log(y_m), end = 2016 + 11/12))
 ## summary(ets_fore_info)
 ## coefficients(ets_fore_info)[1:4]
-
-
-## pars <- rbindlist(lapply(1:(end_fore-begin_fore),
-##        function(x) {
-##            data.table(cbind(mod = x,
-##                       t = time(y_m)[(begin_fore+x)],
-##                       y = trend_fore_out[[x]][[1]]
-##                       ##y = exp(trend_fore_out[[x]]$a[,2])
-##                       ))
-##        }))
-
 ```
 
 #Introduction
@@ -531,7 +518,7 @@ ggplot(melt(data.table(month = time(y_m),
     facet_wrap(~variable, scales = 'free', ncol = 1) +
     #theme(axis.text.x = element_text(angle = 75, hjust = 1)) +
     scale_x_continuous(breaks = seq(1995, 2020, by = 5),
-                       labels = paste('January', seq(1995, 2020, by = 5), sep = '\n')
+                       labels = paste('Jan', seq(1995, 2020, by = 5), sep = '\n')
                        )
 
 
@@ -545,10 +532,36 @@ In addition to the cycle, there are strong seasonal patterns that seem to vary o
 
 ```{r freq-month-plot, fig.cap = 'Seasonal subseries plot of the frequency of mobility'}
 
-ggsubseriesplot(y_m) +
+dat <- data.frame(y = as.numeric(y_m), year = trunc(time(y_m)),
+                   season = as.numeric(cycle(y_m)))
+seasonwidth <- (max(dat$year) - min(dat$year)) * 1.05
+dat$time <- dat$season + 0.025 + (dat$year - min(dat$year))/seasonwidth
+avgLines <- stats::aggregate(dat$y, by = list(dat$season),
+                             FUN = mean)
+#names(avgLines)[1] <- 'season'
+colnames(avgLines) <- c("season", "avg")
+dat <- merge(dat, avgLines, by = "season")
+p <- ggplot2::ggplot(ggplot2::aes_(x = ~time, y = ~y,
+                                   group = ~season), data = dat, na.rm = TRUE)
+p <- p + ggplot2::theme(panel.grid.major.x = ggplot2::element_blank())
+p <- p + ggplot2::geom_line()
+p <- p + ggplot2::geom_line(ggplot2::aes_(y = ~avg),
+                            col = wes_palette("IsleofDogs1")[6])
+xfreq <- frequency(y_m)
+xbreaks <- month.abb
+p <- p + ggplot2::scale_x_continuous(breaks = 0.5 + (1:xfreq), 
+                                     labels = xbreaks) +
     ylab('frequency of mobility') +
-    theme_bw() +
-    ggtitle('')
+    xlab('month') +
+    theme_bw()
+p
+
+## ggsubseriesplot(y_m) +
+##     ylab('frequency of mobility') +
+##     xlab('month') + 
+##     theme_bw() +
+##     ggtitle('') +
+##     scale_colour_manual(values = wes_palette("IsleofDogs1", 2))
 
 ## grid.arrange(
 ##     ggplot(data.table(`frequency of mobility` = as.numeric(y_m),
@@ -569,22 +582,42 @@ ggsubseriesplot(y_m) +
 
 Finally, we check whether there is a linear relationship between lagged variables of the time series (autocorrelation). Figure \@ref(fig:autocorr-plot) reveals a large and positive autocorrelation for small lags, since observations nearby in time tend to be similar in size. We also see that strong autocorrelation in lags that are multiples of the seasonal frequency (12, 24, and 36), which is due to the seasonality discussed above. The slow decline is related to the trend-cycle while the 'scalloped' pattern is related to the seasonality. The significant spikes at the first and second lag in the partial autocorrelation plot in the lower figure suggests that we should include at least two autoregressive terms.
 
-```{r autocorr-plot, fig.cap = 'Autocorrelation function the frequency of mobility'}
+```{r autocorr-plot, fig.cap = 'Autocorrelation function of the frequency of mobility'}
 
-## http://people.duke.edu/~rnau/411arim3.htm
+# plot acf with ggplot
+gg_acf_pacf <- function(func = 'acf', series, n_lags) {
+  significance_level <- qnorm((1 + 0.95)/2)/sqrt(sum(!is.na(series)))  
+  ##a<-acf(series, n_lags, leplot=F)
+  if (func == 'acf') {
+      a<-ggAcf(series, lag = n_lags, plot = F)
+  } else {
+      a<-ggPacf(series, lag = n_lags, plot = F)
+  }
+  a.2<-with(a, data.frame(lag, acf))
+  g<- ggplot(a.2[-1,], aes(x=lag,y=acf)) + 
+      geom_bar(stat = "identity", position = "identity", width = 0.3) +
+      xlab('lag') +
+      ylab(toupper(func)) +
+      geom_hline(yintercept=c(significance_level,-significance_level), lty=3) +
+      theme_bw()
+  # fix scale for integer lags
+  if (all(a.2$lag%%1 == 0)) {
+      g <- g +
+          scale_x_discrete(limits = seq(0, n_lags, by = 6))
+  }
+  return(g);
+}
 
-grid.arrange(ggAcf(y_m, lag = 48) + theme_bw() + ggtitle(''),
-             ggPacf(y_m, lag = 48) + theme_bw() + ggtitle('')
+grid.arrange(gg_acf_pacf('acf', y_m, 48),
+             gg_acf_pacf('pacf', y_m, 48)
              )
-
-##ggAcf(y_m, lag = 48) + theme_bw() + ggtitle('')
 ```
 
 Summing up, the decomposition of the time series suggests that there is no linear trend, rather a cycle with peaks roughly every 10 years. There are furthermore strong seasonal effects with variations between the years, meaning the seasonality contains noise. Furthermore, the seasonality and the trend-cycle lead to autocorrelation. The next section shows how these elements are adressed in the state space model.
 
 # Model description
 
-As mentioned in the Introduction, state space models are modular in the sense that the components discussed in the previous section can be included as separate components in the model. The essence of a state space model is that an unobserved dynamic process $\theta_{t}$ governs the observed $y_{t}$ which is a noisy measurement of the process. Forecasting and inference is done with the recursive Kalman filter algorithm. Residuals are calculated using the one-step ahead predictions from the Kalman filter. There are many ways of describing state space models - the model is implemented in *R* using the *dlm* package, therefore the description in this section follows the notation used in @petris2009dynamic.
+As mentioned in the Introduction, state space models are modular in the sense that the components discussed in the previous section can be included as separate components in the model. The essence of a state space model is that an unobserved dynamic process $\theta_{t}$ governs the observed $y_{t}$ which is a noisy measurement of the process. Forecasting and inference is done with the recursive Kalman filter algorithm. Residuals are calculated by comparing the one-step ahead predictions from the Kalman filter with the observed values. There are many ways of describing state space models - the model is implemented in *R* using the *dlm* package, therefore the description in this section follows the notation used in @petris2009dynamic.
 
 Let $y_{t}$ denote the logarithm of the frequency of mobility in month $t$, where $y_{t}$ are the observed values of underlying (unobserved) vector of states $\theta_{t}$. The DLM assumptions are that errors are Gaussian and independent. We can write this DLM as:
 
@@ -614,7 +647,8 @@ $$
 \theta_{t} = \begin{bmatrix} \mu_t \\ \beta_{t} \end{bmatrix} \quad 
 G_{t} = \begin{bmatrix} 1 & 1 \\ 0 & 1 \end{bmatrix} \quad 
 F_{t} = \begin{bmatrix} 1 & 0 \end{bmatrix} \quad
-W = \begin{bmatrix} \sigma_{\mu}^{2} & 0 \\ 0 & 0 \end{bmatrix}
+W = \begin{bmatrix} \sigma_{\mu}^{2} & 0 \\ 0 & \sigma_{\beta}^{2} \end{bmatrix} \quad
+V = \begin{bmatrix} \sigma_{v}^{2} \end{bmatrix}
 $$
 
 Seasonality is dealt with by including a trigonometric seasonal components to the model with a fixed periodicity of 12 months. One big advantage with the trigonometric specification, relative to simpler seasonal dummies, is that we allow autocorrelation to last through more lags, resulting in a smoother seasonal pattern. This way we filter out some of the noise seen in the figures in the previous section. By including non-zero variances the seasonal pattern is allowed to change trough time. Seasonality is incorporated in the DLM model by extending the state equation with an underlying periodic process $g_{t}$:
@@ -639,7 +673,7 @@ with $\omega_{j} = \frac{2 \pi t j}{s}$. We include two harmonics, meaning that 
 $$
 \theta_{t} = \begin{bmatrix} S_{1, t} \\ S_{1, t}^{*} \\ S_{2, t} \\ S_{2, t}^{*} \end{bmatrix} \quad
 G = \begin{bmatrix} \cos \omega_{1} & \sin \omega_{1} & 0 & 0 \\ -\sin \omega_{1} & \cos \omega_{1} & 0 & 0 \\ 0 & 0 & \cos \omega_{2} & \sin \omega_{2} \\ 0 & 0 & -\sin \omega_{2} & \cos \omega_{2} \\ \end{bmatrix} \quad
-F = \begin{bmatrix} 1 & 0 & 1 & 0\end{bmatrix} \\
+F = \begin{bmatrix} 1 & 0 & 1 & 0\end{bmatrix} \\ \quad
 W = \begin{bmatrix} \sigma_{S_{1}}^{2} & 0 & 0 & 0 \\ 0 & \sigma_{S_{1}^{*}}^{2} & 0 & 0 \\ 0 & 0 & \sigma_{S_{2}}^{2} & 0  \\ 0 & 0 & 0 & \sigma_{S_{2}^{*}}^{2} \end{bmatrix}
 $$
 
@@ -649,16 +683,16 @@ $$
 Y_{t} = \phi_{1} Y_{t-1} + \phi_{2} Y_{t-2} + u_{t} \quad u \sim N(0, \sigma^{2}_{u})
 $$
 
-In order to make sure that observations $Y_{t}$ are independent of past values of itself, an AR(2) model is written as a DLM as follows:
+In order to make sure that observations $Y_{t}$ are independent of past values of itself, an AR(2) model is written as a DLM by splitting up the state equation into two:
 
 $$
 \theta_{t} = \begin{bmatrix} \mu_{1,t} \\ \mu_{2,t} \end{bmatrix} \quad
-G = \begin{bmatrix} \phi_{1} & 1 \\ \phi_{2} & 1 \end{bmatrix} \quad
+G = \begin{bmatrix} \phi_{1} & 1 \\ \phi_{2} & 0 \end{bmatrix} \quad
 F = \begin{bmatrix} 1 & 0 \end{bmatrix} \quad
 W = \begin{bmatrix} \sigma_{u}^{2} & 0 \\ 0 & 0 \end{bmatrix}
 $$
 
-The resulting composite model (trend, seasonal and autoregressive) has a state vector $\mu_t$ of length 8. The model contains a number of unknown parameters that need to be estimated. Besides the observation variance $\sigma_{v}^{2}$, the matrix $W$ contains 6 potentially non-zero variances. We choose the integrated random walk formulation for the trend-cycle component, meaning that we let $\sigma_{\beta}^{2} = 0$. In addition, a residual analysis revealed that a model where only the variance of the first harmonic is zero performs best. Finally, the $G$ matrix contains two parameters for the AR(2) part that need to be estimated. These parameters are estimated subject to stationarity restrictions: 
+The resulting composite model (trend, seasonal and autoregressive) has a state vector $\theta_t$ of length 8: $\theta_t = (\mu_t, \beta_t, S_{1, t}, S_{1, t}^{*}, S_{2, t}, S_{2,t}^{*}, \mu_{1,t}, \mu_{2,t})'$. The model contains a number of unknown parameters that need to be estimated. Besides the observation variance $\sigma_{v}^{2}$, the matrix $W$ contains 6 potentially non-zero variances. We let $\sigma_{\beta}^{2} = 0$, which implies setting a constant nominal speed in the dynamics of $\mu_{t}$. This means that $\beta_{t}$ not only includes local trend growth, but also captures the global trend over the entire times series. In addition, a residual analysis revealed that a model where only the variance of the first harmonic is zero performs best. Finally, the $G$ matrix contains two parameters for the AR(2) part that need to be estimated. These parameters are estimated subject to stationarity restrictions: 
 
 $$
 -1 < \phi_{2} <1, \phi_{1} + \phi_{2} < 1, \phi_{2} - \phi_{1} < 1 
@@ -666,13 +700,12 @@ $$
 
 Consequently there are in total 6 unknown parameters in the model: $\sigma_{v}^{2}$, $\sigma_{\mu}^{2}$, $\sigma_{S_{2}}^{2}$, $\sigma^{2}_{u}$, $\phi_{1}$ and $\phi_{2}$. These parameters are estimated using maximum likelihood [see @petris2009dynamic, ch. 4].
 
-A residual analysis of the model described so far reveled that there was still some autocorrelation not captured by the seasonal effects (Figure \@ref(fig:residual-autocorr) in the Appendix); namely in lags 7 and 12. These effects can be accounted for by including additional autoregressive terms to the state equation. This extension of the model will obviously improves the fit of the model, however it is not a priori not clear that the forecasting accuracy is also improved. In addition to the model described above, hereafter referred to as *DLM1*, we therefore also estimate a model (*DLM2*) with 4 autoregressive terms. This model has two additional parameters that need to be estimated: $\phi_{7}$ and $\phi_{12}$.
+A residual analysis of the model described so far revealed that there was still some autocorrelation not captured by the seasonal effects (see Figure \@ref(fig:residual-autocorr) in the Appendix); namely in lags 7 and 12. These effects can be accounted for by including additional autoregressive terms to the state equation. Although this extension improves the model - residuals need to be Gaussian white noise in dynamic linear models- it is not a priori not clear that the forecasting accuracy is also improved. Since the inclusion of more autoregressive terms leads to a substantial extension of the state vector, estimation of such a model is much more costly. It is therefore useful to investigate whether this further refinements brings sufficient increase in performance. The model described above, which is in effect an AR(2) model is hereafter referred to as *DLM1*. We also estimate an extended model (*DLM2*) with 4 autoregressive terms. This model has two additional parameters that need to be estimated: $\phi_{7}$ and $\phi_{12}$.
 
-After determining the values of unknown parameters we use the Kalman filter to obtain the filtered distribution of $\theta_{t}$ conditional on the observed series up to *t*, $\theta_{t} | y_{1}, y_{2},...,y_{t}$. In addition we can estimate a smoothing distribution of the components, representing the past values of the states given all observed values $\theta_{t} | y_{1}, y_{2},...,y_{s}$ where $s \ge t$.
-
+After determining the values of unknown parameters we use the Kalman filter to obtain the filtered distribution of $\theta_{t}$ conditional on the observed series up to *t*, $\theta_{t} | y_{1}, y_{2},...,y_{t}$. In addition we can estimate a smoothing distribution of the components, representing the past values of the states given all observed values $\theta_{t} | y_{1}, y_{2},...,y_{s}$ where $s \ge t$. Forecasts of the next observation $Y_{t+1}$ based on observations up to $t$, $y_{t}$m are produced by first computing the state vector $\theta_{t+1}$ and then predicting $Y_{t+1}$. Similarly, an n-step ahead forecast $Y_{t+n}$ is based on calculation of the n-step ahead state vector $\theta_{t+n}$. We can write the forecast function as $f_{t} = E(Y_{t+n} | y_{1}, y_{2}, ....y_{t})$.
 
 # Estimated model
-The estimated parameters are shown in Table \@ref(tab:estimated-parameters). We see that the observation variance $\sigma_{v}^{2}$ is very close to zero, indicating a high level of precision on the observation. Note however, that the variances refer to the log of the frequency of mobility. The small size of the observation variance relative to the system variance results in a fairly large signal-to-noise ratio W/V, meaning again that relatively large weight is put on prediction in the previous step in the Kalman algorithm. We furthermore see that both of the AR parameters are negative, with the absolute value of the parameter for the first lag larger than that of the second lag. The inclusion of two higher-order autoregressive elements in the DLM2 model results in a dampening of the effect of the two first autoregressive elements. Otherwise the parameter estimates are very similar.
+The estimated parameters are shown in Table \@ref(tab:estimated-parameters). We see that the observation variance $\sigma_{v}^{2}$ is very close to zero, indicating a high level of precision on the observation. Note however, that the variances refer to the log of the frequency of mobility. The small size of the observation variance relative to the system variance results in a large signal-to-noise ratio W/V, meaning again that relatively large weight is put on prediction in the previous step in the Kalman algorithm. We furthermore see that both of the AR parameters are negative, with the absolute value of the parameter for the first lag larger than that of the second lag. The inclusion of two higher-order autoregressive elements in the DLM2 model results in a dampening of the effect of the two first autoregressive elements. Otherwise the parameter estimates are very similar.
 
 ```{r estimated-parameters, results='show', fig.cap = 'Estimated parameters'}
 
@@ -701,7 +734,7 @@ knitr::kable(est_tbl,
 
 ```
 
-The one-step ahead predictions from the Kalman filter, or filtered values, from both of the models are displayed in Figure \@ref(fig:dlm-filtered), together with Root Mean Square Error (RMSE) calculated on basis of the one-step-ahead forecast errors. The adaptive nature of the Kalman algorithm causes the filtered values in the first periods to veer quite far off the observed values (not shown in the figure). We therefore discard the two first years when calculating the RMSE. It is clear from the figure that DLM2, with the two higher-order autoregressive terms, fits the data better than the DLM1 model, though the difference in terms of RMSE is not dramatic.
+The one-step ahead predictions from the Kalman filter, or filtered values, from both of the models are displayed in Figure \@ref(fig:dlm-filtered), together with Root Mean Square Error (RMSE) calculated on basis of the residuals (one-step-ahead forecast errors). The adaptive nature of the Kalman algorithm causes the filtered values in the first periods to veer quite far off the observed values (not shown in the figure). We therefore discard the three first years when calculating the RMSE. It is clear from the figure that DLM2, with the two higher-order autoregressive terms, fits the data better than the DLM1 model, though the difference in terms of RMSE is not dramatic. A residual check showed that the normality assumption of dynamic linear models is justified for these models (see Appendix for a residual plot of DLM2).
 
 ```{r dlm-filtered, fig.cap = 'One-step-ahead predictions (solid line), observed data (dotted line) and RMSE (calculated from January 1998)'}
 
@@ -729,7 +762,7 @@ ggplot(rbindlist(list(filt_plot_dt(freq_filt[[mods[7]]])[t >= 1998][,mod:='DLM1'
     ylab('frequency of mobility') +
     xlab('month') + 
     scale_x_continuous(breaks = seq(1998, 2018, by = 5),
-                       labels = paste('January', seq(1998, 2018, by = 5), sep = '\n')
+                       labels = paste('Jan', seq(1998, 2018, by = 5), sep = '\n')
                        ) + 
     theme_bw()
        
@@ -748,7 +781,7 @@ ggplot(rbindlist(list(filt_plot_dt(freq_filt[[mods[7]]])[, mod := 'DLM1'],
     ylab('frequency of mobility') +
     xlab('month') + 
     scale_x_continuous(breaks = seq(2010, 2020, by = 2),
-                       labels = paste('January', seq(2010, 2020, by = 2), sep = '\n')
+                       labels = paste('Jan', seq(2010, 2020, by = 2), sep = '\n')
                        ) + 
     theme_bw()
 
@@ -766,7 +799,7 @@ grid.arrange(
     ylab('frequency of mobility') +
     xlab('month') + 
     scale_x_continuous(breaks = seq(1995, 2020, by = 5),
-                       labels = paste('January', seq(1995, 2020, by = 5), sep = '\n')
+                       labels = paste('Jan', seq(1995, 2020, by = 5), sep = '\n')
                        ) + 
     theme_bw(),
     ggplot(data.table(y = exp(apply(dropFirst(freq_smooth[[1]]$s[,c(3:6)]), 1, sum)),
@@ -776,7 +809,7 @@ grid.arrange(
     ylab('frequency of mobility') +
     xlab('month') + 
     scale_x_continuous(breaks = seq(1995, 2020, by = 5),
-                       labels = paste('January', seq(1995, 2020, by = 5), sep = '\n')
+                       labels = paste('Jan', seq(1995, 2020, by = 5), sep = '\n')
                        ) + 
     theme_bw(),
     ggplot(data.table(y = exp(apply(dropFirst(freq_smooth[[2]]$s[,c(1,2)]), 1, sum)),
@@ -786,7 +819,7 @@ grid.arrange(
     ylab('frequency of mobility') +
     xlab('month') + 
     scale_x_continuous(breaks = seq(1995, 2020, by = 5),
-                       labels = paste('January', seq(1995, 2020, by = 5), sep = '\n')
+                       labels = paste('Jan', seq(1995, 2020, by = 5), sep = '\n')
                        ) + 
     theme_bw(),
     ggplot(data.table(y = exp(apply(dropFirst(freq_smooth[[2]]$s[,c(3:6)]), 1, sum)),
@@ -796,7 +829,7 @@ grid.arrange(
     ylab('frequency of mobility') +
     xlab('month') + 
     scale_x_continuous(breaks = seq(1995, 2020, by = 5),
-                       labels = paste('January', seq(1995, 2020, by = 5), sep = '\n')
+                       labels = paste('Jan', seq(1995, 2020, by = 5), sep = '\n')
                        ) + 
     theme_bw()    
 )
@@ -811,8 +844,8 @@ In this section we present the results of the evaluation of forecasting accuracy
 
 plot_dt <- melt(rbindlist(lapply(seq(2016, 2016.75, by = 0.25),
                                  function(x) {
-                                     origin_month  <- c('January', 'April',
-                                                        'July', 'October'
+                                     origin_month  <- c('Jan', 'Apr',
+                                                        'Jul', 'Oct'
                                                         )[which(seq(2016,
                                                                     2016.75,
                                                                     by = 0.25) == x)
@@ -852,7 +885,7 @@ ggplot(plot_dt[t %between% c(2014, 2018)], aes(t, dt)) +
     geom_vline(aes(xintercept = xint), col = 'grey40') + 
     theme_bw() +
     scale_x_continuous(breaks = seq(2014, 2018),
-                       labels = paste('January', seq(2014, 2018), sep = '\n')
+                       labels = paste('Jan', seq(2014, 2018), sep = '\n')
                        ) + 
     ylab('frequency of mobility') +
     xlab('month')
@@ -933,19 +966,19 @@ setnames(error_dt, c('', 'Forecast horizon', model_names))
 ##knitr::kable(cbind(rmse_mean[[1]], rmse_mean[[2]], rmse_mean[[3]]),
 knitr::kable(error_dt,
              booktabs = T, escape = F, digits = 4,
-             caption = 'Mean and standard deviation (in parenthesis) of RMSE and MAPE'
+             caption = 'Mean (and standard deviation) of RMSE and MAPE'
              )
 
 ```
 
 
-Figure \@ref(fig:rmse-origins) delves further the variation in forecasting performance across origins, showing the RMSE per origin and model for the three forecast horizons. In all forecast horizions the two DLMs are the best performing models in the interval between December 2016 and December 2017, with the exception of origins right after March 2017 where the Naïve model perfoms best. We see that the ARIMA, Holt-Winters and the ETS models all perform better than the DLMs on the part of the time series where there is a clear trend in the training data that at least partially extends into the test data (until December 2016). As Table \@ref(tab:error-comparison) showed, the higher forecast accuracy of the ETS model relative to the DLMs occurs primarily for a short forecast horizon. The relatively high RMSE for the DLMs prior to December 2016. Finally, the difference in performance between the two DLMs is, in general, minimal. However, the 6 month forecasts from medio 2017 onwards differ somewhat between the models, with DLM2 performing better than the DLM1. 
+Figure \@ref(fig:rmse-origins) delves further the variation in forecasting performance across origins, showing the MAPE per origin and model for the three forecast horizons. In all forecast horizions the two DLMs are the best performing models in the interval between December 2016 and December 2017, with the exception of origins right after March 2017 where the Naïve model perfoms best. We see that the ARIMA, Holt-Winters and the ETS models all perform better than the DLMs on the part of the time series where there is a clear trend in the training data that at least partially extends into the test data (until December 2016). As Table \@ref(tab:error-comparison) showed, the higher forecast accuracy of the ETS model relative to the DLMs occurs primarily for a short forecast horizon. The relatively high MAPE for the DLMs prior to December 2016. Finally, the difference in performance between the two DLMs is, in general, minimal. However, the 6 month forecasts from medio 2017 onwards differ somewhat between the models, with DLM2 performing better than the DLM1. 
 
-```{r rmse-origins, fig.cap = "RMSE by origin and forecast horizon"}
+```{r rmse-origins, fig.cap = "MAPE by origin and forecast horizon"}
 
-out <- rbindlist(list(err_dt('rmse_6')[-c(26:27)],
-                 err_dt('rmse_12')[-c(26:27)],
-                 err_dt('rmse_18')[-c(26:27)]
+out <- rbindlist(list(err_dt('mape_6')[-c(26:27)],
+                 err_dt('mape_12')[-c(26:27)],
+                 err_dt('mape_18')[-c(26:27)]
                  ))[,
                    N := rep(paste0('N=', c(6, 12, 18)), each = n_fore)
                    ][,
@@ -976,9 +1009,9 @@ ggplot(melt(out,
     ##coord_flip() + 
     facet_grid(N~., scale = 'free') +
     theme_bw() +
-    ylab('RMSE') +
-    scale_colour_brewer(palette = 'Set2') + 
-    ##scale_colour_manual(values = rev(brewer.pal(8, 'Set1'))[1:7]) +
+    ylab('MAPE') +
+    ##scale_colour_brewer(palette = 'Set2') + 
+    scale_colour_manual(values = wes_palette("IsleofDogs1")) + 
     scale_x_discrete(breaks = unique(out$origin)[seq(1, 25, by = 3)], 
                      labels = orig_nms)
 #    theme(legend.position = 'bottom')
@@ -987,9 +1020,8 @@ ggplot(melt(out,
 
 Figure \@ref(fig:rmse-origins) showed how the forecasting performance varied between origins; it suggested that the DLMs performed poorly, relative to other models, where a trend carried over from the training data to the test data and good relative to other models otherwise. Of course our initial interest in this exercise was motivated by a potential trend change. Therefore we zoom in on the forecasted values of the frequency of mobility around the changepoint. Figure \@ref(fig:forecast-2017-2018) compares the forecasts of all models in the period January 2017 to December 2018. The grey dots represent forecast from different origins, the solid line represents the average value of the forecasts across all origins and the dotted line is the data. The figure shows clearly the divergence in forecasting performance between the DLMs and the ARIMA and Holt-Winters models. The Holt-Winters model systematically overpredicts the migration frequency already from June 2017, meaning that the forecasted frequency exceeds the data for all origins. For the ARIMA model this occurs from October 2017. In the case of the DLMs the last forecasted point with a value lower than that of the data occurs in May 2018.
 
-```{r forecast-2017-2018, fig.cap = "Forecasted (light grey dots) and actual (dark grey line) frequency of mobility and average over origins (black line)"}
-##library(lubridate)
-pal <- brewer.pal(3, name = 'Set1')
+```{r forecast-2017-2018, fig.cap = "Forecasted (light grey dots), forecast averaged over origins (black line) and observed (dark grey line) frequency of mobility"}
+
 
 ggplot(rf_dt[t >= 2017 & t < 2019,
              .(forecast, actual_value, mean(forecast, na.rm = T)),
@@ -1016,27 +1048,24 @@ ggplot(rf_dt[t >= 2017 & t < 2019,
 ```
 
 
-# Forecasting migration frequency from 2017 onwards
+# Forecasting migration frequency from January 2017 onwards
 
 As mentioned in the Introduction, the realisation that 2017 possibly represented a turning point in the cycle of the frequency of mobility triggered our initial interest in developing the state space model. Then it is relevant to ask what the second state space model tell us about the development of the frequency of migration from 2017 onwards. In our case we were particularly interested in the development of the yearly frequency the coming couple of years. Figure \@ref(fig:forecast-2017) shows a two-year forecast of both the monthly and yearly frequency of mobility with their 95 percent prediction intervals, where the last period of the training data is December 2016. For simplicity, the yearly frequency is calculated by aggregating the monthly frequencies within that year. As a comparison, we also show results the same forecast using the ETS model discussed in the previous section. The automatic selection procedure results in an ETS(M, Ad, A): a model with multiplicative errors, damped additive trend and additive seasonal effects.
 
-At first glance, the forecast of the monthly frequency (left part of the figure) is quite similar across models. Both models forecast 2017 accurately, and, as Figure \@ref(fig:forecast-2017-2018) also suggest, both models systematically overestimate the test data in 2018. We see that the
-
-
-
-```{r forecast-2017, fig.cap = "Two-year forecast (black line) of monthly (left) and yearly (right) frequency of mobility and test data (dark grey line)"}
+```{r forecast-2017, fig.cap = "Two-year forecast (black line) of monthly (left) and yearly (right) frequency of mobility and test data (dark grey line) and 95 percent prediction interval"}
 
 p1 <- ggplot(two_year_fore[t >= 2010, ], aes(t, actual_value, group = type)) +
     geom_ribbon(aes(ymin = forecast_pl, ymax = forecast_pu),
-                fill = 'grey80', alpha = 0.4) + 
-    geom_line(col = 'grey50') +
+                fill = 'grey80', alpha = 0.4) +
+        geom_line(col = 'grey50') +
     geom_line(aes(y = forecast)) +
+    scale_colour_manual(values = ) + 
     facet_wrap(~type, ncol = 1) +
     theme_bw() +
     ylab('frequency of mobility (monthly)') +
     xlab('month') +
     scale_x_continuous(breaks = seq(2010,2019, by = 2),
-                       labels = paste('January',
+                       labels = paste('Jan',
                                       seq(2010,2019, by = 2),
                                       sep = '\n'))
 
@@ -1055,7 +1084,7 @@ p2 <- ggplot(two_year_fore[,
     facet_wrap(~type, ncol = 1) +
     theme_bw() +
     ylab('frequency of mobility (yearly)') +
-    xlab('year') 
+    xlab('year')
 
 grid.arrange(p1, p2, ncol = 2)
 
@@ -1070,25 +1099,59 @@ grid.arrange(p1, p2, ncol = 2)
 
 ```
 
+At first glance, the point forecast of the monthly frequency (left part of the figure) is quite similar across models, although the prediction interval of ETS is smaller. Both models forecast 2017 accurately, and they both systematically overestimate the test data in 2018. As the right left panels of Figure \@ref(fig:forecast-2017) shows, the yearly frequency of mobility actually declines between 2017 and 2018, and none of the models were able to capture this sudden decline. However, we see ETS is much more "positive" about (i.e., overestimates more substantially) the yearly frequency than DLM2. Figure \@ref(fig:rmse-origins) already hinted at the reason: we saw that the DLM performed worse than the other models, and especially for short forecast horizons on the first origins in 2016. Since the autoregressive terms included in the model are all lags within one year, long-term forecasts (above one year) are primarily driven by the linear growth component. As we recall from above, in the linear growth or local linear trend model, $\beta_t$ is the time-varying slope in the dynamics of the local level $\mu_{t}$. The recursive updating of this parameter implies the assymptotic dynamics of the slope parameter is given by its value in the previous step and the forecasting error weighted by the signal-to-noise ratio (or, more precisely, the Kalman gain) [@petris2009dynamic, eq. 3.11]. Figure \@ref(fig:trend-growth) in the Appendix shows how the estimated $\hat{\beta}_{t}$ develops between 2000 and end 2016. We see immediately that the parameter is negative in most of the interval in the figure, but that it becomes slightly positive towards the end of 2016. Since n-step-ahead forecasts using *dlm* are based on time-invariant values of all parameters, the $\hat{\beta}_{t}$ used for the forecast in Figure \@ref(fig:forecast-2017) is slightly larger than zero. 
 
 # Conclusion
 
-In this study we have developed a model to 
+In this paper we have developed a state space model for short-to medium term univariate forecast of monthly frequency of mobility in the Netherlands. The frequency of mobility is defined as the number of internally migrated persons countrywide (within- and between-municipality) per month divided by the population. This is an important input into the cohort-component model used for our regional population projections; the need for this modelling exercise arose as we suspected that the end of our yearly series represented the top of a cycle.
 
-* The DLMs outperform, on average, other models on the longer forecast horizon. *
- Differences particularly visible in forecasts from March 2017 onwars.
-* DLMs appear to offer a middle ground between naïve and ARIMA/Holt-Winters
-* Difference DLMs: although DLM2 is clearly better fit, difference in terms of forecasting performance is not particularly big.
+The results presented in the previous section show that the state space model (DLM) quite accurately forecasts both monthly and yearly frequency of mobility until end 2018, based on data up to end 2016. In particular, the model would have given us a very accurate picture of the development of the frequency of mobility until end of 2017. More generally, the model performed comparably or even better than a number of popular univariate forecasting in a time interval between end of 2016 to end of 2017. One of the most remarkable feature about the forecasts of the DLM was the relatively limited deterioration in forecast accuracy as the forecast horizon increased. 
+
+The most important reason was that the local linear growth component ensured a certain "conservatism" for forecast horizons above 12 months. The high signal-to-noise rate implied that the estimated local growth rate evolved slowly over time. The only other model mimicking this behaviour was the ETS model - itself also a state space model. An easy critique of this result is that a model that predicts that 'what goes up must eventually come down' is of limited value. Yet such criticism misses the point that the local linear growth component in effect incorporates not only local, but to some extent global, characteristics of the time series. As such, this model also answers the question "come down to what?".
+
+Although the focus of this paper was univariate forecasts, one of the biggest advantages of the structural model developed in this paper, relative to automatically selected models such as ETS, is the easy with which covariates can be included. Future research should focus on investigating whether model performance can be improved by including covariates for which there are reliable short- to medium-term forecasts - for example unemployment levels. Splitting up the time series into several age groups (dynamic hierarchical models) will probably make such an exercise easier, and is probably a fruitful venue for future research. A more theory-driven model with covariates could also provide extra information about the merits of the simpler univariate approach presented.
 
 # Appendix
 
-```{r residual-autocorr, fig.cap = "Autocorrelation function for the residuals"}
+```{r residual-autocorr, fig.cap = "Autocorrelation function of the standardised residuals"}
 ##checkresiduals(residuals(freq_filt[[mods[7]]])$res)
-grid.arrange(ggAcf(residuals(freq_filt[[mods[7]]])$res) + theme_bw() + ggtitle('DLM1'),
-             ggAcf(residuals(freq_filt[[mods[8]]])$res) + theme_bw() + ggtitle('DLM2')
-             )
+## grid.arrange(ggAcf(residuals(freq_filt[[mods[7]]])$res) + theme_bw() + ggtitle('DLM1'),
+##              ggAcf(residuals(freq_filt[[mods[8]]])$res) + theme_bw() + ggtitle('DLM2')
+##              )
+
+grid.arrange(
+    gg_acf_pacf(func='acf',
+                series=residuals(freq_filt[['lt_arma2']])$res, n_lags = '24') +
+    ggtitle('DLM1'),
+    gg_acf_pacf(func='acf',
+                series=residuals(freq_filt[['lt_arma3']])$res, n_lags = '24') +
+    ggtitle('DLM1')
+)
+    
 
 ```
+
+```{r qqnorm, fig.cap = "Normal probability plot of standardized one-step-ahead forecast errors of DLM2"}
+## df <- data.frame(y = as.numeric(window(residuals(freq_filt[[mods[8]]])$res
+##                                        / residuals(freq_filt[[mods[8]]])$sd,
+##                                        start = 2000)
+##                                 )
+##                  )
+df <- data.frame(y = residuals(freq_filt[[mods[8]]])$res)
+
+ggplot(df, aes(sample = y)) +
+    stat_qq() +
+    stat_qq_line() +
+    theme_bw()
+
+## qqnorm(window(residuals(freq_filt[[mods[8]]])$res
+##               / residuals(freq_filt[[mods[8]]])$sd,
+##               start = 2000))
+## qqline(window(residuals(freq_filt[[mods[8]]])$res
+##               / residuals(freq_filt[[mods[8]]])$sd,
+##               start = 2000))
+```
+
 
 ```{r par-comparison, results = 'show'}
 roll_pars <- rbindlist(lapply(1:n_fore,
@@ -1118,5 +1181,21 @@ knitr::kable(roll_pars,
              booktabs = T, escape = F, digits = c(0, 4, 4, 4, 4),
              caption = 'Mean and standard deviation of the estimated parameters')
 ```
+
+```{r trend-growth, fig.cap = "The local growth rate of DLM2 ($\\beta_t$)"}
+ggplot(data.table(t = window(time(y_m), start = 2000, end = c(2016, 12)),
+                   y = window(freq_filt[[mods[8]]]$m[, 2],
+                              start = 2000, end = c(2016, 12)
+                              )),
+        aes(t, y)) +
+     geom_line() + 
+     ylab(expression(hat(beta)[t])) +
+     xlab('month') +
+     scale_x_continuous(breaks = seq(2000, 2016, by = 2),
+                        labels = paste('Jan', seq(2000, 2016, by = 2), sep = '\n')
+                        ) +
+     theme_bw()
+```
+
 
 # Bibliography
