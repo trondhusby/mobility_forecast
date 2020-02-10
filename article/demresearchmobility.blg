@@ -1,0 +1,19 @@
+[0] Config.pm:304> INFO - This is Biber 2.14
+[0] Config.pm:307> INFO - Logfile is 'demresearchmobility.blg'
+[80] biber:322> INFO - === ma feb 10, 2020, 11:02:14
+[97] Biber.pm:415> INFO - Reading 'demresearchmobility.bcf'
+[183] Biber.pm:943> INFO - Found 19 citekeys in bib section 0
+[202] Biber.pm:4256> INFO - Processing section 0
+[202] Utils.pm:75> INFO - Globbing data source 'mobility.bib'
+[203] Utils.pm:91> INFO - Globbed data source 'mobility.bib' to mobility.bib
+[215] Biber.pm:4455> INFO - Looking for bibtex format file 'mobility.bib' for section 0
+[216] bibtex.pm:1653> INFO - LaTeX decoding ...
+[255] bibtex.pm:1471> INFO - Found BibTeX data source 'mobility.bib'
+[370] Utils.pm:304> WARN - I didn't find a database entry for 'young1991recursive' (section 0)
+[412] UCollate.pm:68> INFO - Overriding locale 'de_DE' defaults 'variable = shifted' with 'variable = non-ignorable'
+[412] UCollate.pm:68> INFO - Overriding locale 'de_DE' defaults 'normalization = NFD' with 'normalization = prenormalized'
+[412] Biber.pm:4084> INFO - Sorting list 'nyt/global//global/global' of type 'entry' with template 'nyt' and locale 'de_DE'
+[412] Biber.pm:4090> INFO - No sort tailoring available for locale 'de_DE'
+[439] bbl.pm:652> INFO - Writing 'demresearchmobility.bbl' with encoding 'UTF-8'
+[450] bbl.pm:755> INFO - Output to demresearchmobility.bbl
+[450] Biber.pm:128> INFO - WARNINGS: 1

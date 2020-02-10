@@ -1,0 +1,711 @@
+% $ biblatex auxiliary file $
+% $ biblatex bbl format version 3.1 $
+% Do not modify the above lines!
+%
+% This is an auxiliary file used by the 'biblatex' package.
+% This file may safely be deleted. It will be recreated by
+% biber as required.
+%
+\begingroup
+\makeatletter
+\@ifundefined{ver@biblatex.sty}
+  {\@latex@error
+     {Missing 'biblatex' package}
+     {The bibliography requires the 'biblatex' package.}
+      \aftergroup\endinput}
+  {}
+\endgroup
+
+
+\refsection{0}
+  \datalist[entry]{nyt/global//global/global}
+    \entry{bergmeir2012use}{article}{}
+      \name{author}{2}{}{%
+        {{un=0,uniquepart=base,hash=fb7be81f0574878d688bb03f0abb8502}{%
+           family={Bergmeir},
+           familyi={B\bibinitperiod},
+           given={Christoph},
+           giveni={C\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=15a484f69ae5869f02d0261d7e161bae}{%
+           family={Ben{ı́}tez},
+           familyi={B\bibinitperiod},
+           given={Jos{é}\bibnamedelima M},
+           giveni={J\bibinitperiod\bibinitdelim M\bibinitperiod},
+           givenun=0}}%
+      }
+      \list{publisher}{1}{%
+        {Elsevier}%
+      }
+      \strng{namehash}{abab396d14a036a9c76b7ea8b05976e4}
+      \strng{fullhash}{abab396d14a036a9c76b7ea8b05976e4}
+      \strng{bibnamehash}{abab396d14a036a9c76b7ea8b05976e4}
+      \strng{authorbibnamehash}{abab396d14a036a9c76b7ea8b05976e4}
+      \strng{authornamehash}{abab396d14a036a9c76b7ea8b05976e4}
+      \strng{authorfullhash}{abab396d14a036a9c76b7ea8b05976e4}
+      \field{sortinit}{B}
+      \field{sortinithash}{8de16967003c7207dae369d874f1456e}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{year}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Information Sciences}
+      \field{title}{On the use of cross-validation for time series predictor evaluation}
+      \field{volume}{191}
+      \field{year}{2012}
+      \field{pages}{192\bibrangedash 213}
+      \range{pages}{22}
+    \endentry
+    \entry{bergmeir2018}{article}{}
+      \name{author}{3}{}{%
+        {{un=0,uniquepart=base,hash=fb7be81f0574878d688bb03f0abb8502}{%
+           family={Bergmeir},
+           familyi={B\bibinitperiod},
+           given={Christoph},
+           giveni={C\bibinitperiod},
+           givenun=0}}%
+        {{un=2,uniquepart=given,hash=2f709db8a046ae1d056e75c1f3aad31c}{%
+           family={Hyndman},
+           familyi={H\bibinitperiod},
+           given={Rob\bibnamedelima J.},
+           giveni={R\bibinitperiod\bibinitdelim J\bibinitperiod},
+           givenun=2}}%
+        {{un=0,uniquepart=base,hash=456c64a747ca43a27b2b0588e019452d}{%
+           family={Koo},
+           familyi={K\bibinitperiod},
+           given={Bonsoo},
+           giveni={B\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{3c7d0e367d19008c04c005f000ff27ba}
+      \strng{fullhash}{3c7d0e367d19008c04c005f000ff27ba}
+      \strng{bibnamehash}{3c7d0e367d19008c04c005f000ff27ba}
+      \strng{authorbibnamehash}{3c7d0e367d19008c04c005f000ff27ba}
+      \strng{authornamehash}{3c7d0e367d19008c04c005f000ff27ba}
+      \strng{authorfullhash}{3c7d0e367d19008c04c005f000ff27ba}
+      \field{sortinit}{B}
+      \field{sortinithash}{8de16967003c7207dae369d874f1456e}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{year}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{issn}{0167-9473}
+      \field{journaltitle}{Computational Statistics \& Data Analysis}
+      \field{title}{A note on the validity of cross-validation for evaluating autoregressive time series prediction}
+      \field{volume}{120}
+      \field{year}{2018}
+      \field{pages}{70\bibrangedash 83}
+      \range{pages}{14}
+      \verb{doi}
+      \verb https://doi.org/10.1016/j.csda.2017.11.003
+      \endverb
+      \verb{urlraw}
+      \verb http://www.sciencedirect.com/science/article/pii/S0167947317302384
+      \endverb
+      \verb{url}
+      \verb http://www.sciencedirect.com/science/article/pii/S0167947317302384
+      \endverb
+      \keyw{Cross-validation,Time series,Autoregression}
+    \endentry
+    \entry{canova1998detrending}{article}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=fb6e9180c0547fbbd0a8cd1bd07a9521}{%
+           family={Canova},
+           familyi={C\bibinitperiod},
+           given={Fabio},
+           giveni={F\bibinitperiod},
+           givenun=0}}%
+      }
+      \list{publisher}{1}{%
+        {Elsevier}%
+      }
+      \strng{namehash}{fb6e9180c0547fbbd0a8cd1bd07a9521}
+      \strng{fullhash}{fb6e9180c0547fbbd0a8cd1bd07a9521}
+      \strng{bibnamehash}{fb6e9180c0547fbbd0a8cd1bd07a9521}
+      \strng{authorbibnamehash}{fb6e9180c0547fbbd0a8cd1bd07a9521}
+      \strng{authornamehash}{fb6e9180c0547fbbd0a8cd1bd07a9521}
+      \strng{authorfullhash}{fb6e9180c0547fbbd0a8cd1bd07a9521}
+      \field{sortinit}{C}
+      \field{sortinithash}{4c244ceae61406cdc0cc2ce1cb1ff703}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{year}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Journal of monetary economics}
+      \field{number}{3}
+      \field{title}{Detrending and business cycle facts}
+      \field{volume}{41}
+      \field{year}{1998}
+      \field{pages}{475\bibrangedash 512}
+      \range{pages}{38}
+    \endentry
+    \entry{durbin2012time}{book}{}
+      \name{author}{2}{}{%
+        {{un=0,uniquepart=base,hash=6186d820e49f3adc10764a9c5595a360}{%
+           family={Durbin},
+           familyi={D\bibinitperiod},
+           given={James},
+           giveni={J\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=21f365c12bd59fa8a7120260bd39f1fc}{%
+           family={Koopman},
+           familyi={K\bibinitperiod},
+           given={Siem\bibnamedelima Jan},
+           giveni={S\bibinitperiod\bibinitdelim J\bibinitperiod},
+           givenun=0}}%
+      }
+      \list{publisher}{1}{%
+        {Oxford university press}%
+      }
+      \strng{namehash}{a6d55ee23b49aa3ff87b3f18d97947aa}
+      \strng{fullhash}{a6d55ee23b49aa3ff87b3f18d97947aa}
+      \strng{bibnamehash}{a6d55ee23b49aa3ff87b3f18d97947aa}
+      \strng{authorbibnamehash}{a6d55ee23b49aa3ff87b3f18d97947aa}
+      \strng{authornamehash}{a6d55ee23b49aa3ff87b3f18d97947aa}
+      \strng{authorfullhash}{a6d55ee23b49aa3ff87b3f18d97947aa}
+      \field{sortinit}{D}
+      \field{sortinithash}{c438b3d5d027251ba63f5ed538d98af5}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{year}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Time series analysis by state space methods}
+      \field{year}{2012}
+    \endentry
+    \entry{hamilton2018}{article}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=f1528bc518ebb8f6103311513805ac7d}{%
+           family={Hamilton},
+           familyi={H\bibinitperiod},
+           given={James\bibnamedelima D},
+           giveni={J\bibinitperiod\bibinitdelim D\bibinitperiod},
+           givenun=0}}%
+      }
+      \list{publisher}{1}{%
+        {MIT Press}%
+      }
+      \strng{namehash}{f1528bc518ebb8f6103311513805ac7d}
+      \strng{fullhash}{f1528bc518ebb8f6103311513805ac7d}
+      \strng{bibnamehash}{f1528bc518ebb8f6103311513805ac7d}
+      \strng{authorbibnamehash}{f1528bc518ebb8f6103311513805ac7d}
+      \strng{authornamehash}{f1528bc518ebb8f6103311513805ac7d}
+      \strng{authorfullhash}{f1528bc518ebb8f6103311513805ac7d}
+      \field{sortinit}{H}
+      \field{sortinithash}{6db6145dae8dc9e1271a8d556090b50a}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{year}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Review of Economics and Statistics}
+      \field{number}{5}
+      \field{title}{Why you should never use the Hodrick-Prescott filter}
+      \field{volume}{100}
+      \field{year}{2018}
+      \field{pages}{831\bibrangedash 843}
+      \range{pages}{13}
+    \endentry
+    \entry{holt2004forecasting}{article}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=018dcfa294642ca1e0e51b140bf7683e}{%
+           family={Holt},
+           familyi={H\bibinitperiod},
+           given={Charles\bibnamedelima C},
+           giveni={C\bibinitperiod\bibinitdelim C\bibinitperiod},
+           givenun=0}}%
+      }
+      \list{publisher}{1}{%
+        {Elsevier}%
+      }
+      \strng{namehash}{018dcfa294642ca1e0e51b140bf7683e}
+      \strng{fullhash}{018dcfa294642ca1e0e51b140bf7683e}
+      \strng{bibnamehash}{018dcfa294642ca1e0e51b140bf7683e}
+      \strng{authorbibnamehash}{018dcfa294642ca1e0e51b140bf7683e}
+      \strng{authornamehash}{018dcfa294642ca1e0e51b140bf7683e}
+      \strng{authorfullhash}{018dcfa294642ca1e0e51b140bf7683e}
+      \field{sortinit}{H}
+      \field{sortinithash}{6db6145dae8dc9e1271a8d556090b50a}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{year}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{International journal of forecasting}
+      \field{number}{1}
+      \field{title}{Forecasting seasonals and trends by exponentially weighted moving averages}
+      \field{volume}{20}
+      \field{year}{2004}
+      \field{pages}{5\bibrangedash 10}
+      \range{pages}{6}
+    \endentry
+    \entry{hyndman2018forecasting}{book}{}
+      \name{author}{2}{}{%
+        {{un=2,uniquepart=given,hash=2f709db8a046ae1d056e75c1f3aad31c}{%
+           family={Hyndman},
+           familyi={H\bibinitperiod},
+           given={Rob\bibnamedelima J},
+           giveni={R\bibinitperiod\bibinitdelim J\bibinitperiod},
+           givenun=2}}%
+        {{un=0,uniquepart=base,hash=95cfbf5a8396e08b434cc6f7f5b18dc8}{%
+           family={Athanasopoulos},
+           familyi={A\bibinitperiod},
+           given={George},
+           giveni={G\bibinitperiod},
+           givenun=0}}%
+      }
+      \list{publisher}{1}{%
+        {OTexts}%
+      }
+      \strng{namehash}{f5d192acd9066e5facaab32c8173f6d0}
+      \strng{fullhash}{f5d192acd9066e5facaab32c8173f6d0}
+      \strng{bibnamehash}{f5d192acd9066e5facaab32c8173f6d0}
+      \strng{authorbibnamehash}{f5d192acd9066e5facaab32c8173f6d0}
+      \strng{authornamehash}{f5d192acd9066e5facaab32c8173f6d0}
+      \strng{authorfullhash}{f5d192acd9066e5facaab32c8173f6d0}
+      \field{sortinit}{H}
+      \field{sortinithash}{6db6145dae8dc9e1271a8d556090b50a}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{year}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Forecasting: principles and practice}
+      \field{year}{2018}
+    \endentry
+    \entry{hyndman2019}{article}{}
+      \name{author}{2}{}{%
+        {{un=2,uniquepart=given,hash=2f709db8a046ae1d056e75c1f3aad31c}{%
+           family={Hyndman},
+           familyi={H\bibinitperiod},
+           given={Rob\bibnamedelima J},
+           giveni={R\bibinitperiod\bibinitdelim J\bibinitperiod},
+           givenun=2}}%
+        {{un=0,uniquepart=base,hash=1e46dc51c8831a47f1fbcd69c3eaf3bd}{%
+           family={Khandakar},
+           familyi={K\bibinitperiod},
+           given={Yeasmin},
+           giveni={Y\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{9d9f0e7f8afffc41db669119dd5d064f}
+      \strng{fullhash}{9d9f0e7f8afffc41db669119dd5d064f}
+      \strng{bibnamehash}{9d9f0e7f8afffc41db669119dd5d064f}
+      \strng{authorbibnamehash}{9d9f0e7f8afffc41db669119dd5d064f}
+      \strng{authornamehash}{9d9f0e7f8afffc41db669119dd5d064f}
+      \strng{authorfullhash}{9d9f0e7f8afffc41db669119dd5d064f}
+      \field{sortinit}{H}
+      \field{sortinithash}{6db6145dae8dc9e1271a8d556090b50a}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{year}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Journal of Statistical Software}
+      \field{number}{3}
+      \field{title}{Automatic time series forecasting: the forecast package for {R}}
+      \field{volume}{26}
+      \field{year}{2008}
+      \field{pages}{1\bibrangedash 22}
+      \range{pages}{22}
+      \verb{urlraw}
+      \verb http://www.jstatsoft.org/article/view/v027i03
+      \endverb
+      \verb{url}
+      \verb http://www.jstatsoft.org/article/view/v027i03
+      \endverb
+    \endentry
+    \entry{hyndman2002state}{article}{}
+      \name{author}{4}{ul=2}{%
+        {{un=2,uniquepart=given,hash=2f709db8a046ae1d056e75c1f3aad31c}{%
+           family={Hyndman},
+           familyi={H\bibinitperiod},
+           given={Rob\bibnamedelima J},
+           giveni={R\bibinitperiod\bibinitdelim J\bibinitperiod},
+           givenun=2}}%
+        {{un=0,uniquepart=base,hash=e1d517a3ae1d7b892371ef8f37f88412}{%
+           family={Koehler},
+           familyi={K\bibinitperiod},
+           given={Anne\bibnamedelima B},
+           giveni={A\bibinitperiod\bibinitdelim B\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=e2c7b0aa60e13c2d08ed61c493f59b0d}{%
+           family={Snyder},
+           familyi={S\bibinitperiod},
+           given={Ralph\bibnamedelima D},
+           giveni={R\bibinitperiod\bibinitdelim D\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=18bde17b6766e6ea2c78bbee17d9ce1e}{%
+           family={Grose},
+           familyi={G\bibinitperiod},
+           given={Simone},
+           giveni={S\bibinitperiod},
+           givenun=0}}%
+      }
+      \list{publisher}{1}{%
+        {Elsevier}%
+      }
+      \strng{namehash}{16edf30a0cc0f71de6c28bdeea77ba24}
+      \strng{fullhash}{b9c8713a69aa527824cec936822fbb4a}
+      \strng{bibnamehash}{16edf30a0cc0f71de6c28bdeea77ba24}
+      \strng{authorbibnamehash}{16edf30a0cc0f71de6c28bdeea77ba24}
+      \strng{authornamehash}{16edf30a0cc0f71de6c28bdeea77ba24}
+      \strng{authorfullhash}{b9c8713a69aa527824cec936822fbb4a}
+      \field{sortinit}{H}
+      \field{sortinithash}{6db6145dae8dc9e1271a8d556090b50a}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{year}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{International Journal of forecasting}
+      \field{number}{3}
+      \field{title}{A state space framework for automatic forecasting using exponential smoothing methods}
+      \field{volume}{18}
+      \field{year}{2002}
+      \field{pages}{439\bibrangedash 454}
+      \range{pages}{16}
+    \endentry
+    \entry{kalman1960contributions}{article}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=db7237683df4b2a7d7d3fe64f451086b}{%
+           family={Kalman},
+           familyi={K\bibinitperiod},
+           given={Rudolf\bibnamedelima Emil},
+           giveni={R\bibinitperiod\bibinitdelim E\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{db7237683df4b2a7d7d3fe64f451086b}
+      \strng{fullhash}{db7237683df4b2a7d7d3fe64f451086b}
+      \strng{bibnamehash}{db7237683df4b2a7d7d3fe64f451086b}
+      \strng{authorbibnamehash}{db7237683df4b2a7d7d3fe64f451086b}
+      \strng{authornamehash}{db7237683df4b2a7d7d3fe64f451086b}
+      \strng{authorfullhash}{db7237683df4b2a7d7d3fe64f451086b}
+      \field{sortinit}{K}
+      \field{sortinithash}{d3edc18d54b9438a72c24c925bfb38f4}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{year}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Bol. soc. mat. mexicana}
+      \field{number}{2}
+      \field{title}{Contributions to the theory of optimal control}
+      \field{volume}{5}
+      \field{year}{1960}
+      \field{pages}{102\bibrangedash 119}
+      \range{pages}{18}
+    \endentry
+    \entry{kaplan2017understanding}{article}{}
+      \name{author}{2}{}{%
+        {{un=0,uniquepart=base,hash=f025571451540285659413736c0535d1}{%
+           family={Kaplan},
+           familyi={K\bibinitperiod},
+           given={Greg},
+           giveni={G\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=14a1745eb349e5970f8892df2848f0fe}{%
+           family={Schulhofer-Wohl},
+           familyi={S\bibinithyphendelim W\bibinitperiod},
+           given={Sam},
+           giveni={S\bibinitperiod},
+           givenun=0}}%
+      }
+      \list{publisher}{1}{%
+        {Wiley Online Library}%
+      }
+      \strng{namehash}{6a26fa7babe59d0e6901aa8aac47d455}
+      \strng{fullhash}{6a26fa7babe59d0e6901aa8aac47d455}
+      \strng{bibnamehash}{6a26fa7babe59d0e6901aa8aac47d455}
+      \strng{authorbibnamehash}{6a26fa7babe59d0e6901aa8aac47d455}
+      \strng{authornamehash}{6a26fa7babe59d0e6901aa8aac47d455}
+      \strng{authorfullhash}{6a26fa7babe59d0e6901aa8aac47d455}
+      \field{sortinit}{K}
+      \field{sortinithash}{d3edc18d54b9438a72c24c925bfb38f4}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{year}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{International Economic Review}
+      \field{number}{1}
+      \field{title}{Understanding the long-run decline in interstate migration}
+      \field{volume}{58}
+      \field{year}{2017}
+      \field{pages}{57\bibrangedash 94}
+      \range{pages}{38}
+    \endentry
+    \entry{monahan1984note}{article}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=d03651a04d3690c2889797440ad9337c}{%
+           family={Monahan},
+           familyi={M\bibinitperiod},
+           given={John\bibnamedelima F},
+           giveni={J\bibinitperiod\bibinitdelim F\bibinitperiod},
+           givenun=0}}%
+      }
+      \list{publisher}{1}{%
+        {Oxford University Press}%
+      }
+      \strng{namehash}{d03651a04d3690c2889797440ad9337c}
+      \strng{fullhash}{d03651a04d3690c2889797440ad9337c}
+      \strng{bibnamehash}{d03651a04d3690c2889797440ad9337c}
+      \strng{authorbibnamehash}{d03651a04d3690c2889797440ad9337c}
+      \strng{authornamehash}{d03651a04d3690c2889797440ad9337c}
+      \strng{authorfullhash}{d03651a04d3690c2889797440ad9337c}
+      \field{sortinit}{M}
+      \field{sortinithash}{2e5c2f51f7fa2d957f3206819bf86dc3}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{year}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Biometrika}
+      \field{number}{2}
+      \field{title}{A note on enforcing stationarity in autoregressive-moving average models}
+      \field{volume}{71}
+      \field{year}{1984}
+      \field{pages}{403\bibrangedash 404}
+      \range{pages}{2}
+    \endentry
+    \entry{mulder2018putting}{article}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=c5aeb660c84a0554316c3d71f47d2e10}{%
+           family={Mulder},
+           familyi={M\bibinitperiod},
+           given={Clara\bibnamedelima H},
+           giveni={C\bibinitperiod\bibinitdelim H\bibinitperiod},
+           givenun=0}}%
+      }
+      \list{publisher}{1}{%
+        {JSTOR}%
+      }
+      \strng{namehash}{c5aeb660c84a0554316c3d71f47d2e10}
+      \strng{fullhash}{c5aeb660c84a0554316c3d71f47d2e10}
+      \strng{bibnamehash}{c5aeb660c84a0554316c3d71f47d2e10}
+      \strng{authorbibnamehash}{c5aeb660c84a0554316c3d71f47d2e10}
+      \strng{authornamehash}{c5aeb660c84a0554316c3d71f47d2e10}
+      \strng{authorfullhash}{c5aeb660c84a0554316c3d71f47d2e10}
+      \field{sortinit}{M}
+      \field{sortinithash}{2e5c2f51f7fa2d957f3206819bf86dc3}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{year}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Demographic Research}
+      \field{title}{Putting family centre stage: Ties to nonresident family, internal migration, and immobility}
+      \field{volume}{39}
+      \field{year}{2018}
+      \field{pages}{1151\bibrangedash 1180}
+      \range{pages}{30}
+    \endentry
+    \entry{petris2009dynamic}{book}{}
+      \name{author}{3}{}{%
+        {{un=0,uniquepart=base,hash=6f10e131c6c7771fafafd1377b41c690}{%
+           family={Petris},
+           familyi={P\bibinitperiod},
+           given={Giovanni},
+           giveni={G\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=0f905ad2bb6f070a26adcf2046427d62}{%
+           family={Petrone},
+           familyi={P\bibinitperiod},
+           given={Sonia},
+           giveni={S\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=d4cf723fb2813804e6c2e570ee3caf50}{%
+           family={Campagnoli},
+           familyi={C\bibinitperiod},
+           given={Patrizia},
+           giveni={P\bibinitperiod},
+           givenun=0}}%
+      }
+      \list{publisher}{1}{%
+        {Springer}%
+      }
+      \strng{namehash}{1b771aad632781febba001b17bc7e953}
+      \strng{fullhash}{1b771aad632781febba001b17bc7e953}
+      \strng{bibnamehash}{1b771aad632781febba001b17bc7e953}
+      \strng{authorbibnamehash}{1b771aad632781febba001b17bc7e953}
+      \strng{authornamehash}{1b771aad632781febba001b17bc7e953}
+      \strng{authorfullhash}{1b771aad632781febba001b17bc7e953}
+      \field{sortinit}{P}
+      \field{sortinithash}{bb5b15f2db90f7aef79bb9e83defefcb}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{year}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Dynamic linear models with R}
+      \field{year}{2009}
+    \endentry
+    \entry{tashman2000out}{article}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=cb0086a4775cfa14457cfaa2ed93ac4b}{%
+           family={Tashman},
+           familyi={T\bibinitperiod},
+           given={Leonard\bibnamedelima J.},
+           giveni={L\bibinitperiod\bibinitdelim J\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{cb0086a4775cfa14457cfaa2ed93ac4b}
+      \strng{fullhash}{cb0086a4775cfa14457cfaa2ed93ac4b}
+      \strng{bibnamehash}{cb0086a4775cfa14457cfaa2ed93ac4b}
+      \strng{authorbibnamehash}{cb0086a4775cfa14457cfaa2ed93ac4b}
+      \strng{authornamehash}{cb0086a4775cfa14457cfaa2ed93ac4b}
+      \strng{authorfullhash}{cb0086a4775cfa14457cfaa2ed93ac4b}
+      \field{sortinit}{T}
+      \field{sortinithash}{51f9faf24c60c62ca764a77f78cf5666}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{year}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{issn}{0169-2070}
+      \field{journaltitle}{International Journal of Forecasting}
+      \field{note}{The M3- Competition}
+      \field{number}{4}
+      \field{title}{Out-of-sample tests of forecasting accuracy: an analysis and review}
+      \field{volume}{16}
+      \field{year}{2000}
+      \field{pages}{437\bibrangedash 450}
+      \range{pages}{14}
+      \verb{doi}
+      \verb https://doi.org/10.1016/S0169-2070(00)00065-0
+      \endverb
+      \verb{urlraw}
+      \verb http://www.sciencedirect.com/science/article/pii/S0169207000000650
+      \endverb
+      \verb{url}
+      \verb http://www.sciencedirect.com/science/article/pii/S0169207000000650
+      \endverb
+      \keyw{Out-of-sample,Fit period,Test period,Fixed origin,Rolling origin,Updating,Recalibration,Rolling window,Sliding simulation,Forecasting competitions}
+    \endentry
+    \entry{teriele2019}{article}{}
+      \name{author}{6}{}{%
+        {{un=0,uniquepart=base,hash=225b4dfe5aa53e3df8174198ac0f761d}{%
+           family={{te Riele}},
+           familyi={t\bibinitperiod},
+           given={Saskia},
+           giveni={S\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=be512037840a8882e4446c750dbe87fb}{%
+           family={Huisman},
+           familyi={H\bibinitperiod},
+           given={Corina},
+           giveni={C\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=da07dd3989c613f5ef49b25c48bf8c34}{%
+           family={Stoeldraijer},
+           familyi={S\bibinitperiod},
+           given={Lenny},
+           giveni={L\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=a77bfd7802197805ed499d9323634033}{%
+           family={Jong},
+           familyi={J\bibinitperiod},
+           given={Andries},
+           giveni={A\bibinitperiod},
+           givenun=0,
+           prefix={de},
+           prefixi={d\bibinitperiod},
+           prefixun=0}}%
+        {{un=0,uniquepart=base,hash=d2f295994196e1adb9b5fecec51e4a2b}{%
+           family={Duin},
+           familyi={D\bibinitperiod},
+           given={Coen},
+           giveni={C\bibinitperiod},
+           givenun=0,
+           prefix={van},
+           prefixi={v\bibinitperiod},
+           prefixun=0}}%
+        {{un=0,uniquepart=base,hash=a60efee285ee5f19426c4ca52867fdf6}{%
+           family={Husby},
+           familyi={H\bibinitperiod},
+           given={Trond},
+           giveni={T\bibinitperiod},
+           givenun=0}}%
+      }
+      \list{publisher}{1}{%
+        {CBS}%
+      }
+      \strng{namehash}{fb2c8d5851c499573732d1fac137fa9f}
+      \strng{fullhash}{49b2f5da3ce076193149491d6002983c}
+      \strng{bibnamehash}{fb2c8d5851c499573732d1fac137fa9f}
+      \strng{authorbibnamehash}{fb2c8d5851c499573732d1fac137fa9f}
+      \strng{authornamehash}{fb2c8d5851c499573732d1fac137fa9f}
+      \strng{authorfullhash}{49b2f5da3ce076193149491d6002983c}
+      \field{sortinit}{t}
+      \field{sortinithash}{51f9faf24c60c62ca764a77f78cf5666}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{year}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Statistische Trends}
+      \field{title}{PBL/CBS Regionale bevolkings- enhuishoudensprognose 2019–2050: Belangrijkste uitkomsten}
+      \field{year}{2019}
+    \endentry
+    \entry{winters1960forecasting}{article}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=dc347711a162c542123df450c84d3178}{%
+           family={Winters},
+           familyi={W\bibinitperiod},
+           given={Peter\bibnamedelima R},
+           giveni={P\bibinitperiod\bibinitdelim R\bibinitperiod},
+           givenun=0}}%
+      }
+      \list{publisher}{1}{%
+        {INFORMS}%
+      }
+      \strng{namehash}{dc347711a162c542123df450c84d3178}
+      \strng{fullhash}{dc347711a162c542123df450c84d3178}
+      \strng{bibnamehash}{dc347711a162c542123df450c84d3178}
+      \strng{authorbibnamehash}{dc347711a162c542123df450c84d3178}
+      \strng{authornamehash}{dc347711a162c542123df450c84d3178}
+      \strng{authorfullhash}{dc347711a162c542123df450c84d3178}
+      \field{sortinit}{W}
+      \field{sortinithash}{1af34bd8c148ffb32de1494636b49713}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{year}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Management science}
+      \field{number}{3}
+      \field{title}{Forecasting sales by exponentially weighted moving averages}
+      \field{volume}{6}
+      \field{year}{1960}
+      \field{pages}{324\bibrangedash 342}
+      \range{pages}{19}
+    \endentry
+    \entry{zietz2014us}{article}{}
+      \name{author}{2}{}{%
+        {{un=0,uniquepart=base,hash=5aeafe0ee6f6b1d5dae01a1fed6ac6b9}{%
+           family={Zietz},
+           familyi={Z\bibinitperiod},
+           given={Joachim},
+           giveni={J\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=b0028208b72319481f8fa1e37f7d14a8}{%
+           family={Traian},
+           familyi={T\bibinitperiod},
+           given={Anca},
+           giveni={A\bibinitperiod},
+           givenun=0}}%
+      }
+      \list{publisher}{1}{%
+        {Elsevier}%
+      }
+      \strng{namehash}{3d27422084dad285afd2445f39a9ab3b}
+      \strng{fullhash}{3d27422084dad285afd2445f39a9ab3b}
+      \strng{bibnamehash}{3d27422084dad285afd2445f39a9ab3b}
+      \strng{authorbibnamehash}{3d27422084dad285afd2445f39a9ab3b}
+      \strng{authornamehash}{3d27422084dad285afd2445f39a9ab3b}
+      \strng{authorfullhash}{3d27422084dad285afd2445f39a9ab3b}
+      \field{sortinit}{Z}
+      \field{sortinithash}{8f7b480688e809b50b6f6577b16f3db5}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{year}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{The Quarterly Review of Economics and Finance}
+      \field{number}{2}
+      \field{title}{When was the US housing downturn predictable? A comparison of univariate forecasting methods}
+      \field{volume}{54}
+      \field{year}{2014}
+      \field{pages}{271\bibrangedash 281}
+      \range{pages}{11}
+    \endentry
+  \enddatalist
+  \missing{young1991recursive}
+\endrefsection
+\endinput
+

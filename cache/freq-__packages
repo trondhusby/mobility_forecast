@@ -17,3 +17,8 @@ kableExtra
 RColorBrewer
 xlsx
 wesanderson
+lubridate
+PerformanceAnalytics
+TTR
+quantmod
+tidyquant

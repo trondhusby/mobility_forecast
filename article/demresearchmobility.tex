@@ -1,0 +1,914 @@
+\documentclass[12pt, a4paper]{article}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc} % set input encoding
+\usepackage[english]{babel}
+\usepackage{textcomp}
+\usepackage[
+    backend=biber,
+    style=authoryear-icomp,
+    sortlocale=de_DE,
+    natbib=true,
+    url=false, 
+    doi=true,
+    eprint=false
+]{biblatex}
+\addbibresource{mobility.bib}
+
+%% Optional packages
+\usepackage{enumerate}	
+\usepackage{varwidth}
+\usepackage{lipsum}
+\usepackage{caption}
+\usepackage[section]{placeins}
+
+% Math support
+\usepackage{mathtools}
+\usepackage{xspace}
+
+%% Load article specific packages
+\usepackage{import}
+
+% For nice graphs and tables
+\usepackage{epstopdf}
+\usepackage{transparent}
+\usepackage{tikz}
+\usepackage{booktabs}
+\usepackage{color}
+\usepackage{caption}
+
+%% bold figure captions
+\captionsetup[figure]{labelfont=bf, textfont = bf, position = top}
+\captionsetup[table]{labelfont=bf, textfont = bf, position = top}
+
+\usepackage{longtable,booktabs}
+\usepackage{graphicx,grffile}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+\IfFileExists{parskip.sty}{%
+\usepackage{parskip}
+}{% else
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{6pt plus 2pt minus 1pt}
+}
+\setlength{\emergencystretch}{3em}  % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{5}
+
+%%% Change title format to be more compact
+\usepackage{titling}
+
+%% add floatbarrier to subsections and subsubsections
+\makeatletter
+\AtBeginDocument{%
+  \expandafter\renewcommand\expandafter\subsection\expandafter{%
+    \expandafter\@fb@secFB\subsection
+  }%
+}
+\makeatother
+
+\makeatletter
+\AtBeginDocument{%
+  \expandafter\renewcommand\expandafter\subsubsection\expandafter{%
+    \expandafter\@fb@secFB\subsubsection
+  }%
+}
+
+% Create subtitle command for use in maketitle
+%% \newcommand{\subtitle}[1]{
+%%   \posttitle{
+%%     \begin{center}\large#1\end{center}
+%%     }
+%% }
+
+
+\begin{document}
+
+\title{Forecasting internal migration in the short- to medium run}
+
+\author{Trond Husby}
+\maketitle
+
+
+\begin{abstract}
+Here the abstract...
+%% Remove the final part of the abstract below. Text should not include version info. 
+\bigskip
+\textbf{This version}: {\today}
+\end{abstract}
+
+\section{Introduction}\label{introduction}
+
+Long-term projections of internal migration are key inputs to
+regional-level demographic population projections. The long-term
+projections rely on the identification of a long-term trend in data,
+thus filtering out short-run fluctuations due to the business cycle.
+However, such detrending analyses are complicated if there is no clear
+trend in the data, if business cycles themselves stretch into the
+medium- to long run or if the end of the time series represents the top or the bottom
+of the cycle \citep{canova1998detrending, hamilton2018}. Therefore it is
+informative to analyse the short- to medium term dynamics of demographic
+components, forecasting along the business cycle. This paper develops a
+state space model for short-to medium term univariate forecast of
+monthly frequency of mobility in the Netherlands.
+
+As is the case in most developed countries, the main driver of
+regional-level population change in the Netherlands is migration
+(external and domestic). Due to the close relation between migration
+decisions and labour- and housing market conditions, the volume of
+internal migration often moves along with the business cycle. However,
+recent research argues that the relationship between economic drivers
+and migration has changed \citep{kaplan2017understanding}. And other
+drivers than macroeconomic factors may, at least in the long run, be just as important in
+explaining migration. For example, family considerations are important
+determinants of migration decisions on an individual level, meaning
+migration flows are likely affected by changes to family composition
+and aging \citep[see e.g.][]{mulder2018putting}. As such, there are many
+possible candidate determinants of internal migration and their
+influence on migration flows may change over time.
+
+Even if one succeeds in finding these determinants, it is far from certain that 
+the accuracy of the projections is improved \citep{smith1997further}. Many
+official population projections are carried out with cohort-component
+models, where the growth paths of the components are given as inputs to
+the model. A forecast of migration using explanatory variables requires
+knowledge of both the future trajectory of the explanatory variables and
+the future development of their relationship with migration.
+Consequently, in practice the growth path used as inputs in
+cohort-component models is most commonly based on extrapolation of
+long-term historic trends \citep{smith2013practitioner}.[check this!!]
+
+When working with the latest Dutch Regional Population Projections,
+published in September 2019 \citep{teriele2019}, we were questioning
+whether the last data point in the time series of yearly frequency of
+mobility - registered at the end of 2016 - represented the top of a
+cycle. We knew, for example, that a recent change to the Dutch student
+finance system seems to have caused a decrease in mobility for an
+otherwise very mobile
+group.\footnote{https://www.cbs.nl/nl-nl/nieuws/2018/04/studenten-gaan-minder-op-kamers}
+As is common in the literature, key inputs for the cohort-component
+model used for the projections are extrapolations of the long-term trend
+of the components. Obviously, if the last data point used to determine
+the long-term trend represents the top of a cycle, our extrapolation
+could overestimate the true trend. In order to determine whether the
+last point of our yearly series of the migration frequency represented
+the top of a cycle, it was informative to carry out a medium-term
+forecast based on data which was both more recent and of higher
+frequency than the yearly series.
+
+Forecasting of time series often involves decomposing the series into
+the more basic elements such as trend, cycle and seasonality. Univariate
+forecasting models make use of basic time series patterns to form a
+forecast \citep{zietz2014us}. One popular type of model used for this
+purpose are Dynamic Linear Models (DLM), which is a type of State Space
+models \citep{petris2009dynamic, durbin2012time}. As the name suggests,
+DLMs are linear models with a Gaussian error structure, where the
+relevant inferences are carried out using the Kalman filter. Unknown
+parameters of the model are be estimated by either maximum likelihood or
+Bayesian techniques. One advantage of this model type is its modularity;
+time series components can be added to or removed from the model
+whenever deemed necessary. Another advantage is that state space models
+are stochastic, meaning one can derive forecast distributions, either
+analytically or by simulation.
+
+The time-series in this paper is the national-level frequency of
+mobility, defined as the sum of intra- and inter-municipal moves per
+1000 inhabitants. This represents a measure of the intensity of internal
+migration in the Netherlands, and gives us a rough picture of migration
+also on a regional level. We compare the forecasting performance on our
+model with that of four other popular models for univariate time-series
+forecasting. These models are all fit using automatic routines available
+in \emph{R}. As such, as a byproduct of the evaluation exercise, we
+evaluate the merits of our manual model selection compared to the
+automatic model selection in easy-to-use software packages.
+
+In the paper I firstly show the time series data and discuss its
+patterns. Next I present the model, discuss its elements and the
+estimated parameters. Thereafter I evaluate the out-of-sample
+forecasting performance of the DLM, comparing it to that of four other
+models. Finally I discuss what the models tell us about the development
+of the frequency of mobility from 2017 onwards.
+
+\section{Data}\label{data}
+
+The frequency of mobility $y_{t}$ in month $t$ is in this paper
+defined as the sum of inter- en intramunicipality moves between the
+first and the last day of month $t$, divided by the population on the
+last day of $t$. Open data available from the Statistics Netherlands
+allow us to calculate monthly time series of the from January 1995 to
+December 2019, meaning we have in total 299 observations at our
+disposal. Figure \ref{fig:freq-plot} shows the time series from January
+1995 to December 2019 as well as the seasonal differences
+$y^{'}_{t} = y_{t} - y_{t-12}$ . The dotted line in the figure shows
+two-year moving averages of both the frequency of mobility and the
+seasonal differences.
+
+\begin{figure}
+\caption{\label{fig:freq-plot}Frequency of mobility (upper panel) and
+seasonal differences (lower panel) and two-year moving averages (dotted
+line)}
+\centering
+\includegraphics{../figs/freq--freq-plot-1.pdf}
+\end{figure}
+
+The upper panel shows that there are between 11 and 7 moves per 1000
+inhabitants per month. The plot suggests that the frequency of mobility
+is cyclical with uneven period length. We see clearly from the plot that
+the time series is non-stationary and a Dickey Fuller test confirms
+this. The financial crisis, which hit the Dutch housing market hard, can
+be seen in the dip from 2008 onwards, with the recovery from the crisis
+set in during the year of 2014. The dotted line, which in this panel can
+be interpreted as the trend-cycle, illustrates clearly the connection
+between mobility and the macroeconomy: the dip from 2008 onwards and the
+recovery from 2014 follows the financial crisis which hit both labour
+and housing markets in the same periods.
+
+From the bottom panel, which shows the seasonal differences, we see that
+the year on year changes are negative from January 2009 with a recovery
+in 2012 and a new dip in 2013 before a real recovery from 2014.
+Interestingly the lower-panel figure reveals that the year on year
+changes become negative from medio 2017. This is also reported by
+Statistics
+Netherlands:\footnote{\url{https://www.cbs.nl/nl-nl/nieuws/2018/26/minder-mensen-verhuisd-in-eerste-kwartaal-2018}}
+in 2018 there were 5 \% fewer moves than in 2017, with the decline
+concentrated primarily among people younger than 50 years old. This
+reflects thus an end of an increasing trend from 2014 onwards. As such,
+our suspicions of a peak in mobility frequency around the end of
+2016 seem to be justified.
+
+Summing up, the decomposition of the time series suggests that there is
+no linear trend, rather a cycle with peaks roughly every 10 years. There
+are furthermore strong seasonal effects with variations between the
+years, meaning the seasonality contains noise. Furthermore, the
+seasonality and the trend-cycle lead to autocorrelation. The next
+section shows how these elements are adressed in the state space model.
+
+\section{Model description}\label{model-description}
+
+The ``state'' is state space models is an unobserved dynamic process
+$\theta_{t}$ for which only a noisy measurement $y_{t}$ can be
+observered. If $v_{t}$ is regarded as a measurement error, then the true underlying process of $y_{t}$ is given by $\theta_{t}$. State space models are modular in the sense that the state vector $\theta_{t}$ includes the components deemed
+necessary to characterise the time series. As mentioned in the
+Introduction, DLMs are a special case of state space models with
+Gaussian and independent errors. Forecasting and inference is carried
+out with the recursive Kalman filter algorithm
+\citep{kalman1960contributions}. There are many ways of describing DLMs; the model
+is implemented in \emph{R} using the \emph{dlm} package, therefore the
+description in this section follows the notation used in
+\citet{petris2009dynamic}.
+
+Let $y_{t}$ denote the logarithm of the frequency of mobility in month
+$t$, where $y_{t}$ are the observed values of underlying
+(unobserved) vector of states $\theta_{t}$. $y_{t}$ are
+conditionally independent given the state $\theta_{t}$. The state
+is a latent Markov process, meaning that the probability of
+moving to the next state depends only on the previous state. We can
+write this DLM as:
+
+\begin{align}
+& y_{t} = F \theta_{t} + v_{t} & v_{t} \sim N(0, V_{t}) \\
+& \theta_{t} = G \theta_{t-1} + w_{t} &w_{t} \sim N(0, W_{t}) \\
+& \theta_{0} \sim N(m_{0}, C_{0})
+\end{align}
+
+
+The first equation is called the \emph{observation equation} and the
+second the \emph{state equation}. $v_{t}$ and $w_{t}$ are
+uncorrelated Gaussian errors, where the observation variances are
+gathered in the $m \times m$ matrix $V_{t}$ and system variances in
+the $p \times p$ matrix $W_{t}$. $F$ and $G$ are known system
+matrices of dimension $p \times m$ and $p \times p$ respectively.
+The initial $\theta_{0}$ are normally distributed with means $m_{0}$
+and variances $C_{0}$.
+
+Elements of the state vector $\theta_{t}$ should be
+chosen such that they reflect the characteristics of the time series in
+question. The first thing we noted in the previous section was that the
+time series was clearly non-stationary. Periods of growth were followed by periods of decline, meaning there were piecewise or local linear trends. One model that can capture such patterns is the linear growth or local linear trend model, where the
+$y_{t}$ are noisy observations of a level $\mu_{t}$ which varies
+over time with slope $\beta_{t}$. The dynamics of the slope itself is
+modelled as a random walk. We can write the local linear trend model as
+follows:
+
+
+\begin{align}
+& y_{t} = \mu_{t} + v_{t} & v_{t} \sim N(0, \sigma_{v}^{2}) \\
+& \mu_{t} = \mu_{t-1} + \beta_{t-1} + w_{t,1} &w_{t,1} \sim N(0, \sigma_{\mu}^{2}) \\
+& \beta_{t} = \beta_{t-1} + w_{t,2} &w_{t,2} \sim N(0, \sigma_{\beta}^{2})
+\end{align}
+
+
+Follow the notation in \citet{petris2009dynamic}, we can write the local
+linear trend model as:
+
+\begin{equation*}
+\theta_{t} = \begin{bmatrix} \mu_t \\ \beta_{t} \end{bmatrix} \quad 
+G_{t} = \begin{bmatrix} 1 & 1 \\ 0 & 1 \end{bmatrix} \quad 
+F_{t} = \begin{bmatrix} 1 & 0 \end{bmatrix} \quad
+W = \begin{bmatrix} \sigma_{\mu}^{2} & 0 \\ 0 & \sigma_{\beta}^{2} \end{bmatrix} \quad
+V = \begin{bmatrix} \sigma_{v}^{2} \end{bmatrix}
+\begin{equation*}
+
+Seasonality is dealt with by including a trigonometric seasonal
+components to the model with a fixed periodicity of 12 months. One big
+advantage with the trigonometric specification, relative to simpler
+seasonal dummies, is that we allow autocorrelation to last through more
+lags, resulting in a smoother seasonal pattern. This way we filter out
+some of the noise seen in the figures in the previous section. By
+including non-zero variances the seasonal pattern is allowed to change
+trough time. Seasonality is incorporated in the DLM model by extending
+the state equation with a trigonometric function that describes a harmonic motion. For the $j$th harmonic we can write the evolution of the seasonal effects as:
+
+
+\begin{align}
+&S_{j, t+1} = S_{j, t} \cos \omega_{j} + S_{j, t}^{*} \sin \omega_{j} \\ 
+&S_{j, t+1}^{*} = - S_{j, t} \sin \omega_{j} + S_{j, t}^{*} \cos \omega_{j}
+\end{align}
+
+with $\omega_{j} = \frac{2 \pi t j}{s}$. We include two harmonics,
+meaning that the trigonometric specification can be written on
+matrix-form as:
+
+\begin{align*}
+   & \theta_{t} = \begin{bmatrix}
+    S_{1, t} \\ S_{1, t}^{*} \\ S_{2, t} \\ S_{2, t}^{*}
+  \end{bmatrix}
+   & G = \begin{bmatrix}
+    \cos \omega_{1} & \sin \omega_{1} & 0 & 0 \\ 
+    -\sin \omega_{1} & \cos \omega_{1} & 0 & 0 \\
+    0 & 0 & \cos \omega_{2} & \sin \omega_{2} \\
+    0 & 0 & -\sin \omega_{2} & \cos \omega_{2}
+  \end{bmatrix}
+   \\
+    & F = \begin{bmatrix} 1 & 0 & 1 & 0 \end{bmatrix}   
+   & W = \begin{bmatrix}
+     \sigma_{S_{1}}^{2} & 0 & 0 & 0 \\
+     0 & \sigma_{S_{1}^{*}}^{2} & 0 & 0 \\
+     0 & 0 & \sigma_{S_{2}}^{2} & 0  \\
+     0 & 0 & 0 & \sigma_{S_{2}^{*}}^{2}
+   \end{bmatrix}
+\end{align*}
+
+The two components discussed so far (trend and seasonal) remove much of
+the autocorrelation, however a Ljung-Box test confirmed that the
+residuals of such a model were still not white noise. One
+way of dealing with residual autocorrelation is to include
+autoregressive elements into the state space model. The specification chosen here is
+an AR(4) with two higher order lags - namely lags 7 and 12. This model can be written on matrix notation using the following trick:
+
+\begin{equation*}
+\begin{bmatrix}
+\mu_{1,t} \\ \mu_{2,t} \\ \mu_{7,t} \\ \mu_{12,t} 
+\end{bmatrix} =  \begin{bmatrix} 
+\phi_{1} & 1 & 0 & 0 \\ 
+\phi_{2} & 0 & 1 & 0 \\
+\phi_{7} & 0 & 0 & 1 \\
+\phi_{12} & 0 & 0 & 0 
+\end{bmatrix} \begin{bmatrix} 
+\mu_{1,t-1} \\ \mu_{2,t-1} \\ \mu_{7,t-1} \\ \mu_{12,t-1} 
+\end{bmatrix} \begin{bmatrix}
+u_{t} \\ 0 \\ 0 \\ 0 
+\end{bmatrix}
+\end{equation*}
+
+which gives
+
+\begin{align}
+\mu_{1,t} = \phi_{1} \mu_{1,t-1} + \phi_{2} \mu_{1,t-2} + \phi_{7} \mu_{1,t-7} + \phi_{12} \mu_{1,t-12} + u_{t} \quad u \sim N(0, \sigma^{2}_{u})
+\end{align}
+
+Notice that the standard routine for creating autoregressive elements in
+the \emph{dlm} package does not allow for `gaps' in the included lags. In
+order to estimate the model, we use the system matrices of
+an AR(12) where the parameter of lags not included in the model are set
+to zero:
+
+\begin{equation*}
+G = \begin{bmatrix} 
+\phi_{1}  & 1      & 0      & 0      & \cdots & 0      & \cdots & 0      \\
+\phi_{2}  & 0      & 1      & 0      & \cdots & 0      & \cdots & 0      \\
+0         & 0      & 0      & 1      & \cdots & 0      & \cdots & 0      \\
+\vdots    & \vdots & \vdots & \vdots & \ddots & \vdots & \ddots & \vdots \\
+\phi_{7}  & 0      & 0      & 0      & \cdots & 1      & \cdots & 0      \\
+\vdots    & \vdots & \vdots & \vdots & \ddots & \vdots & \ddots & \vdots \\
+0         & 0      & 0      & 0      & \cdots & 0      & \cdots & 1      \\
+\phi_{12} & 0      & 0      & 0      & \cdots & 0      & \cdots & 0
+\end{bmatrix} \quad F = \begin{bmatrix} 1 & 0 \cdots \end{bmatrix} \quad W = diag(\sigma_{u}^{2}, 0, ...)
+\end{equation*}
+
+The resulting composite model (trend, seasonal and autoregressive) has a
+state vector $\theta_t$ of length 7:
+$\theta_t = (\mu_t, \beta_t, S_{1, t}, S_{1, t}^{*}, S_{2, t}, S_{2,t}^{*}, \mu_{1,t})'$.
+
+\section{Results}\label{results}
+
+In order to apply the Kalman filter we first need to determine the
+unknown model parameters. As we saw in the previous section, the matrix $W$ contains 9 potentially non-zero parameters: $\sigma_{v}^{2}$, $\sigma_{\mu}^{2}$, $\sigma_{S_{2}}^{2}$,
+$\sigma^{2}_{u}$, $\phi_{1}$, $\phi_{2}$, $\phi_{7}$, and
+$\phi_{12}$. We chose to estimate all of them using maximum
+likelihood \citep[see][ch.~4]{petris2009dynamic}. Note that the parameters for the autoregressive
+component are estimated subject to stationarity restrictions \citep{monahan1984note}.
+
+With the estimated parameters we can use the Kalman filter for inference. One important inferential tasks is to estimate the underlying process $\theta_{t}$ with data up to $t$. This is referred to as filtering. Another closely related task is smoothing, which entails estimating $\theta_{t}$ with all data. This section presents estimated parameters and resulting from filtering and smoothing distributions.
+
+\subsection{Estimated parameters}\label{estimated-parameters}
+
+As we discussed in the previous section, the trend component contains two
+error terms with their own variances - one for the level and one for the
+slope. Initial runs with the model revealed that two
+special cases fit the data better than the general formulation with both variances larger than zero. The
+first special case is obtained by setting $\sigma^{2}_{\mu} = 0$,
+sometimes referred to as the integrated random walk or the smooth trend
+model \citep{young1991recursive}. In this specification, all noise is shifted from the level component to the slope,
+meaning that the trend-cycle component of the state vector becomes rather smooth (hence the
+name). In the rest of the paper we will refer to this model as DLM1. A
+second special case is a model in which $\sigma^{2}_{\beta} = 0$,
+where all stochasticity is removed from the dynamics of the slope. In
+this formulation the estimated $\beta_{t}$ reflect the long run growth
+of the time series rather than the local growth. Looking at Figure
+\ref{fig:freq-plot}, the average (monthly) change in $\beta_{t}$ is very close to zero. Due to the inclusion of the autoregressive elements, the forecasted
+values can diverge from the long-term growth in the short-run. More
+specifically, a one-step-ahead forecast $\hat{y}_{t + 1}$ reflects up
+to 12 lagged values of the time series $y_{t}$. We will refer to this model as DLM2.
+
+The estimated parameters are shown in Table
+\ref{tab:estimated-parameters}. We see that the observation variance
+$\sigma_{v}^{2}$ is very close to zero, indicating a high level of
+precision of the observations. The estimated parameters of the
+autoregressive parts are very similar between the two models, except for
+the parameter of the second lag which takes positive values for DLM1 and
+negative values for DLM2.
+
+\begin{table}[t]
+
+\caption{\label{tab:estimated-parameters}Estimated variances and AR parameters}
+\centering
+\begin{tabular}{lll}
+\toprule
+Parameter & DLM1 & DLM2\\
+\midrule
+$\sigma_{v}^{2}$ & 1.523e-08 & 1.523e-08\\
+$\sigma_{\mu}^{2}$ & 0 & 0.0001465\\
+$\sigma_{\beta}^{2}$ & 2.531e-06 & 0\\
+$\sigma_{S_{2}}^{2}$ & 7.704e-06 & 7.712e-06\\
+$\sigma^{2}_{u}$ & 0.001286 & 0.001022\\
+\addlinespace
+$\phi_{1}$ & -0.6459 & -0.6958\\
+$\phi_{2}$ & 0.0346 & -0.05614\\
+$\phi_{7}$ & -0.4456 & -0.492\\
+$\phi_{12}$ & 0.4517 & 0.4363\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Filtering and smoothing estimates of the frequency of
+mobility}\label{filtering-and-smoothing-estimates-of-the-frequency-of-mobility}
+
+We obtain the filtered distribution of $\theta_{t}$ conditional on the
+observed series up to \emph{t}, $\theta_{t} | y_{1}, y_{2},...,y_{t}$.
+Forecasts of the next observation $y_{t+1}$ based on observations up
+to $t$, are produced by first computing the state vector
+$\theta_{t+1}$ and then predicting $\hat{y}_{t+1}$. Similarly, an n-step
+ahead forecast $y_{t+n}$ is based on calculating the n-step ahead
+state vector $\theta_{t+n}$. We can write the forecast function as
+$f_{t} = E(Y_{t+n} | y_{1}, y_{2}, ....y_{t})$. In addition we
+estimate a smoothing distribution of the components, representing the
+past values of the states given all observed values
+$\theta_{t} | y_{1}, y_{2},...,y_{s}$ where $s \ge t$.
+
+The one-step ahead forecast from the Kalman filter, or filtered
+values, from both of the models are displayed in Figure
+\ref{fig:dlm-filtered} together with Mean Absolute Percentage Error (MAPE).
+Due to the recursive nature of the Kalman algorithm, the filtered values
+in the first periods veer quite far off from the observed values (not
+shown in the figure). We therefore discard the three first years when
+calculating the MAPE. The MAPE suggests that DLM2 fits the
+data somewhat better than DLM1, though the difference is not
+dramatic. A residual check showed that the normality assumption of
+dynamic linear models is justified for both of the models (see Appendix B for
+a residual plot of DLM2).
+
+\begin{figure}
+ \caption{\label{fig:dlm-filtered}One-step-ahead predictions (solid line),
+observed data (dotted line) and MAPE (calculated from January 1998)}
+\centering
+\includegraphics{../figs/freq--dlm-filtered-1.pdf}
+\end{figure}
+
+Figure \ref{fig:ci-comparison} shows the one-step ahead forecasts
+along with the 95 percent prediction intervals of DLM1 and DLM2 for the
+months between January 2010 and December 2018. The interval is
+calculated using the standard deviation of the filtered values
+\citep[ch.~3]{petris2009dynamic}. Although the mean forecasts of the two models are in general quite similar, we see that DLM1 systematically predicts a higher frequency of mobility than DLM2
+from 2014 to about 2017.
+
+\begin{figure}
+\caption{\label{fig:ci-comparison}Filtering estimate and 95 percent
+prediction intervals}
+  \centering
+\includegraphics{../figs/freq--ci-comparison-1.pdf}
+\end{figure}
+
+The smoothing estimates for the trend-cycle component and for the
+seasonal effects are shown in Figure \ref{fig:dlm-smoothed}. From the
+left panels we can pinpoint the recent peak in the trend-cycle to March
+2017. We see a visible difference between DLM1 and DLM2, where the
+former model produces a much smoother trend-cycle. The right panels show how the
+seasonal effects vary over time; at the start of the time series the
+within-year cycle exhibites one pronounced maximum (July) and one
+minimum (March). However, from around the middle of the series, there is
+gradually another local maximum within each year (Janauary). This means
+that the seasonal patterns in the model captures well the development of
+the seasonal factors from the raw data.
+
+\begin{figure}
+  \caption{\label{fig:dlm-smoothed}Smoothing estimates of the trend-cycle (left) and
+seasonality (right)}
+\centering
+\includegraphics{../figs/freq--dlm-smoothed-1.pdf}
+\end{figure}
+
+\section{Discussion}\label{discussion}
+
+\subsection{Cross validation: evaluation over a rolling
+origin}\label{cross-validation-evaluation-over-a-rolling-origin}
+
+In this section we evaluated the forecasting accuracy of the models
+described in the previous sections. Our primary interests here are how
+well the models predict data points that have not been used for
+estimation (out-of-sample), and how performance varies with the length
+of the forecast horizon, whereby accuracy measures are calculated for
+several forecast lengths (in effect N-step forecast). For
+cross-sectional data such evaluations are commonly carried out by
+estimating the model on a training data set and evaluating it on an
+independent test data set. In order to control for effects arising from
+the composition of the training data, it is common to repeat this
+procedure with different training and test data sets using k-fold cross
+validation. Due to the serial autocorrelation and potential
+non-stationarity in the data, it is common to choose a test set that
+does not contain observations occuring prior to the observations in the
+training data \citep{bergmeir2012use}. Recent literature suggests that
+standard cross-validation can be applied to certain time series models
+\citep{bergmeir2018} - however, due the Markov assumption embedded in the
+Kalman filtering algorithm, we suspect that the technique would not work
+for the the DLMs developed in this paper. Therefore
+we follow the conventional approach for evaluating forecast errors;
+namely evaluation over a \textit{rolling forecasting origin}
+\citep{tashman2000out} where the training data is succesively extended in iterations.
+The last point of the training data in each iteration is referred to as the \textit{origin} $T$,
+since the origin on which the forecast is based rolls forward in time.
+In this approach, the training data consists of observations between
+$t = 1, ..., T$ and forecasts are generated for time periods $T+1$,
+$T+2$, \ldots{}, $T+N$. This procedure is illustrated in Figure
+\ref{fig:rolling-forecast-example}. The movement along the x-axis shows
+how the origins (vertical dotted line) ``roll'' forward in time, where
+the model is estimated on the training data (black solid line). The
+model perfomance is then evaluated by averaging the prediction errors
+over different forecast horizon (dotted horizontal lines).
+
+\begin{figure}
+  \caption{\label{fig:rolling-forecast-example}Illustration of rolling
+forecasting origin: training data (solid black line), origin (vertical
+dark grey line), forecast horizion (dotted horizontal lines) and test
+data (grey line)}
+\centering
+\includegraphics{../figs/freq--rolling-forecast-example-1.pdf}
+
+\end{figure}
+
+We evaluate forecasting performance on three time horizons - $N=6$,
+$N=12$ and $N=18$ - meaning that, for each origin, we calculate
+three indicators of accuracy; one for a half year forecast, one for a
+year and one for one and a half year. We are interested in assessing the
+performance around the changepoint of the trend-cycle. From the previous
+section we identified this as March 2017 (see Figure
+\ref{fig:dlm-smoothed}). In order to evaluate the performance of the
+models on both sides of the changepoint we include origins within 12
+months before and after March 2017. Including the changepoint itself we
+have in total 25 forecast origins: T = March 2016, February 2016,
+\ldots{}, June 2017.
+
+It is possible that estimated parameter values differ
+between the different origins. The resulting mean and standard
+deviations, shown in Table \ref{tab:par-comparison} in the Appendix,
+reveal that differences in training data has a very limited effect on
+the estimated parameters. This also gives us confidence that there is
+enough data for estimation even on the first origin.
+
+Performance of the DLMs is assessed by comparing forecasting accuracy
+with that of three other popular models. The first of these is a naïve
+seasonal model (Naïve), where the forecast of a specific month is simply
+the value of the same month of the previous year. Despite its simplicity
+this model is a standard benchmark and often performs very well, especially for time series with no clear trend. The next model is the Holt-Winters method with
+multiplicative seasonality
+\citep{holt2004forecasting, winters1960forecasting}. This model is an
+extension of the simple exponential smoothing model, allowing for
+forecasts with seasonality. Using the function ${\tt HoltWinters()}$ in
+base \emph{R}, the smoothing parameters of the model are selected
+automatically, for each origin, with the default initial values. This
+model type performs particularly well on data with a clear trend, and we
+therefore expect it to forecast accurately before the changepoint and
+increasingly worse around and after it.
+
+Furthermore, exponential smoothing can also be formulated on state space
+form, which in this sense becomes a general formulation of exponential smoothing
+methods. We will refer to this model type as ETS (Error, Trend,
+Seasonal). One advantage of formulating exponential smoothing models on the
+(stochastic) state space form is the possibility of generating prediction
+intervals - either analytically or by simulation. This furthermore
+allows information criteria to be used for model selection, meaning that
+all combination of trend-, seasonal and error components can be explored
+\citep{hyndman2002state}. The automatic model selection is carried out
+using the ${\tt ets()}$ function with default values for all
+arguments, meaning that selection is based on the corrected Akaike's
+Information Criterion (AICc).
+
+Finally we include a seasonal ARIMA model into the comparison.
+Identification of the model is carried out using the
+${\tt auto.arima()}$ function on the whole sample \citep{hyndman2019},
+and results in an ARIMA(2,1,5)(2,1,1). This is thus a model with double
+differencing, with yearly and monthly MA(2), and yearly AR(5) and
+monthly AR(2). For each origin we reestimate the model parameters on the
+respective training data. We also tried the automatic selection for each
+origin with only marginal differences in results.
+
+Table \ref{tab:error-comparison} shows the overall forecast accuracy across origins.
+It shows both RMSE and mean absolute percentage error (MAPE), averaged over origins, for each forecast horizon (6 months, 12 months, 18 months). The table also show the standard deviation of RMSE and MAPE which is a measure of how much accuracy varies over the origins. From the table we see that DLM2 outperforms DLM1 for all forecast horizons, and especially for 18 months forecast. Not suprisingly, the forecast accuracy of DLM2 deteriorates as N increases but not dramatically so: the mean
+RMSE for N=6 is 0.39, compared to 0.53 for N=18. The limited
+deterioration in forecast accuracy is not shared with DLM1, the ARIMA and
+Holt-Winters models, which both see substantial increases in forecasting
+errors as the forecast horizon increases. The mean RMSEs of the Naïve
+model is stable across all forecast horizons. For short-term forecasts it is also one of the least accurate models. We see that the ETS model outperforms
+DLM2 for the shortest forecast horizon in terms of both RMSE and MAPE.
+For forecasts of 12 or 18 months the ETS model performs slightly better
+than DLM2 in terms of RMSE and slightly worse in terms of MAPE. Since
+squared errors gives a heavier penalty to large forecast errors than
+absolute errors, this means that DLM2 produces the smallest median
+forecast error and ETS the smallest mean forecast error. For forecast horizons of 12 and 18 months, the table shows that the errors of DLM2 has a small variance compared to other models. This suggests that the forecasting performance of this model generalises across the different training data sets. 
+
+\begin{table}[t]
+%{\scriptsize
+\caption{\label{tab:error-comparison}Mean (and standard deviation) of RMSE and MAPE}
+\centering
+%\begin{tabular}{llllllll}
+\begin{tabular}{p{1.2cm}p{1.2cm}p{1.2cm}p{1.2cm}p{1.2cm}p{1.2cm}p{1.2cm}p{1.2cm}}
+\toprule
+ & Forecast horizon & ARIMA & DLM1 & DLM2 & ETS & Holt- Winters & Naïve\\
+\midrule
+RMSE & N=6 & 0.4003 & 0.4315 & 0.3937 & 0.3781 & 0.4384 & 0.5693\\
+ &  & (0.095) & (0.1655) & (0.1087) & (0.0629) & (0.1822) & (0.193)\\
+ & N=12 & 0.5214 & 0.5841 & 0.4766 & 0.4676 & 0.609 & 0.5758\\
+ &  & (0.1434) & (0.2339) & (0.0982) & (0.1016) & (0.2443) & (0.124)\\
+ & N=18 & 0.6258 & 0.767 & 0.5297 & 0.5262 & 0.8085 & 0.6085\\
+ &  & (0.2435) & (0.3914) & (0.0884) & (0.1652) & (0.3599) & (0.1075)\\
+&  &  &  &  &  &  & \\
+\addlinespace
+MAPE & N=6 & 0.0391 & 0.0426 & 0.0358 & 0.0362 & 0.0443 & 0.0546\\
+ &  & (0.0111) & (0.0171) & (0.0103) & (0.0079) & (0.0201) & (0.0196)\\
+ & N=12 & 0.0514 & 0.0577 & 0.0427 & 0.0446 & 0.0608 & 0.0535\\
+ &  & (0.0172) & (0.0262) & (0.0093) & (0.013) & (0.028) & (0.0115)\\
+ & N=18 & 0.0618 & 0.0752 & 0.0489 & 0.0509 & 0.08 & 0.0571\\
+ &  & (0.0269) & (0.041) & (0.0096) & (0.0188) & (0.0383) & (0.0122)\\
+\bottomrule
+\end{tabular}
+%}
+\end{table}
+
+Figure \ref{fig:rmse-origins} delves further into the variation in
+forecasting performance across origins, showing the MAPE per origin and
+model for the three forecast horizons. In the interval between December
+2016 and December 2017, DLM2 is the best performing models for all forecast horizon, with the exception of origins right after March
+2017 where the Naïve model perfoms best. We see that the ARIMA,
+Holt-Winters and the ETS models all perform better than the DLMs on the
+part of the time series where there is a clear trend in the training
+data that at least partially extends into the test data (until December
+2016). As Table \ref{tab:error-comparison} showed, the higher forecast
+accuracy of the ETS model relative to the DLMs occurs primarily for a
+short forecast horizon. The relatively high MAPE for the DLMs prior to
+December 2016. Finally, the difference in performance between the two
+DLMs is, in general, minimal. However, the 6 month forecasts from medio
+2017 onwards differ somewhat between the models, with DLM2 performing
+better than the DLM1.
+
+\begin{figure}
+  \caption{\label{fig:rmse-origins}MAPE by origin and forecast horizon}
+\centering
+\includegraphics{../figs/freq--rmse-origins-1.pdf}
+\end{figure}
+
+\subsection{Forecasted values from all origins}\label{forecasted-values-from-all-origins}
+
+In addtion to evaluating how forecasting performance
+vary between origins, we are also interested in the value of some specific forecasts.
+In particular, our initial interest in this exercise was motivated by a
+potential trend change. Therefore we zoom in on the forecasted values of
+the frequency of mobility around the changepoint. Figure
+\ref{fig:forecast-2017-2018} compares the forecasts of all models in the
+period January 2017 to December 2018. The grey dots represent forecast
+from different origins, the solid line represents the average value of
+the forecasts across all origins and the dotted line is the data. The
+figure shows clearly the divergence in forecasting performance between
+the DLMs and the ARIMA and Holt-Winters models. The Holt-Winters model
+systematically overpredicts the migration frequency already from June
+2017, meaning that the forecasted frequency exceeds the data for all
+origins. For the ARIMA model this occurs from October 2017. In the case
+of the DLMs the last forecasted point with a value lower than that of
+the data occurs in May 2018.
+
+\begin{figure}
+  \caption{\label{fig:forecast-2017-2018}Forecasted (light grey dots),
+forecast averaged over origins (black line) and observed (dark grey
+line) frequency of mobility}
+\centering
+\includegraphics{../figs/freq--forecast-2017-2018-1.pdf}
+\end{figure}
+
+\subsection{Two-year forecast from January 2017}\label{two-year-forecast-from-january-2017}
+
+As mentioned in the Introduction, the realisation that 2017 possibly
+represented a turning point in the cycle of the frequency of mobility
+triggered our initial interest in developing the state space model. Then
+it is relevant to ask what the second state space model tell us about
+the development of the frequency of migration from 2017 onwards. In our
+case we were particularly interested in the development of the yearly
+frequency the coming couple of years. Figure \ref{fig:forecast-2017}
+shows a two-year forecast of both the monthly and yearly frequency of
+mobility with their 95 percent prediction intervals, where the last
+period of the training data is December 2016. For simplicity, the yearly
+frequency is calculated by aggregating the monthly frequencies within
+that year. As a comparison, we also show results the same forecast using
+the ETS model discussed in the previous section. The automatic selection
+procedure results in an ETS(M, Ad, A): a model with multiplicative
+errors, damped additive trend and additive seasonal effects.
+
+\begin{figure}
+  \caption{\label{fig:forecast-2017}Two-year forecast (black line) of monthly
+(left) and yearly (right) frequency of mobility and test data (dark grey
+line) and 95 percent prediction interval}
+\centering
+\includegraphics{../figs/freq--forecast-2017-1.pdf}
+\end{figure}
+
+At first glance, the point forecast of the monthly frequency (left part
+of the figure) is quite similar across models, although the prediction
+interval of ETS is smaller. Both models forecast 2017 accurately, and
+they both systematically overestimate the test data in 2018. As the
+right left panels of Figure \ref{fig:forecast-2017} shows, the yearly
+frequency of mobility actually declines between 2017 and 2018, and none
+of the models were able to capture this sudden decline. However, we see
+ETS is much more ``positive'' about (i.e., overestimates more
+substantially) the yearly frequency than DLM2. As we discussed earlier,
+both of these models can allow a short-run forecasts to diverge from a
+long-run trend growth. The figure thus suggests that the models produce
+quite similar short-run forecasts, but they differ in terms of their
+expected long-run growth. As a side note, the Naïve model would in fact
+predict the yearly frequency of 2018 very well. However, a clock without
+battery also shows the right time twice a day...
+
+\section{Conclusion}\label{conclusion}
+
+In this paper we have developed a state space model for short-to medium
+term univariate forecast of monthly frequency of mobility in the
+Netherlands. The frequency of mobility is defined as the number of
+internally migrated persons countrywide (within- and
+between-municipality) per month divided by the population. This is an
+important input into the cohort-component model used for our regional
+population projections; the need for this modelling exercise arose as we
+suspected that the end of our yearly series represented the top of a
+cycle.
+
+The results presented in the previous section show that the state space
+model (DLM) quite accurately forecasts both monthly and yearly frequency
+of mobility until end 2018, based on data up to end 2016. In particular,
+the model would have given us a very accurate picture of the development
+of the frequency of mobility until end of 2017. More generally, the
+model performed comparably or even better than a number of popular
+univariate forecasting in a time interval between end of 2016 to end of
+2017. One of the most remarkable feature about the forecasts of the DLM
+was the relatively limited deterioration in forecast accuracy as the
+forecast horizon increased.
+
+The most important reason was that the local linear growth component
+ensured a certain ``conservatism'' for forecast horizons above 12
+months. The high signal-to-noise rate implied that the estimated local
+growth rate evolved slowly over time. The only other model mimicking
+this behaviour was the ETS model - itself also a state space model. An
+easy critique of this result is that a model that predicts that `what
+goes up must eventually come down' is of limited value. Yet such
+criticism misses the point that the local linear growth component in
+effect incorporates not only local, but to some extent global,
+characteristics of the time series. As such, this model also answers the
+question ``come down to what?''.
+
+Although the focus of this paper was univariate forecasts, one of the
+biggest advantages of the structural model developed in this paper,
+relative to automatically selected models such as ETS, is the easy with
+which covariates can be included. Future research should focus on
+investigating whether model performance can be improved by including
+covariates for which there are reliable short- to medium-term forecasts
+- for example unemployment levels. Splitting up the time series into
+several age groups (dynamic hierarchical models) will probably make such
+an exercise easier, and is probably a fruitful venue for future
+research. A more theory-driven model with covariates could also provide
+extra information about the merits of the simpler univariate approach
+presented.
+
+\section{Appendix A}\label{appendix-a}
+
+In addition to the cycle, there are strong seasonal patterns that seem
+to vary over time. The seasonal subseries plot in Figure
+\ref{fig:freq-month-plot} shows the movement per year and average per
+month (lower panel), and the horizontal lines in the figure indicating
+the means for each month. This plot enables us to see the underlying
+seasonal pattern clearly, and it also shows the changes in seasonality
+over time. The figure shows that the highest frequency is, on average,
+in August and July while the lowest is in April. We also see there is
+quite some variation between the years: the differences between the
+months were more pronounced in the early part of the time series than in
+later years. The lower panel suggests a sinusoidal pattern with two
+peaks within one year - one peak in the summer and one at the end of the
+year.
+
+Finally, we check whether there is a linear relationship between lagged
+variables of the time series (autocorrelation). Figure
+\ref{fig:autocorr-plot} reveals a large and positive autocorrelation for
+small lags, since observations nearby in time tend to be similar in
+size. We also see that strong autocorrelation in lags that are multiples
+of the seasonal frequency (12, 24, and 36), which is due to the
+seasonality discussed above. The slow decline is related to the
+trend-cycle while the `scalloped' pattern is related to the seasonality.
+In terms of lag selection for an ARIMA model, the significant spikes at
+the first and second lag in the partial autocorrelation plot in the
+lower figure suggests that we should include at least two autoregressive
+terms \citep{hyndman2018forecasting}.
+
+\begin{figure}
+  \caption{\label{fig:freq-month-plot}Seasonal subseries plot of the frequency
+of mobility}
+\centering
+\includegraphics{../figs/freq--freq-month-plot-1.pdf}
+\end{figure}
+
+\begin{figure}
+  \caption{\label{fig:autocorr-plot}Autocorrelation function of the frequency
+of mobility}
+\centering
+\includegraphics{../figs/freq--autocorr-plot-1.pdf}
+\end{figure}
+
+\section{Appendix B}\label{appendix-b}
+
+\begin{figure}
+  \caption{\label{fig:residual-autocorr}Autocorrelation function of the
+standardised residuals}
+\centering
+\includegraphics{../figs/freq--residual-autocorr-1.pdf}
+\end{figure}
+
+\begin{figure}
+  \caption{\label{fig:qqnorm}Normal probability plot of standardized
+one-step-ahead forecast errors of DLM2}
+\centering
+\includegraphics{../figs/freq--qqnorm-1.pdf}
+\end{figure}
+
+\begin{table}[t]
+
+\caption{\label{tab:par-comparison}Mean and standard deviation of the estimated parameters}
+\centering
+\begin{tabular}{lllll}
+\toprule
+Parameter & DLM1 Mean & DLM1 SD & DLM2 Mean & DLM2 SD\\
+\midrule
+$\sigma_{v}^{2}$ & 1.523e-08 & 5.459e-13 & 1.523e-08 & 8.178e-14\\
+$\sigma_{\mu}^{2}$ & 0 & 0 & 0.000152 & 4.744e-06\\
+$\sigma_{\beta}^{2}$ & 1.828e-06 & 2.717e-07 & 0 & 0\\
+$\sigma_{S_{2}}^{2}$ & 7.899e-06 & 2.844e-07 & 7.665e-06 & 2.572e-07\\
+$\sigma^{2}_{u}$ & 0.001342 & 1.913e-05 & 0.001028 & 1.236e-05\\
+\addlinespace
+$\phi_{1}$ & -0.6689 & 0.01432 & -0.7349 & 0.01313\\
+$\phi_{2}$ & 0.07194 & 0.008122 & -0.03206 & 0.005823\\
+$\phi_{7}$ & -0.445 & 0.005193 & -0.5018 & 0.00541\\
+$\phi_{12}$ & 0.4363 & 0.003109 & 0.4255 & 0.002562\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure}
+  \caption{\label{fig:trend-growth}Filtering state estimates of the slope
+($\beta_t$)}
+\centering
+\includegraphics{../figs/freq--trend-growth-1.pdf}
+\end{figure}
+
+\renewcommand\refname{Bibliography}
+\printbibliography
+
+
+\end{document}
