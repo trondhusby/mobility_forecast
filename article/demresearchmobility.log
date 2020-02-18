@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.20 (TeX Live 2019) (preloaded format=pdflatex 2020.2.7)  10 FEB 2020 11:02
+This is pdfTeX, Version 3.14159265-2.6-1.40.20 (TeX Live 2019) (preloaded format=pdflatex 2020.2.7)  18 FEB 2020 16:44
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -169,7 +169,7 @@ Package biblatex Info: ... file 'blx-dm.def' found.
 File: blx-dm.def 2019/12/01 v3.14 biblatex localization (PK/MW)
 )
 Package biblatex Info: Trying to load biblatex style data model...
-Package biblatex Info: ... file 'authoryear-icomp.dbx' not found.
+Package biblatex Info: ... file 'chicago-authordate-trad.dbx' not found.
 Package biblatex Info: Trying to load biblatex custom data model...
 Package biblatex Info: ... file 'biblatex-dm.cfg' not found.
 \c@afterword=\count289
@@ -287,48 +287,56 @@ File: blx-natbib.def 2019/12/01 v3.14 biblatex compatibility (PK/MW)
 Package biblatex Info: Delimiter 'nameyeardelim' in context '' already defined,
  overwriting.
 )
-Package biblatex Info: Trying to load bibliography style 'authoryear-icomp'...
-Package biblatex Info: ... file 'authoryear-icomp.bbx' found.
+Package biblatex Info: Trying to load bibliography style 'chicago-authordate-tr
+ad'...
+Package biblatex Info: ... file 'chicago-authordate-trad.bbx' found.
 
-(/usr/local/texlive/2019/texmf-dist/tex/latex/biblatex/bbx/authoryear-icomp.bbx
-File: authoryear-icomp.bbx 2019/12/01 v3.14 biblatex bibliography style (PK/MW)
+(/usr/local/texlive/2019/texmf-dist/tex/latex/biblatex-chicago/chicago-authorda
+te-trad.bbx
+File: chicago-authordate-trad.bbx 
+Package biblatex Info: Trying to load bibliography style 'chicago-authordate'..
+.
+Package biblatex Info: ... file 'chicago-authordate.bbx' found.
 
-Package biblatex Info: Trying to load bibliography style 'authoryear'...
-Package biblatex Info: ... file 'authoryear.bbx' found.
-(/usr/local/texlive/2019/texmf-dist/tex/latex/biblatex/bbx/authoryear.bbx
-File: authoryear.bbx 2019/12/01 v3.14 biblatex bibliography style (PK/MW)
-Package biblatex Info: Trying to load bibliography style 'standard'...
-Package biblatex Info: ... file 'standard.bbx' found.
-
-(/usr/local/texlive/2019/texmf-dist/tex/latex/biblatex/bbx/standard.bbx
-File: standard.bbx 2019/12/01 v3.14 biblatex bibliography style (PK/MW)
+(/usr/local/texlive/2019/texmf-dist/tex/latex/biblatex-chicago/chicago-authorda
+te.bbx
+File: chicago-authordate.bbx 2018/01/11 v 3.10 biblatex bibliography style
+\lositemsep=\skip71
 \c@bbx:relatedcount=\count366
 \c@bbx:relatedtotal=\count367
-)))
-Package biblatex Info: Trying to load citation style 'authoryear-icomp'...
-Package biblatex Info: ... file 'authoryear-icomp.cbx' found.
+))
+Package biblatex Info: Trying to load citation style 'chicago-authordate-trad'.
+..
+Package biblatex Info: ... file 'chicago-authordate-trad.cbx' found.
 
-(/usr/local/texlive/2019/texmf-dist/tex/latex/biblatex/cbx/authoryear-icomp.cbx
-File: authoryear-icomp.cbx 2019/12/01 v3.14 biblatex citation style (PK/MW)
+(/usr/local/texlive/2019/texmf-dist/tex/latex/biblatex-chicago/chicago-authorda
+te-trad.cbx
+File: chicago-authordate-trad.cbx 2018/01/11 v 3.10 biblatex citation style
+Package biblatex Info: Trying to load citation style 'chicago-dates-common'...
+Package biblatex Info: ... file 'chicago-dates-common.cbx' found.
+
+(/usr/local/texlive/2019/texmf-dist/tex/latex/biblatex-chicago/chicago-dates-co
+mmon.cbx
+File: chicago-dates-common.cbx 2018/01/11 v 3.10 biblatex citation style
 Package biblatex Info: Redefining '\cite'.
 Package biblatex Info: Redefining '\parencite'.
 Package biblatex Info: Redefining '\footcite'.
 Package biblatex Info: Redefining '\footcitetext'.
-Package biblatex Info: Redefining '\smartcite'.
+Package biblatex Info: Redefining '\footfullcite'.
+Package biblatex Info: Redefining '\fullcite'.
 Package biblatex Info: Redefining '\textcite'.
 Package biblatex Info: Redefining '\textcites'.
 Package biblatex Info: Redefining '\cites'.
 Package biblatex Info: Redefining '\parencites'.
 Package biblatex Info: Redefining '\footcites'.
 Package biblatex Info: Redefining '\footcitetexts'.
-Package biblatex Info: Redefining '\smartcites'.
-)
+Package biblatex Info: Patching 'autolang=other' option.
+))
 Package biblatex Info: Trying to load configuration file...
 Package biblatex Info: ... file 'biblatex.cfg' found.
  (/usr/local/texlive/2019/texmf-dist/tex/latex/biblatex/biblatex.cfg
 File: biblatex.cfg 
-))
-(/usr/local/texlive/2019/texmf-dist/tex/latex/tools/enumerate.sty
+)) (/usr/local/texlive/2019/texmf-dist/tex/latex/tools/enumerate.sty
 Package: enumerate 2015/07/23 v3.00 enumerate extensions (DPC)
 \@enLab=\toks17
 )
@@ -359,49 +367,28 @@ Package: lipsum 2019/01/02 v2.2 150 paragraphs of Lorem Ipsum dummy text
 (/usr/local/texlive/2019/texmf-dist/tex/latex/lipsum/lipsum.ltd.tex
 File: lipsum.ltd.tex 2019/01/02 v2.2 The Lorem ipsum dummy text
 ))
-(/usr/local/texlive/2019/texmf-dist/tex/latex/caption/caption.sty
-Package: caption 2020/01/03 v3.4h Customizing captions (AR)
-
-(/usr/local/texlive/2019/texmf-dist/tex/latex/caption/caption3.sty
-Package: caption3 2020/01/03 v1.8h caption3 kernel (AR)
-Package caption3 Info: TeX engine: e-TeX on input line 61.
-\captionmargin=\dimen138
-\captionmargin@=\dimen139
-\captionwidth=\dimen140
-\caption@tempdima=\dimen141
-\caption@indent=\dimen142
-\caption@parindent=\dimen143
-\caption@hangindent=\dimen144
-Package caption Info: Standard document class detected.
-)
-\c@caption@flags=\count374
-\c@continuedfloat=\count375
-)
-(/usr/local/texlive/2019/texmf-dist/tex/latex/placeins/placeins.sty
-Package: placeins 2005/04/18  v 2.2
-)
 (/usr/local/texlive/2019/texmf-dist/tex/latex/mathtools/mathtools.sty
 Package: mathtools 2020/01/17 v1.23 mathematical typesetting tools
 
 (/usr/local/texlive/2019/texmf-dist/tex/latex/tools/calc.sty
 Package: calc 2017/05/25 v4.3 Infix arithmetic (KKT,FJ)
-\calc@Acount=\count376
-\calc@Bcount=\count377
-\calc@Adimen=\dimen145
-\calc@Bdimen=\dimen146
-\calc@Askip=\skip71
-\calc@Bskip=\skip72
+\calc@Acount=\count374
+\calc@Bcount=\count375
+\calc@Adimen=\dimen138
+\calc@Bdimen=\dimen139
+\calc@Askip=\skip72
+\calc@Bskip=\skip73
 LaTeX Info: Redefining \setlength on input line 80.
 LaTeX Info: Redefining \addtolength on input line 81.
-\calc@Ccount=\count378
-\calc@Cskip=\skip73
+\calc@Ccount=\count376
+\calc@Cskip=\skip74
 )
 (/usr/local/texlive/2019/texmf-dist/tex/latex/mathtools/mhsetup.sty
 Package: mhsetup 2017/03/31 v1.3 programming setup (MH)
 )
 (/usr/local/texlive/2019/texmf-dist/tex/latex/amsmath/amsmath.sty
 Package: amsmath 2020/01/20 v2.17e AMS math features
-\@mathmargin=\skip74
+\@mathmargin=\skip75
 
 For additional information on amsmath, use the `?' option.
 (/usr/local/texlive/2019/texmf-dist/tex/latex/amsmath/amstext.sty
@@ -410,49 +397,49 @@ Package: amstext 2000/06/29 v2.01 AMS text
 (/usr/local/texlive/2019/texmf-dist/tex/latex/amsmath/amsgen.sty
 File: amsgen.sty 1999/11/30 v2.0 generic functions
 \@emptytoks=\toks18
-\ex@=\dimen147
+\ex@=\dimen140
 ))
 (/usr/local/texlive/2019/texmf-dist/tex/latex/amsmath/amsbsy.sty
 Package: amsbsy 1999/11/29 v1.2d Bold Symbols
-\pmbraise@=\dimen148
+\pmbraise@=\dimen141
 )
 (/usr/local/texlive/2019/texmf-dist/tex/latex/amsmath/amsopn.sty
 Package: amsopn 2016/03/08 v2.02 operator names
 )
-\inf@bad=\count379
+\inf@bad=\count377
 LaTeX Info: Redefining \frac on input line 227.
-\uproot@=\count380
-\leftroot@=\count381
+\uproot@=\count378
+\leftroot@=\count379
 LaTeX Info: Redefining \overline on input line 389.
-\classnum@=\count382
-\DOTSCASE@=\count383
+\classnum@=\count380
+\DOTSCASE@=\count381
 LaTeX Info: Redefining \ldots on input line 486.
 LaTeX Info: Redefining \dots on input line 489.
 LaTeX Info: Redefining \cdots on input line 610.
 \Mathstrutbox@=\box47
 \strutbox@=\box48
-\big@size=\dimen149
+\big@size=\dimen142
 LaTeX Font Info:    Redeclaring font encoding OML on input line 733.
 LaTeX Font Info:    Redeclaring font encoding OMS on input line 734.
-\macc@depth=\count384
-\c@MaxMatrixCols=\count385
+\macc@depth=\count382
+\c@MaxMatrixCols=\count383
 \dotsspace@=\muskip21
-\c@parentequation=\count386
-\dspbrk@lvl=\count387
+\c@parentequation=\count384
+\dspbrk@lvl=\count385
 \tag@help=\toks19
-\row@=\count388
-\column@=\count389
-\maxfields@=\count390
+\row@=\count386
+\column@=\count387
+\maxfields@=\count388
 \andhelp@=\toks20
-\eqnshift@=\dimen150
-\alignsep@=\dimen151
-\tagshift@=\dimen152
-\tagwidth@=\dimen153
-\totwidth@=\dimen154
-\lineht@=\dimen155
+\eqnshift@=\dimen143
+\alignsep@=\dimen144
+\tagshift@=\dimen145
+\tagwidth@=\dimen146
+\totwidth@=\dimen147
+\lineht@=\dimen148
 \@envbody=\toks21
-\multlinegap=\skip75
-\multlinetaggap=\skip76
+\multlinegap=\skip76
+\multlinetaggap=\skip77
 \mathdisplay@stack=\toks22
 LaTeX Info: Redefining \[ on input line 2859.
 LaTeX Info: Redefining \] on input line 2860.
@@ -461,15 +448,15 @@ LaTeX Info: Thecontrolsequence`\('isalreadyrobust on input line 129.
 LaTeX Info: Thecontrolsequence`\)'isalreadyrobust on input line 129.
 LaTeX Info: Thecontrolsequence`\['isalreadyrobust on input line 129.
 LaTeX Info: Thecontrolsequence`\]'isalreadyrobust on input line 129.
-\g_MT_multlinerow_int=\count391
-\l_MT_multwidth_dim=\dimen156
-\origjot=\skip77
-\l_MT_shortvdotswithinadjustabove_dim=\dimen157
-\l_MT_shortvdotswithinadjustbelow_dim=\dimen158
-\l_MT_above_intertext_sep=\dimen159
-\l_MT_below_intertext_sep=\dimen160
-\l_MT_above_shortintertext_sep=\dimen161
-\l_MT_below_shortintertext_sep=\dimen162
+\g_MT_multlinerow_int=\count389
+\l_MT_multwidth_dim=\dimen149
+\origjot=\skip78
+\l_MT_shortvdotswithinadjustabove_dim=\dimen150
+\l_MT_shortvdotswithinadjustbelow_dim=\dimen151
+\l_MT_above_intertext_sep=\dimen152
+\l_MT_below_intertext_sep=\dimen153
+\l_MT_above_shortintertext_sep=\dimen154
+\l_MT_below_shortintertext_sep=\dimen155
 )
 (/usr/local/texlive/2019/texmf-dist/tex/latex/tools/xspace.sty
 Package: xspace 2014/10/28 v1.13 Space after command names (DPC,MH)
@@ -504,8 +491,8 @@ Package: auxhook 2019-12-17 v1.6 Hooks for auxiliary files (HO)
 (/usr/local/texlive/2019/texmf-dist/tex/generic/pgf/utilities/pgfutil-common.te
 x
 \pgfutil@everybye=\toks23
-\pgfutil@tempdima=\dimen163
-\pgfutil@tempdimb=\dimen164
+\pgfutil@tempdima=\dimen156
+\pgfutil@tempdimb=\dimen157
 
 (/usr/local/texlive/2019/texmf-dist/tex/generic/pgf/utilities/pgfutil-common-li
 sts.tex))
@@ -538,8 +525,8 @@ Package graphics Info: Driver file: pdftex.def on input line 105.
 (/usr/local/texlive/2019/texmf-dist/tex/latex/graphics-def/pdftex.def
 File: pdftex.def 2018/01/08 v1.0l Graphics/color driver for pdftex
 ))
-\Gin@req@height=\dimen165
-\Gin@req@width=\dimen166
+\Gin@req@height=\dimen158
+\Gin@req@width=\dimen159
 )
 (/usr/local/texlive/2019/texmf-dist/tex/latex/pgf/systemlayer/pgfsys.sty
 (/usr/local/texlive/2019/texmf-dist/tex/generic/pgf/systemlayer/pgfsys.code.tex
@@ -552,26 +539,26 @@ Package: pgfsys 2020/01/08 v3.1.5b (3.1.5b)
 ode.tex
 \pgfkeys@tmptoks=\toks26
 ))
-\pgf@x=\dimen167
-\pgf@y=\dimen168
-\pgf@xa=\dimen169
-\pgf@ya=\dimen170
-\pgf@xb=\dimen171
-\pgf@yb=\dimen172
-\pgf@xc=\dimen173
-\pgf@yc=\dimen174
-\pgf@xd=\dimen175
-\pgf@yd=\dimen176
+\pgf@x=\dimen160
+\pgf@y=\dimen161
+\pgf@xa=\dimen162
+\pgf@ya=\dimen163
+\pgf@xb=\dimen164
+\pgf@yb=\dimen165
+\pgf@xc=\dimen166
+\pgf@yc=\dimen167
+\pgf@xd=\dimen168
+\pgf@yd=\dimen169
 \w@pgf@writea=\write4
 \r@pgf@reada=\read4
-\c@pgf@counta=\count392
-\c@pgf@countb=\count393
-\c@pgf@countc=\count394
-\c@pgf@countd=\count395
+\c@pgf@counta=\count390
+\c@pgf@countb=\count391
+\c@pgf@countc=\count392
+\c@pgf@countd=\count393
 \t@pgf@toka=\toks27
 \t@pgf@tokb=\toks28
 \t@pgf@tokc=\toks29
-\pgf@sys@id@count=\count396
+\pgf@sys@id@count=\count394
 
 (/usr/local/texlive/2019/texmf-dist/tex/generic/pgf/systemlayer/pgf.cfg
 File: pgf.cfg 2020/01/08 v3.1.5b (3.1.5b)
@@ -589,8 +576,8 @@ File: pgfsys-common-pdf.def 2020/01/08 v3.1.5b (3.1.5b)
 (/usr/local/texlive/2019/texmf-dist/tex/generic/pgf/systemlayer/pgfsyssoftpath.
 code.tex
 File: pgfsyssoftpath.code.tex 2020/01/08 v3.1.5b (3.1.5b)
-\pgfsyssoftpath@smallbuffer@items=\count397
-\pgfsyssoftpath@bigbuffer@items=\count398
+\pgfsyssoftpath@smallbuffer@items=\count395
+\pgfsyssoftpath@bigbuffer@items=\count396
 )
 (/usr/local/texlive/2019/texmf-dist/tex/generic/pgf/systemlayer/pgfsysprotocol.
 code.tex
@@ -618,8 +605,8 @@ Package: pgfcore 2020/01/08 v3.1.5b (3.1.5b)
 (/usr/local/texlive/2019/texmf-dist/tex/generic/pgf/math/pgfmathcalc.code.tex
 (/usr/local/texlive/2019/texmf-dist/tex/generic/pgf/math/pgfmathutil.code.tex)
 (/usr/local/texlive/2019/texmf-dist/tex/generic/pgf/math/pgfmathparser.code.tex
-\pgfmath@dimen=\dimen177
-\pgfmath@count=\count399
+\pgfmath@dimen=\dimen170
+\pgfmath@count=\count397
 \pgfmath@box=\box50
 \pgfmath@toks=\toks30
 \pgfmath@stack@operand=\toks31
@@ -644,37 +631,37 @@ code.tex)
 (/usr/local/texlive/2019/texmf-dist/tex/generic/pgf/math/pgfmathfunctions.integ
 erarithmetics.code.tex)))
 (/usr/local/texlive/2019/texmf-dist/tex/generic/pgf/math/pgfmathfloat.code.tex
-\c@pgfmathroundto@lastzeros=\count400
+\c@pgfmathroundto@lastzeros=\count398
 )) (/usr/local/texlive/2019/texmf-dist/tex/generic/pgf/math/pgfint.code.tex)
 (/usr/local/texlive/2019/texmf-dist/tex/generic/pgf/basiclayer/pgfcorepoints.co
 de.tex
 File: pgfcorepoints.code.tex 2020/01/08 v3.1.5b (3.1.5b)
-\pgf@picminx=\dimen178
-\pgf@picmaxx=\dimen179
-\pgf@picminy=\dimen180
-\pgf@picmaxy=\dimen181
-\pgf@pathminx=\dimen182
-\pgf@pathmaxx=\dimen183
-\pgf@pathminy=\dimen184
-\pgf@pathmaxy=\dimen185
-\pgf@xx=\dimen186
-\pgf@xy=\dimen187
-\pgf@yx=\dimen188
-\pgf@yy=\dimen189
-\pgf@zx=\dimen190
-\pgf@zy=\dimen191
+\pgf@picminx=\dimen171
+\pgf@picmaxx=\dimen172
+\pgf@picminy=\dimen173
+\pgf@picmaxy=\dimen174
+\pgf@pathminx=\dimen175
+\pgf@pathmaxx=\dimen176
+\pgf@pathminy=\dimen177
+\pgf@pathmaxy=\dimen178
+\pgf@xx=\dimen179
+\pgf@xy=\dimen180
+\pgf@yx=\dimen181
+\pgf@yy=\dimen182
+\pgf@zx=\dimen183
+\pgf@zy=\dimen184
 )
 (/usr/local/texlive/2019/texmf-dist/tex/generic/pgf/basiclayer/pgfcorepathconst
 ruct.code.tex
 File: pgfcorepathconstruct.code.tex 2020/01/08 v3.1.5b (3.1.5b)
-\pgf@path@lastx=\dimen192
-\pgf@path@lasty=\dimen193
+\pgf@path@lastx=\dimen185
+\pgf@path@lasty=\dimen186
 )
 (/usr/local/texlive/2019/texmf-dist/tex/generic/pgf/basiclayer/pgfcorepathusage
 .code.tex
 File: pgfcorepathusage.code.tex 2020/01/08 v3.1.5b (3.1.5b)
-\pgf@shorten@end@additional=\dimen194
-\pgf@shorten@start@additional=\dimen195
+\pgf@shorten@end@additional=\dimen187
+\pgf@shorten@start@additional=\dimen188
 )
 (/usr/local/texlive/2019/texmf-dist/tex/generic/pgf/basiclayer/pgfcorescopes.co
 de.tex
@@ -682,19 +669,19 @@ File: pgfcorescopes.code.tex 2020/01/08 v3.1.5b (3.1.5b)
 \pgfpic=\box51
 \pgf@hbox=\box52
 \pgf@layerbox@main=\box53
-\pgf@picture@serial@count=\count401
+\pgf@picture@serial@count=\count399
 )
 (/usr/local/texlive/2019/texmf-dist/tex/generic/pgf/basiclayer/pgfcoregraphicst
 ate.code.tex
 File: pgfcoregraphicstate.code.tex 2020/01/08 v3.1.5b (3.1.5b)
-\pgflinewidth=\dimen196
+\pgflinewidth=\dimen189
 )
 (/usr/local/texlive/2019/texmf-dist/tex/generic/pgf/basiclayer/pgfcoretransform
 ations.code.tex
 File: pgfcoretransformations.code.tex 2020/01/08 v3.1.5b (3.1.5b)
-\pgf@pt@x=\dimen197
-\pgf@pt@y=\dimen198
-\pgf@pt@temp=\dimen199
+\pgf@pt@x=\dimen190
+\pgf@pt@y=\dimen191
+\pgf@pt@temp=\dimen192
 )
 (/usr/local/texlive/2019/texmf-dist/tex/generic/pgf/basiclayer/pgfcorequick.cod
 e.tex
@@ -711,14 +698,14 @@ File: pgfcorepathprocessing.code.tex 2020/01/08 v3.1.5b (3.1.5b)
 (/usr/local/texlive/2019/texmf-dist/tex/generic/pgf/basiclayer/pgfcorearrows.co
 de.tex
 File: pgfcorearrows.code.tex 2020/01/08 v3.1.5b (3.1.5b)
-\pgfarrowsep=\dimen256
+\pgfarrowsep=\dimen193
 )
 (/usr/local/texlive/2019/texmf-dist/tex/generic/pgf/basiclayer/pgfcoreshade.cod
 e.tex
 File: pgfcoreshade.code.tex 2020/01/08 v3.1.5b (3.1.5b)
-\pgf@max=\dimen257
-\pgf@sys@shading@range@num=\count402
-\pgf@shadingcount=\count403
+\pgf@max=\dimen194
+\pgf@sys@shading@range@num=\count400
+\pgf@shadingcount=\count401
 )
 (/usr/local/texlive/2019/texmf-dist/tex/generic/pgf/basiclayer/pgfcoreimage.cod
 e.tex
@@ -757,8 +744,8 @@ File: pgfmoduleplot.code.tex 2020/01/08 v3.1.5b (3.1.5b)
 (/usr/local/texlive/2019/texmf-dist/tex/latex/pgf/compatibility/pgfcomp-version
 -0-65.sty
 Package: pgfcomp-version-0-65 2020/01/08 v3.1.5b (3.1.5b)
-\pgf@nodesepstart=\dimen258
-\pgf@nodesepend=\dimen259
+\pgf@nodesepstart=\dimen195
+\pgf@nodesepend=\dimen196
 )
 (/usr/local/texlive/2019/texmf-dist/tex/latex/pgf/compatibility/pgfcomp-version
 -1-18.sty
@@ -773,8 +760,8 @@ Package: pgfcomp-version-1-18 2020/01/08 v3.1.5b (3.1.5b)
 Package: pgffor 2020/01/08 v3.1.5b (3.1.5b)
 
 (/usr/local/texlive/2019/texmf-dist/tex/generic/pgf/math/pgfmath.code.tex)
-\pgffor@iter=\dimen260
-\pgffor@skip=\dimen261
+\pgffor@iter=\dimen197
+\pgffor@skip=\dimen198
 \pgffor@stack=\toks33
 \pgffor@toks=\toks34
 ))
@@ -785,34 +772,34 @@ Package: tikz 2020/01/08 v3.1.5b (3.1.5b)
 (/usr/local/texlive/2019/texmf-dist/tex/generic/pgf/libraries/pgflibraryplothan
 dlers.code.tex
 File: pgflibraryplothandlers.code.tex 2020/01/08 v3.1.5b (3.1.5b)
-\pgf@plot@mark@count=\count404
-\pgfplotmarksize=\dimen262
+\pgf@plot@mark@count=\count402
+\pgfplotmarksize=\dimen199
 )
-\tikz@lastx=\dimen263
-\tikz@lasty=\dimen264
-\tikz@lastxsaved=\dimen265
-\tikz@lastysaved=\dimen266
-\tikz@lastmovetox=\dimen267
-\tikz@lastmovetoy=\dimen268
-\tikzleveldistance=\dimen269
-\tikzsiblingdistance=\dimen270
+\tikz@lastx=\dimen256
+\tikz@lasty=\dimen257
+\tikz@lastxsaved=\dimen258
+\tikz@lastysaved=\dimen259
+\tikz@lastmovetox=\dimen260
+\tikz@lastmovetoy=\dimen261
+\tikzleveldistance=\dimen262
+\tikzsiblingdistance=\dimen263
 \tikz@figbox=\box56
 \tikz@figbox@bg=\box57
 \tikz@tempbox=\box58
 \tikz@tempbox@bg=\box59
-\tikztreelevel=\count405
-\tikznumberofchildren=\count406
-\tikznumberofcurrentchild=\count407
-\tikz@fig@count=\count408
+\tikztreelevel=\count403
+\tikznumberofchildren=\count404
+\tikznumberofcurrentchild=\count405
+\tikz@fig@count=\count406
 
 (/usr/local/texlive/2019/texmf-dist/tex/generic/pgf/modules/pgfmodulematrix.cod
 e.tex
 File: pgfmodulematrix.code.tex 2020/01/08 v3.1.5b (3.1.5b)
-\pgfmatrixcurrentrow=\count409
-\pgfmatrixcurrentcolumn=\count410
-\pgf@matrix@numberofcolumns=\count411
+\pgfmatrixcurrentrow=\count407
+\pgfmatrixcurrentcolumn=\count408
+\pgf@matrix@numberofcolumns=\count409
 )
-\tikz@expandcount=\count412
+\tikz@expandcount=\count410
 
 (/usr/local/texlive/2019/texmf-dist/tex/generic/pgf/frontendlayer/tikz/librarie
 s/tikzlibrarytopaths.code.tex
@@ -820,41 +807,67 @@ File: tikzlibrarytopaths.code.tex 2020/01/08 v3.1.5b (3.1.5b)
 )))
 (/usr/local/texlive/2019/texmf-dist/tex/latex/booktabs/booktabs.sty
 Package: booktabs 2020/01/12 v1.61803398 Publication quality tables
-\heavyrulewidth=\dimen271
-\lightrulewidth=\dimen272
-\cmidrulewidth=\dimen273
-\belowrulesep=\dimen274
-\belowbottomsep=\dimen275
-\aboverulesep=\dimen276
-\abovetopsep=\dimen277
-\cmidrulesep=\dimen278
-\cmidrulekern=\dimen279
-\defaultaddspace=\dimen280
-\@cmidla=\count413
-\@cmidlb=\count414
-\@aboverulesep=\dimen281
-\@belowrulesep=\dimen282
-\@thisruleclass=\count415
-\@lastruleclass=\count416
-\@thisrulewidth=\dimen283
+\heavyrulewidth=\dimen264
+\lightrulewidth=\dimen265
+\cmidrulewidth=\dimen266
+\belowrulesep=\dimen267
+\belowbottomsep=\dimen268
+\aboverulesep=\dimen269
+\abovetopsep=\dimen270
+\cmidrulesep=\dimen271
+\cmidrulekern=\dimen272
+\defaultaddspace=\dimen273
+\@cmidla=\count411
+\@cmidlb=\count412
+\@aboverulesep=\dimen274
+\@belowrulesep=\dimen275
+\@thisruleclass=\count413
+\@lastruleclass=\count414
+\@thisrulewidth=\dimen276
+)
+(/usr/local/texlive/2019/texmf-dist/tex/latex/caption/caption.sty
+Package: caption 2020/01/03 v3.4h Customizing captions (AR)
+
+(/usr/local/texlive/2019/texmf-dist/tex/latex/caption/caption3.sty
+Package: caption3 2020/01/03 v1.8h caption3 kernel (AR)
+Package caption3 Info: TeX engine: e-TeX on input line 61.
+\captionmargin=\dimen277
+\captionmargin@=\dimen278
+\captionwidth=\dimen279
+\caption@tempdima=\dimen280
+\caption@indent=\dimen281
+\caption@parindent=\dimen282
+\caption@hangindent=\dimen283
+Package caption Info: Standard document class detected.
+)
+\c@caption@flags=\count415
+\c@continuedfloat=\count416
+)
+(/usr/local/texlive/2019/texmf-dist/tex/latex/float/float.sty
+Package: float 2001/11/08 v1.3d Float enhancements (AL)
+\c@float@type=\count417
+\float@exts=\toks35
+\float@box=\box60
+\@float@everytoks=\toks36
+\@floatcapt=\box61
 )
 (/usr/local/texlive/2019/texmf-dist/tex/latex/tools/longtable.sty
 Package: longtable 2020/01/07 v4.13 Multi-page Table package (DPC)
-\LTleft=\skip78
-\LTright=\skip79
-\LTpre=\skip80
-\LTpost=\skip81
-\LTchunksize=\count417
+\LTleft=\skip79
+\LTright=\skip80
+\LTpre=\skip81
+\LTpost=\skip82
+\LTchunksize=\count418
 \LTcapwidth=\dimen284
-\LT@head=\box60
-\LT@firsthead=\box61
-\LT@foot=\box62
-\LT@lastfoot=\box63
-\LT@cols=\count418
-\LT@rows=\count419
-\c@LT@tables=\count420
-\c@LT@chunks=\count421
-\LT@p@ftn=\toks35
+\LT@head=\box62
+\LT@firsthead=\box63
+\LT@foot=\box64
+\LT@lastfoot=\box65
+\LT@cols=\count419
+\LT@rows=\count420
+\c@LT@tables=\count421
+\c@LT@chunks=\count422
+\LT@p@ftn=\toks37
 )
 (/usr/local/texlive/2019/texmf-dist/tex/latex/grffile/grffile.sty
 Package: grffile 2019/11/11 v2.1 Extended file name support for graphics (legac
@@ -862,41 +875,37 @@ y)
 Package grffile Info: This package is an empty stub for compatibility on input 
 line 40.
 )
-(/usr/local/texlive/2019/texmf-dist/tex/latex/parskip/parskip.sty
-Package: parskip 2020-01-22 v2.0d non-zero parskip adjustments
-)
 (/usr/local/texlive/2019/texmf-dist/tex/latex/titling/titling.sty
 Package: titling 2009/09/04 v2.1d maketitle typesetting
-\thanksmarkwidth=\skip82
-\thanksmargin=\skip83
-\droptitle=\skip84
+\thanksmarkwidth=\skip83
+\thanksmargin=\skip84
+\droptitle=\skip85
 )
 
 Package biblatex Warning: 'babel/polyglossia' detected but 'csquotes' missing.
 (biblatex)                Loading 'csquotes' recommended.
 
-\@quotelevel=\count422
-\@quotereset=\count423
-(./demresearchmobility.aux)
+\@quotelevel=\count423
+\@quotereset=\count424
+No file demresearchmobility.aux.
 \openout1 = `demresearchmobility.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 91.
-LaTeX Font Info:    ... okay on input line 91.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 91.
-LaTeX Font Info:    ... okay on input line 91.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 91.
-LaTeX Font Info:    ... okay on input line 91.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 91.
-LaTeX Font Info:    ... okay on input line 91.
-LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 91.
-LaTeX Font Info:    ... okay on input line 91.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 91.
-LaTeX Font Info:    ... okay on input line 91.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 91.
-LaTeX Font Info:    ... okay on input line 91.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 50.
+LaTeX Font Info:    ... okay on input line 50.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 50.
+LaTeX Font Info:    ... okay on input line 50.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 50.
+LaTeX Font Info:    ... okay on input line 50.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 50.
+LaTeX Font Info:    ... okay on input line 50.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 50.
+LaTeX Font Info:    ... okay on input line 50.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 50.
+LaTeX Font Info:    ... okay on input line 50.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 50.
+LaTeX Font Info:    ... okay on input line 50.
 Package biblatex Info: Trying to load language 'english'...
 Package biblatex Info: ... file 'english.lbx' found.
-
 (/usr/local/texlive/2019/texmf-dist/tex/latex/biblatex/lbx/english.lbx
 File: english.lbx 2019/12/01 v3.14 biblatex localization (PK/MW)
 )
@@ -906,494 +915,693 @@ Package biblatex Info: Automatic encoding selection.
 \openout3 = `demresearchmobility.bcf'.
 
 Package biblatex Info: Trying to load bibliographic data...
-Package biblatex Info: ... file 'demresearchmobility.bbl' found.
+Package biblatex Info: ... file 'demresearchmobility.bbl' not found.
 
-(./demresearchmobility.bbl
-
-Package biblatex Warning: The following entry could not be found
-(biblatex)                in the database:
-(biblatex)                young1991recursive
-(biblatex)                Please verify the spelling and rerun
-(biblatex)                LaTeX afterwards.
-
+No file demresearchmobility.bbl.
+Package biblatex Info: Reference section=0 on input line 50.
+Package biblatex Info: Reference segment=0 on input line 50.
+ABD: EveryShipout initializing macros
+(/usr/local/texlive/2019/texmf-dist/tex/context/base/mkii/supp-pdf.mkii
+[Loading MPS to PDF converter (version 2006.09.02).]
+\scratchcounter=\count425
+\scratchdimen=\dimen285
+\scratchbox=\box66
+\nofMPsegments=\count426
+\nofMParguments=\count427
+\everyMPshowfont=\toks38
+\MPscratchCnt=\count428
+\MPscratchDim=\dimen286
+\MPnumerator=\count429
+\makeMPintoPDFobject=\count430
+\everyMPtoPDFconversion=\toks39
 )
-Package biblatex Info: Reference section=0 on input line 91.
-Package biblatex Info: Reference segment=0 on input line 91.
 Package caption Info: Begin \AtBeginDocument code.
+Package caption Info: float package is loaded.
 Package caption Info: longtable package is loaded.
  (/usr/local/texlive/2019/texmf-dist/tex/latex/caption/ltcaption.sty
 Package: ltcaption 2018/08/26 v1.4a longtable captions (AR)
 )
 Package caption Info: End \AtBeginDocument code.
 
-ABD: EveryShipout initializing macros
-(/usr/local/texlive/2019/texmf-dist/tex/context/base/mkii/supp-pdf.mkii
-[Loading MPS to PDF converter (version 2006.09.02).]
-\scratchcounter=\count424
-\scratchdimen=\dimen285
-\scratchbox=\box64
-\nofMPsegments=\count425
-\nofMParguments=\count426
-\everyMPshowfont=\toks36
-\MPscratchCnt=\count427
-\MPscratchDim=\dimen286
-\MPnumerator=\count428
-\makeMPintoPDFobject=\count429
-\everyMPtoPDFconversion=\toks37
+! Argument of \reserved@a has an extra }.
+<inserted text> 
+                \par 
+l.54 ...@pbl.nl}} and Hans Visser\footnotemark[1]}
+                                                  
+I've run across a `}' that doesn't seem to match anything.
+For example, `\def\a#1{...}' and `\a}' would produce
+this error. If you simply proceed now, the `\par' that
+I've just inserted will cause me to report a runaway
+argument that might be the root of the problem. But if
+your `}' was spurious, just type `2' and it will go away.
+
+Runaway argument?
+]
+! Paragraph ended before \reserved@a was complete.
+<to be read again> 
+                   \par 
+l.54 ...@pbl.nl}} and Hans Visser\footnotemark[1]}
+                                                  
+I suspect you've forgotten a `}', causing me to apply this
+control sequence to too much text. How can we recover?
+My plan is to forget the whole thing and hope for the best.
+
+! Undefined control sequence.
+\Url Error ->\url used in a moving argument. 
+                                             
+l.56 \maketitle
+               
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+LaTeX Font Info:    Trying to load font information for T1+cmtt on input line 5
+6.
+(/usr/local/texlive/2019/texmf-dist/tex/latex/base/t1cmtt.fd
+File: t1cmtt.fd 2019/12/16 v2.5j Standard LaTeX font definitions
 ) [1
 
 {/usr/local/texlive/2019/texmf-var/fonts/map/pdftex/updmap/pdftex.map}]
+
+LaTeX Warning: Citation 'beer1993forecast' on page 2 undefined on input line 82
+.
+
+
+LaTeX Warning: Citation 'matthews2013progress' on page 2 undefined on input lin
+e 82.
+
+
+LaTeX Warning: Citation 'raymer2019spatial' on page 2 undefined on input line 8
+2.
+
+
+LaTeX Warning: Citation 'canova1998detrending' on page 2 undefined on input lin
+e 82.
+
+
+LaTeX Warning: Citation 'hamilton2018' on page 2 undefined on input line 82.
+
 [2]
-<../figs/freq--freq-plot-1.pdf, id=21, 445.665pt x 299.1175pt>
+
+LaTeX Warning: Citation 'kaplan2017understanding' on page 3 undefined on input 
+line 89.
+
+
+LaTeX Warning: Citation 'mulder2018putting' on page 3 undefined on input line 9
+3.
+
+
+LaTeX Warning: Citation 'smith1997further' on page 3 undefined on input line 96
+.
+
+
+LaTeX Warning: Citation 'de2005achtergronden' on page 3 undefined on input line
+ 98.
+
+
+LaTeX Warning: Citation 'smith2013practitioner' on page 3 undefined on input li
+ne 101.
+
+
+LaTeX Warning: Citation 'teriele2019' on page 3 undefined on input line 104.
+
+[3]
+
+LaTeX Warning: Citation 'zietz2014us' on page 4 undefined on input line 115.
+
+
+LaTeX Warning: Citation 'petris2009dynamic' on page 4 undefined on input line 1
+16.
+
+
+LaTeX Warning: Citation 'durbin2012time' on page 4 undefined on input line 116.
+
+
+
+Overfull \hbox (33.7483pt too wide) in paragraph at lines 115--117
+\T1/cmr/m/n/12 long to the familiy of state space mod-els ([]; []).
+ []
+
+
+LaTeX Warning: Reference `fig:freq-plot' on page 4 undefined on input line 141.
+
+
+[4]
+<../figs/freq--freq-plot-1.pdf, id=34, 445.665pt x 299.1175pt>
 File: ../figs/freq--freq-plot-1.pdf Graphic file (type pdf)
 <use ../figs/freq--freq-plot-1.pdf>
-Package pdftex.def Info: ../figs/freq--freq-plot-1.pdf  used on input line 218.
+Package pdftex.def Info: ../figs/freq--freq-plot-1.pdf  used on input line 151.
 
-(pdftex.def)             Requested size: 390.00351pt x 261.75911pt.
- [3] [4 <../figs/freq--freq-plot-1.pdf>]
-LaTeX Font Info:    Trying to load font information for T1+cmtt on input line 2
-39.
+(pdftex.def)             Requested size: 356.53249pt x 239.29431pt.
 
-(/usr/local/texlive/2019/texmf-dist/tex/latex/base/t1cmtt.fd
-File: t1cmtt.fd 2019/12/16 v2.5j Standard LaTeX font definitions
-)
-Overfull \hbox (82.88539pt too wide) in paragraph at lines 239--239
+Overfull \hbox (82.88539pt too wide) in paragraph at lines 172--172
 [][]$\T1/cmtt/m/n/10 https : / / www . cbs . nl / nl-[]nl / nieuws / 2018 / 26 
 / minder-[]mensen-[]verhuisd-[]in-[]eerste-[]kwartaal-[]2018$| 
  []
 
-[5]
+[5 <../figs/freq--freq-plot-1.pdf>]
 
-! LaTeX Error: Bad math environment delimiter.
+LaTeX Warning: Citation 'kalman1960contributions' on page 6 undefined on input 
+line 189.
 
-See the LaTeX manual or LaTeX Companion for explanation.
-Type  H <return>  for immediate help.
- ...                                              
-                                                  
-l.325 \begin{equation*}
-                       
-Your command was ignored.
-Type  I <command> <return>  to replace it with another command,
-or  <return>  to continue without it.
 
-! Missing $ inserted.
-<inserted text> 
-                $
-l.326 
-      
-I've inserted a begin-math/end-math symbol since I think
-you left one out. Proceed, with fingers crossed.
+LaTeX Warning: Citation 'petris2009dynamic' on page 6 undefined on input line 1
+92.
 
-! Missing \endgroup inserted.
-<inserted text> 
-                \endgroup 
-l.326 
-      
-I've inserted something that you may have forgotten.
-(See the <inserted text> above.)
-With luck, this will get me unwedged. But if you
-really didn't forget anything, try typing `2' now; then
-my insertion and my current dilemma will both disappear.
+[6]
 
-! Display math should end with $$.
-<to be read again> 
-                   \par 
-l.326 
-      
-The `$' that I just saw supposedly matches a previous `$$'.
-So I shall assume that you typed `$$' both times.
+LaTeX Warning: Citation 'petris2009dynamic' on page 7 undefined on input line 2
+33.
 
-[6] [7] [8] [9]
-<../figs/freq--dlm-filtered-1.pdf, id=64, 463.7325pt x 314.17375pt>
+[7]
+
+LaTeX Warning: Citation 'petris2009dynamic' on page 8 undefined on input line 3
+35.
+
+[8]
+
+LaTeX Warning: Citation 'monahan1984note' on page 9 undefined on input line 341
+.
+
+
+LaTeX Warning: Citation 'young1991recursive' on page 9 undefined on input line 
+346.
+
+
+LaTeX Warning: Citation 'durbin2012time' on page 9 undefined on input line 352.
+
+
+
+LaTeX Warning: Reference `tab:estimated-parameters' on page 9 undefined on inpu
+t line 358.
+
+[9]
+
+LaTeX Warning: Reference `fig:dlm-filtered' on page 10 undefined on input line 
+399.
+
+<../figs/freq--dlm-filtered-1.pdf, id=65, 463.7325pt x 314.17375pt>
 File: ../figs/freq--dlm-filtered-1.pdf Graphic file (type pdf)
 <use ../figs/freq--dlm-filtered-1.pdf>
-Package pdftex.def Info: ../figs/freq--dlm-filtered-1.pdf  used on input line 5
-14.
-(pdftex.def)             Requested size: 390.00673pt x 264.22533pt.
- [10 <../figs/freq--dlm-filtered-1.pdf>]
-<../figs/freq--ci-comparison-1.pdf, id=75, 457.71pt x 313.17pt>
+Package pdftex.def Info: ../figs/freq--dlm-filtered-1.pdf  used on input line 4
+12.
+(pdftex.def)             Requested size: 370.9865pt x 251.33932pt.
+[10]
+
+LaTeX Warning: Reference `fig:ci-comparison' on page 11 undefined on input line
+ 415.
+
+
+LaTeX Warning: Citation 'petris2009dynamic' on page 11 undefined on input line 
+419.
+
+<../figs/freq--ci-comparison-1.pdf, id=69, 457.71pt x 313.17pt>
 File: ../figs/freq--ci-comparison-1.pdf Graphic file (type pdf)
 <use ../figs/freq--ci-comparison-1.pdf>
 Package pdftex.def Info: ../figs/freq--ci-comparison-1.pdf  used on input line 
-529.
-(pdftex.def)             Requested size: 390.01216pt x 266.8504pt.
-<../figs/freq--dlm-smoothed-1.pdf, id=76, 464.73625pt x 313.17pt>
+425.
+(pdftex.def)             Requested size: 366.1685pt x 250.53633pt.
+[11 <../figs/freq--dlm-filtered-1.pdf>]
+
+LaTeX Warning: Reference `fig:dlm-smoothed' on page 12 undefined on input line 
+429.
+
+<../figs/freq--dlm-smoothed-1.pdf, id=80, 463.7325pt x 313.17pt>
 File: ../figs/freq--dlm-smoothed-1.pdf Graphic file (type pdf)
 <use ../figs/freq--dlm-smoothed-1.pdf>
-Package pdftex.def Info: ../figs/freq--dlm-smoothed-1.pdf  used on input line 5
-48.
-(pdftex.def)             Requested size: 390.00703pt x 262.8125pt.
- [11 <../figs/freq--ci-comparison-1.pdf>] [12 <../figs/freq--dlm-smoothed-1.pdf
->]
+Package pdftex.def Info: ../figs/freq--dlm-smoothed-1.pdf  used on input line 4
+44.
+(pdftex.def)             Requested size: 370.9865pt x 250.53633pt.
+[12 <../figs/freq--ci-comparison-1.pdf>]
 
-! Package inputenc Error: Unicode character ́ (U+0301)
-(inputenc)                not set up for use with LaTeX.
+LaTeX Warning: Citation 'bergmeir2012use' on page 13 undefined on input line 46
+5.
 
-See the inputenc package documentation for explanation.
-Type  H <return>  for immediate help.
- ...                                              
-                                                  
-l.570 training data \citep{bergmeir2012use}.
-                                             Recent literature suggests that
-You may provide a definition with
-\DeclareUnicodeCharacter 
 
-<../figs/freq--rolling-forecast-example-1.pdf, id=100, 457.71pt x 313.17pt>
+LaTeX Warning: Citation 'bergmeir2018' on page 13 undefined on input line 467.
+
+
+LaTeX Warning: Citation 'tashman2000out' on page 13 undefined on input line 472
+.
+
+
+LaTeX Warning: Reference `fig:rolling-forecast-example' on page 13 undefined on
+ input line 476.
+
+[13 <../figs/freq--dlm-smoothed-1.pdf>]
+<../figs/freq--rolling-forecast-example-1.pdf, id=105, 457.71pt x 313.17pt>
 File: ../figs/freq--rolling-forecast-example-1.pdf Graphic file (type pdf)
 <use ../figs/freq--rolling-forecast-example-1.pdf>
 Package pdftex.def Info: ../figs/freq--rolling-forecast-example-1.pdf  used on 
-input line 596.
-(pdftex.def)             Requested size: 390.01216pt x 266.8504pt.
-[13] [14 <../figs/freq--rolling-forecast-example-1.pdf>] [15]
-Overfull \hbox (8.50328pt too wide) in paragraph at lines 681--681
-[]\T1/cmr/m/n/12 Forecast
+input line 487.
+(pdftex.def)             Requested size: 366.1685pt x 250.53633pt.
+
+
+LaTeX Warning: Reference `fig:dlm-smoothed' on page 14 undefined on input line 
+497.
+
+[14 <../figs/freq--rolling-forecast-example-1.pdf>]
+
+LaTeX Warning: Reference `tab:par-comparison' on page 15 undefined on input lin
+e 505.
+
+
+LaTeX Warning: Citation 'holt2004forecasting' on page 15 undefined on input lin
+e 516.
+
+
+LaTeX Warning: Citation 'winters1960forecasting' on page 15 undefined on input 
+line 516.
+
+
+LaTeX Warning: Citation 'hyndman2002state' on page 15 undefined on input line 5
+33.
+
+
+LaTeX Warning: Citation 'hyndman2019' on page 15 undefined on input line 540.
+
+[15]
+
+LaTeX Warning: Reference `tab:error-comparison' on page 16 undefined on input l
+ine 547.
+
+
+Overfull \hbox (11.0776pt too wide) in paragraph at lines 569--569
+[]\T1/cmr/m/n/10.95 Forecast
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 681--681
-\T1/cmr/m/n/12 hori-
+Underfull \hbox (badness 10000) in paragraph at lines 569--569
+\T1/cmr/m/n/10.95 hori-
  []
 
 
-Overfull \hbox (7.11612pt too wide) in paragraph at lines 681--681
-[]\T1/cmr/m/n/12 ARIMA| 
+Overfull \hbox (4.09448pt too wide) in paragraph at lines 569--569
+[]\T1/cmr/m/n/10.95 ARIMA| 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 681--681
-[]\T1/cmr/m/n/12 Holt-
+Underfull \hbox (badness 10000) in paragraph at lines 569--569
+[]\T1/cmr/m/n/10.95 Holt-
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 681--681
-\T1/cmr/m/n/12 Win-
+Overfull \hbox (3.41734pt too wide) in paragraph at lines 569--569
+\T1/cmr/m/n/10.95 Winters| 
  []
 
 
-Overfull \hbox (1.75078pt too wide) in paragraph at lines 684--684
-[]\T1/cmr/m/n/12 (0.095)| 
+Overfull \hbox (9.40823pt too wide) in paragraph at lines 569--569
+[]\T1/cmr/m/n/10.95 StructTS| 
  []
 
 
-Overfull \hbox (7.62434pt too wide) in paragraph at lines 684--684
-[]\T1/cmr/m/n/12 (0.1655)| 
+Overfull \hbox (2.59225pt too wide) in paragraph at lines 569--570
+[]\T1/cmr/m/n/10.95 TBATS| 
  []
 
 
-Overfull \hbox (7.62434pt too wide) in paragraph at lines 684--684
-[]\T1/cmr/m/n/12 (0.1087)| 
+Overfull \hbox (5.83386pt too wide) in paragraph at lines 571--571
+[]\T1/cmr/m/n/10.95 RMSE| 
  []
 
 
-Overfull \hbox (7.62434pt too wide) in paragraph at lines 684--684
-[]\T1/cmr/m/n/12 (0.0629)| 
+Overfull \hbox (4.5726pt too wide) in paragraph at lines 572--572
+[]\T1/cmr/m/n/10.95 (0.1655)| 
  []
 
 
-Overfull \hbox (7.62434pt too wide) in paragraph at lines 684--684
-[]\T1/cmr/m/n/12 (0.1822)| 
+Overfull \hbox (4.5726pt too wide) in paragraph at lines 572--572
+[]\T1/cmr/m/n/10.95 (0.1087)| 
  []
 
 
-Overfull \hbox (1.75078pt too wide) in paragraph at lines 684--685
-[]\T1/cmr/m/n/12 (0.193)| 
+Overfull \hbox (4.5726pt too wide) in paragraph at lines 572--572
+[]\T1/cmr/m/n/10.95 (0.0629)| 
  []
 
 
-Overfull \hbox (7.62434pt too wide) in paragraph at lines 686--686
-[]\T1/cmr/m/n/12 (0.1434)| 
+Overfull \hbox (4.5726pt too wide) in paragraph at lines 572--572
+[]\T1/cmr/m/n/10.95 (0.1822)| 
  []
 
 
-Overfull \hbox (7.62434pt too wide) in paragraph at lines 686--686
-[]\T1/cmr/m/n/12 (0.2339)| 
+Overfull \hbox (4.5726pt too wide) in paragraph at lines 572--572
+[]\T1/cmr/m/n/10.95 (0.1003)| 
  []
 
 
-Overfull \hbox (7.62434pt too wide) in paragraph at lines 686--686
-[]\T1/cmr/m/n/12 (0.0982)| 
+Overfull \hbox (4.5726pt too wide) in paragraph at lines 572--573
+[]\T1/cmr/m/n/10.95 (0.0654)| 
  []
 
 
-Overfull \hbox (7.62434pt too wide) in paragraph at lines 686--686
-[]\T1/cmr/m/n/12 (0.1016)| 
+Overfull \hbox (4.5726pt too wide) in paragraph at lines 574--574
+[]\T1/cmr/m/n/10.95 (0.1434)| 
  []
 
 
-Overfull \hbox (7.62434pt too wide) in paragraph at lines 686--686
-[]\T1/cmr/m/n/12 (0.2443)| 
+Overfull \hbox (4.5726pt too wide) in paragraph at lines 574--574
+[]\T1/cmr/m/n/10.95 (0.2339)| 
  []
 
 
-Overfull \hbox (1.75078pt too wide) in paragraph at lines 686--687
-[]\T1/cmr/m/n/12 (0.124)| 
+Overfull \hbox (4.5726pt too wide) in paragraph at lines 574--574
+[]\T1/cmr/m/n/10.95 (0.0982)| 
  []
 
 
-Overfull \hbox (7.62434pt too wide) in paragraph at lines 688--688
-[]\T1/cmr/m/n/12 (0.2435)| 
+Overfull \hbox (4.5726pt too wide) in paragraph at lines 574--574
+[]\T1/cmr/m/n/10.95 (0.1016)| 
  []
 
 
-Overfull \hbox (7.62434pt too wide) in paragraph at lines 688--688
-[]\T1/cmr/m/n/12 (0.3914)| 
+Overfull \hbox (4.5726pt too wide) in paragraph at lines 574--574
+[]\T1/cmr/m/n/10.95 (0.2443)| 
  []
 
 
-Overfull \hbox (7.62434pt too wide) in paragraph at lines 688--688
-[]\T1/cmr/m/n/12 (0.0884)| 
+Overfull \hbox (4.5726pt too wide) in paragraph at lines 574--574
+[]\T1/cmr/m/n/10.95 (0.1327)| 
  []
 
 
-Overfull \hbox (7.62434pt too wide) in paragraph at lines 688--688
-[]\T1/cmr/m/n/12 (0.1652)| 
+Overfull \hbox (4.5726pt too wide) in paragraph at lines 574--575
+[]\T1/cmr/m/n/10.95 (0.1403)| 
  []
 
 
-Overfull \hbox (7.62434pt too wide) in paragraph at lines 688--688
-[]\T1/cmr/m/n/12 (0.3599)| 
+Overfull \hbox (4.5726pt too wide) in paragraph at lines 576--576
+[]\T1/cmr/m/n/10.95 (0.2435)| 
  []
 
 
-Overfull \hbox (7.62434pt too wide) in paragraph at lines 688--689
-[]\T1/cmr/m/n/12 (0.1075)| 
+Overfull \hbox (4.5726pt too wide) in paragraph at lines 576--576
+[]\T1/cmr/m/n/10.95 (0.3914)| 
  []
 
 
-Overfull \hbox (1.41199pt too wide) in paragraph at lines 691--691
-[]\T1/cmr/m/n/12 MAPE| 
+Overfull \hbox (4.5726pt too wide) in paragraph at lines 576--576
+[]\T1/cmr/m/n/10.95 (0.0884)| 
  []
 
 
-Overfull \hbox (7.62434pt too wide) in paragraph at lines 692--692
-[]\T1/cmr/m/n/12 (0.0111)| 
+Overfull \hbox (4.5726pt too wide) in paragraph at lines 576--576
+[]\T1/cmr/m/n/10.95 (0.1652)| 
  []
 
 
-Overfull \hbox (7.62434pt too wide) in paragraph at lines 692--692
-[]\T1/cmr/m/n/12 (0.0171)| 
+Overfull \hbox (4.5726pt too wide) in paragraph at lines 576--576
+[]\T1/cmr/m/n/10.95 (0.3599)| 
  []
 
 
-Overfull \hbox (7.62434pt too wide) in paragraph at lines 692--692
-[]\T1/cmr/m/n/12 (0.0103)| 
+Overfull \hbox (4.5726pt too wide) in paragraph at lines 576--576
+[]\T1/cmr/m/n/10.95 (0.1075)| 
  []
 
 
-Overfull \hbox (7.62434pt too wide) in paragraph at lines 692--692
-[]\T1/cmr/m/n/12 (0.0079)| 
+Overfull \hbox (4.5726pt too wide) in paragraph at lines 576--576
+[]\T1/cmr/m/n/10.95 (0.2245)| 
  []
 
 
-Overfull \hbox (7.62434pt too wide) in paragraph at lines 692--692
-[]\T1/cmr/m/n/12 (0.0201)| 
+Overfull \hbox (7.34207pt too wide) in paragraph at lines 578--578
+[]\T1/cmr/m/n/10.95 MAPE| 
  []
 
 
-Overfull \hbox (7.62434pt too wide) in paragraph at lines 692--693
-[]\T1/cmr/m/n/12 (0.0196)| 
+Overfull \hbox (4.5726pt too wide) in paragraph at lines 579--579
+[]\T1/cmr/m/n/10.95 (0.0111)| 
  []
 
 
-Overfull \hbox (7.62434pt too wide) in paragraph at lines 694--694
-[]\T1/cmr/m/n/12 (0.0172)| 
+Overfull \hbox (4.5726pt too wide) in paragraph at lines 579--579
+[]\T1/cmr/m/n/10.95 (0.0171)| 
  []
 
 
-Overfull \hbox (7.62434pt too wide) in paragraph at lines 694--694
-[]\T1/cmr/m/n/12 (0.0262)| 
+Overfull \hbox (4.5726pt too wide) in paragraph at lines 579--579
+[]\T1/cmr/m/n/10.95 (0.0103)| 
  []
 
 
-Overfull \hbox (7.62434pt too wide) in paragraph at lines 694--694
-[]\T1/cmr/m/n/12 (0.0093)| 
+Overfull \hbox (4.5726pt too wide) in paragraph at lines 579--579
+[]\T1/cmr/m/n/10.95 (0.0079)| 
  []
 
 
-Overfull \hbox (1.75078pt too wide) in paragraph at lines 694--694
-[]\T1/cmr/m/n/12 (0.013)| 
+Overfull \hbox (4.5726pt too wide) in paragraph at lines 579--579
+[]\T1/cmr/m/n/10.95 (0.0201)| 
  []
 
 
-Overfull \hbox (1.75078pt too wide) in paragraph at lines 694--694
-[]\T1/cmr/m/n/12 (0.028)| 
+Overfull \hbox (4.5726pt too wide) in paragraph at lines 579--579
+[]\T1/cmr/m/n/10.95 (0.0196)| 
  []
 
 
-Overfull \hbox (7.62434pt too wide) in paragraph at lines 694--695
-[]\T1/cmr/m/n/12 (0.0115)| 
+Overfull \hbox (4.5726pt too wide) in paragraph at lines 579--579
+[]\T1/cmr/m/n/10.95 (0.0106)| 
  []
 
 
-Overfull \hbox (7.62434pt too wide) in paragraph at lines 696--696
-[]\T1/cmr/m/n/12 (0.0269)| 
+Overfull \hbox (4.5726pt too wide) in paragraph at lines 579--580
+[]\T1/cmr/m/n/10.95 (0.0084)| 
  []
 
 
-Overfull \hbox (1.75078pt too wide) in paragraph at lines 696--696
-[]\T1/cmr/m/n/12 (0.041)| 
+Overfull \hbox (4.5726pt too wide) in paragraph at lines 581--581
+[]\T1/cmr/m/n/10.95 (0.0172)| 
  []
 
 
-Overfull \hbox (7.62434pt too wide) in paragraph at lines 696--696
-[]\T1/cmr/m/n/12 (0.0096)| 
+Overfull \hbox (4.5726pt too wide) in paragraph at lines 581--581
+[]\T1/cmr/m/n/10.95 (0.0262)| 
  []
 
 
-Overfull \hbox (7.62434pt too wide) in paragraph at lines 696--696
-[]\T1/cmr/m/n/12 (0.0188)| 
+Overfull \hbox (4.5726pt too wide) in paragraph at lines 581--581
+[]\T1/cmr/m/n/10.95 (0.0093)| 
  []
 
 
-Overfull \hbox (7.62434pt too wide) in paragraph at lines 696--696
-[]\T1/cmr/m/n/12 (0.0383)| 
+Overfull \hbox (4.5726pt too wide) in paragraph at lines 581--581
+[]\T1/cmr/m/n/10.95 (0.0115)| 
  []
 
 
-Overfull \hbox (7.62434pt too wide) in paragraph at lines 696--697
-[]\T1/cmr/m/n/12 (0.0122)| 
+Overfull \hbox (4.5726pt too wide) in paragraph at lines 581--581
+[]\T1/cmr/m/n/10.95 (0.0157)| 
  []
 
-<../figs/freq--rmse-origins-1.pdf, id=119, 453.695pt x 315.1775pt>
+
+Overfull \hbox (4.5726pt too wide) in paragraph at lines 581--582
+[]\T1/cmr/m/n/10.95 (0.0156)| 
+ []
+
+
+Overfull \hbox (4.5726pt too wide) in paragraph at lines 583--583
+[]\T1/cmr/m/n/10.95 (0.0269)| 
+ []
+
+
+Overfull \hbox (4.5726pt too wide) in paragraph at lines 583--583
+[]\T1/cmr/m/n/10.95 (0.0096)| 
+ []
+
+
+Overfull \hbox (4.5726pt too wide) in paragraph at lines 583--583
+[]\T1/cmr/m/n/10.95 (0.0188)| 
+ []
+
+
+Overfull \hbox (4.5726pt too wide) in paragraph at lines 583--583
+[]\T1/cmr/m/n/10.95 (0.0383)| 
+ []
+
+
+Overfull \hbox (4.5726pt too wide) in paragraph at lines 583--583
+[]\T1/cmr/m/n/10.95 (0.0122)| 
+ []
+
+
+Overfull \hbox (4.5726pt too wide) in paragraph at lines 583--583
+[]\T1/cmr/m/n/10.95 (0.0239)| 
+ []
+
+
+Overfull \hbox (4.5726pt too wide) in paragraph at lines 583--584
+[]\T1/cmr/m/n/10.95 (0.0249)| 
+ []
+
+
+Overfull \hbox (57.2058pt too wide) in paragraph at lines 567--586
+ [][] 
+ []
+
+[16]
+
+LaTeX Warning: Reference `fig:rmse-origins' on page 17 undefined on input line 
+617.
+
+
+LaTeX Warning: Reference `tab:error-comparison' on page 17 undefined on input l
+ine 625.
+
+<../figs/freq--rmse-origins-1.pdf, id=123, 453.695pt x 315.1775pt>
 File: ../figs/freq--rmse-origins-1.pdf Graphic file (type pdf)
 <use ../figs/freq--rmse-origins-1.pdf>
-Package pdftex.def Info: ../figs/freq--rmse-origins-1.pdf  used on input line 7
-21.
-(pdftex.def)             Requested size: 390.00395pt x 270.93195pt.
-[16]
-<../figs/freq--forecast-2017-2018-1.pdf, id=123, 463.7325pt x 313.17pt>
+Package pdftex.def Info: ../figs/freq--rmse-origins-1.pdf  used on input line 6
+36.
+(pdftex.def)             Requested size: 362.9565pt x 252.14233pt.
+[17]
+
+LaTeX Warning: Reference `fig:forecast-2017-2018' on page 18 undefined on input
+ line 646.
+
+<../figs/freq--forecast-2017-2018-1.pdf, id=127, 463.7325pt x 313.17pt>
 File: ../figs/freq--forecast-2017-2018-1.pdf Graphic file (type pdf)
 <use ../figs/freq--forecast-2017-2018-1.pdf>
 Package pdftex.def Info: ../figs/freq--forecast-2017-2018-1.pdf  used on input 
-line 748.
-(pdftex.def)             Requested size: 390.00673pt x 263.38115pt.
- [17] [18 <../figs/freq--rmse-origins-1.pdf>] [19 <../figs/freq--forecast-2017-
-2018-1.pdf>]
-<../figs/freq--forecast-2017-1.pdf, id=148, 464.73625pt x 315.1775pt>
+line 663.
+(pdftex.def)             Requested size: 370.9865pt x 250.53633pt.
+[18 <../figs/freq--rmse-origins-1.pdf>]
+
+LaTeX Warning: Reference `fig:forecast-2017' on page 19 undefined on input line
+ 674.
+
+<../figs/freq--forecast-2017-1.pdf, id=138, 464.73625pt x 315.1775pt>
 File: ../figs/freq--forecast-2017-1.pdf Graphic file (type pdf)
 <use ../figs/freq--forecast-2017-1.pdf>
 Package pdftex.def Info: ../figs/freq--forecast-2017-1.pdf  used on input line 
-775.
-(pdftex.def)             Requested size: 390.00703pt x 264.49721pt.
- [20
+685.
+(pdftex.def)             Requested size: 371.78949pt x 252.14233pt.
+[19 <../figs/freq--forecast-2017-2018-1.pdf>]
 
-] [21 <../figs/freq--forecast-2017-1.pdf>] [22]
-<../figs/freq--freq-month-plot-1.pdf, id=168, 463.7325pt x 313.17pt>
+LaTeX Warning: Reference `fig:forecast-2017' on page 20 undefined on input line
+ 692.
+
+
+LaTeX Warning: Reference `fig:forecast-2017' on page 20 undefined on input line
+ 703.
+
+[20 <../figs/freq--forecast-2017-1.pdf>]
+<../figs/freq--mc-intervals-1.pdf, id=163, 463.7325pt x 315.1775pt>
+File: ../figs/freq--mc-intervals-1.pdf Graphic file (type pdf)
+<use ../figs/freq--mc-intervals-1.pdf>
+Package pdftex.def Info: ../figs/freq--mc-intervals-1.pdf  used on input line 7
+08.
+(pdftex.def)             Requested size: 370.9865pt x 252.14233pt.
+
+
+LaTeX Warning: Reference `fig:forecast-2017' on page 21 undefined on input line
+ 711.
+
+[21 <../figs/freq--mc-intervals-1.pdf>]
+
+LaTeX Warning: Empty bibliography on input line 757.
+
+
+LaTeX Warning: Reference `fig:freq-month-plot' on page 22 undefined on input li
+ne 763.
+
+[22]
+
+LaTeX Warning: Reference `fig:autocorr-plot' on page 23 undefined on input line
+ 777.
+
+
+LaTeX Warning: Citation 'hyndman2018forecasting' on page 23 undefined on input 
+line 786.
+
+<../figs/freq--freq-month-plot-1.pdf, id=180, 463.7325pt x 313.17pt>
 File: ../figs/freq--freq-month-plot-1.pdf Graphic file (type pdf)
 <use ../figs/freq--freq-month-plot-1.pdf>
 Package pdftex.def Info: ../figs/freq--freq-month-plot-1.pdf  used on input lin
-e 875.
-(pdftex.def)             Requested size: 390.00673pt x 263.38115pt.
-<../figs/freq--autocorr-plot-1.pdf, id=169, 459.7175pt x 315.1775pt>
+e 792.
+(pdftex.def)             Requested size: 370.9865pt x 250.53633pt.
+[23]
+<../figs/freq--autocorr-plot-1.pdf, id=184, 459.7175pt x 315.1775pt>
 File: ../figs/freq--autocorr-plot-1.pdf Graphic file (type pdf)
 <use ../figs/freq--autocorr-plot-1.pdf>
 Package pdftex.def Info: ../figs/freq--autocorr-plot-1.pdf  used on input line 
-882.
-(pdftex.def)             Requested size: 390.01816pt x 267.39236pt.
- [23]
-[24 <../figs/freq--freq-month-plot-1.pdf> <../figs/freq--autocorr-plot-1.pdf>]
-<../figs/freq--residual-autocorr-1.pdf, id=191, 459.7175pt x 315.1775pt>
+799.
+(pdftex.def)             Requested size: 367.77449pt x 252.14233pt.
+<../figs/freq--residual-autocorr-1.pdf, id=185, 459.7175pt x 315.1775pt>
 File: ../figs/freq--residual-autocorr-1.pdf Graphic file (type pdf)
 <use ../figs/freq--residual-autocorr-1.pdf>
 Package pdftex.def Info: ../figs/freq--residual-autocorr-1.pdf  used on input l
-ine 891.
-(pdftex.def)             Requested size: 390.01816pt x 267.39236pt.
-<../figs/freq--qqnorm-1.pdf, id=192, 459.7175pt x 313.17pt>
+ine 808.
+(pdftex.def)             Requested size: 367.77449pt x 252.14233pt.
+ [24 <../figs/freq--freq-month-plot-1.pdf> <../figs/freq--autocorr-plot-1.pdf>]
+<../figs/freq--qqnorm-1.pdf, id=204, 459.7175pt x 313.17pt>
 File: ../figs/freq--qqnorm-1.pdf Graphic file (type pdf)
 <use ../figs/freq--qqnorm-1.pdf>
-Package pdftex.def Info: ../figs/freq--qqnorm-1.pdf  used on input line 898.
-(pdftex.def)             Requested size: 390.01816pt x 265.68921pt.
-<../figs/freq--trend-growth-1.pdf, id=193, 459.7175pt x 313.17pt>
+Package pdftex.def Info: ../figs/freq--qqnorm-1.pdf  used on input line 815.
+(pdftex.def)             Requested size: 367.77449pt x 250.53633pt.
+ [25 <../figs/freq--residual-autocorr-1.pdf>]
+<../figs/freq--trend-growth-1.pdf, id=216, 459.7175pt x 313.17pt>
 File: ../figs/freq--trend-growth-1.pdf Graphic file (type pdf)
 <use ../figs/freq--trend-growth-1.pdf>
-Package pdftex.def Info: ../figs/freq--trend-growth-1.pdf  used on input line 9
-27.
-(pdftex.def)             Requested size: 390.01816pt x 265.68921pt.
+Package pdftex.def Info: ../figs/freq--trend-growth-1.pdf  used on input line 8
+44.
+(pdftex.def)             Requested size: 367.77449pt x 250.53633pt.
+ [26 <../figs/freq--qqnorm-1.pdf>] [27 <../figs/freq--trend-growth-1.pdf>] (./d
+emresearchmobility.aux)
 
-[25] [26 <../figs/freq--residual-autocorr-1.pdf>] [27 <../figs/freq--qqnorm-1.p
-df>] [28 <../figs/freq--trend-growth-1.pdf>]
+LaTeX Warning: There were undefined references.
 
-! Package inputenc Error: Unicode character ́ (U+0301)
-(inputenc)                not set up for use with LaTeX.
 
-See the inputenc package documentation for explanation.
-Type  H <return>  for immediate help.
- ...                                              
-                                                  
-l.932 
-      
-You may provide a definition with
-\DeclareUnicodeCharacter 
+LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
 
-[29
 
-]
-Underfull \hbox (badness 1655) in paragraph at lines 932--932
-[][]\T1/cmr/m/n/12 te Riele, Saskia et al. (2019). ``PBL/CBS Re-gionale bevolki
-ngs- en-
- []
+Package biblatex Warning: Please (re)run Biber on the file:
+(biblatex)                demresearchmobility
+(biblatex)                and rerun LaTeX afterwards.
 
-[30]
-
-! LaTeX Error: \begin{equation*} on input line 319 ended by \end{document}.
-
-See the LaTeX manual or LaTeX Companion for explanation.
-Type  H <return>  for immediate help.
- ...                                              
-                                                  
-l.934 \end{document}
-                    
-Your command was ignored.
-Type  I <command> <return>  to replace it with another command,
-or  <return>  to continue without it.
-
-(./demresearchmobility.aux)
 Package logreq Info: Writing requests to 'demresearchmobility.run.xml'.
 \openout1 = `demresearchmobility.run.xml'.
 
- )
-(\end occurred inside a group at level 1)
-
-### semi simple group (level 1) entered at line 319 (\begingroup)
-### bottom level 
+ ) 
 Here is how much of TeX's memory you used:
- 23223 strings out of 481248
- 457446 string characters out of 5918184
- 1169179 words of memory out of 5000000
- 38056 multiletter control sequences out of 15000+600000
- 549076 words of font info for 61 fonts, out of 8000000 for 9000
+ 23704 strings out of 481248
+ 467985 string characters out of 5918184
+ 1333236 words of memory out of 5000000
+ 38542 multiletter control sequences out of 15000+600000
+ 550070 words of font info for 66 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 60i,15n,60p,833b,1671s stack positions out of 5000i,500n,10000p,200000b,80000s
-{/usr/local/texlive/2019/texmf-dist/fonts/enc/dvips/cm-super/cm
--super-t1.enc}</usr/local/texlive/2019/texmf-dist/fonts/type1/public/amsfonts/c
-m/cmex10.pfb></usr/local/texlive/2019/texmf-dist/fonts/type1/public/amsfonts/cm
-/cmmi12.pfb></usr/local/texlive/2019/texmf-dist/fonts/type1/public/amsfonts/cm/
-cmmi8.pfb></usr/local/texlive/2019/texmf-dist/fonts/type1/public/amsfonts/cm/cm
-r12.pfb></usr/local/texlive/2019/texmf-dist/fonts/type1/public/amsfonts/cm/cmr6
-.pfb></usr/local/texlive/2019/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pf
-b></usr/local/texlive/2019/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb
-></usr/local/texlive/2019/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy6.pfb><
-/usr/local/texlive/2019/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy8.pfb></u
-sr/local/texlive/2019/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt12.pfb></us
-r/local/texlive/2019/texmf-dist/fonts/type1/public/cm-super/sfbx1095.pfb></usr/
-local/texlive/2019/texmf-dist/fonts/type1/public/cm-super/sfbx1200.pfb></usr/lo
-cal/texlive/2019/texmf-dist/fonts/type1/public/cm-super/sfbx1440.pfb></usr/loca
-l/texlive/2019/texmf-dist/fonts/type1/public/cm-super/sfbx1728.pfb></usr/local/
-texlive/2019/texmf-dist/fonts/type1/public/cm-super/sfcc1200.pfb></usr/local/te
-xlive/2019/texmf-dist/fonts/type1/public/cm-super/sfrm0700.pfb></usr/local/texl
-ive/2019/texmf-dist/fonts/type1/public/cm-super/sfrm0800.pfb></usr/local/texliv
-e/2019/texmf-dist/fonts/type1/public/cm-super/sfrm1000.pfb></usr/local/texlive/
-2019/texmf-dist/fonts/type1/public/cm-super/sfrm1095.pfb></usr/local/texlive/20
-19/texmf-dist/fonts/type1/public/cm-super/sfrm1200.pfb></usr/local/texlive/2019
-/texmf-dist/fonts/type1/public/cm-super/sfrm1440.pfb></usr/local/texlive/2019/t
-exmf-dist/fonts/type1/public/cm-super/sfrm2074.pfb></usr/local/texlive/2019/tex
-mf-dist/fonts/type1/public/cm-super/sfti1200.pfb></usr/local/texlive/2019/texmf
--dist/fonts/type1/public/cm-super/sftt1000.pfb></usr/local/texlive/2019/texmf-d
-ist/fonts/type1/public/cm-super/sftt1200.pfb>
-Output written on demresearchmobility.pdf (30 pages, 593204 bytes).
+ 60i,16n,60p,1243b,1624s stack positions out of 5000i,500n,10000p,200000b,80000s
+{/usr/local/texlive/2019/texmf-dist/fonts/enc/dvips/cm-super/cm-super-t1.enc}
+{/usr/local/texlive/2019/texmf-dist/fonts/enc/dvips/cm-super/cm-super-ts1.enc}<
+/usr/local/texlive/2019/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb></
+usr/local/texlive/2019/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi12.pfb></u
+sr/local/texlive/2019/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi8.pfb></usr
+/local/texlive/2019/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb></usr/l
+ocal/texlive/2019/texmf-dist/fonts/type1/public/amsfonts/cm/cmr6.pfb></usr/loca
+l/texlive/2019/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb></usr/local/t
+exlive/2019/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/local/te
+xlive/2019/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy8.pfb></usr/local/texl
+ive/2019/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt12.pfb></usr/local/texli
+ve/2019/texmf-dist/fonts/type1/public/cm-super/sfbx1095.pfb></usr/local/texlive
+/2019/texmf-dist/fonts/type1/public/cm-super/sfbx1200.pfb></usr/local/texlive/2
+019/texmf-dist/fonts/type1/public/cm-super/sfbx1440.pfb></usr/local/texlive/201
+9/texmf-dist/fonts/type1/public/cm-super/sfbx1728.pfb></usr/local/texlive/2019/
+texmf-dist/fonts/type1/public/cm-super/sfrm0700.pfb></usr/local/texlive/2019/te
+xmf-dist/fonts/type1/public/cm-super/sfrm0800.pfb></usr/local/texlive/2019/texm
+f-dist/fonts/type1/public/cm-super/sfrm1000.pfb></usr/local/texlive/2019/texmf-
+dist/fonts/type1/public/cm-super/sfrm1095.pfb></usr/local/texlive/2019/texmf-di
+st/fonts/type1/public/cm-super/sfrm1200.pfb></usr/local/texlive/2019/texmf-dist
+/fonts/type1/public/cm-super/sfrm1440.pfb></usr/local/texlive/2019/texmf-dist/f
+onts/type1/public/cm-super/sfrm2074.pfb></usr/local/texlive/2019/texmf-dist/fon
+ts/type1/public/cm-super/sfti1200.pfb></usr/local/texlive/2019/texmf-dist/fonts
+/type1/public/cm-super/sftt1000.pfb>
+Output written on demresearchmobility.pdf (27 pages, 595335 bytes).
 PDF statistics:
- 317 PDF objects out of 1000 (max. 8388607)
- 218 compressed objects within 3 object streams
+ 312 PDF objects out of 1000 (max. 8388607)
+ 216 compressed objects within 3 object streams
  0 named destinations out of 1000 (max. 500000)
- 78 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 83 words of extra memory for PDF output out of 10000 (max. 10000000)
 

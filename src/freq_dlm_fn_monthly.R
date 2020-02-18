@@ -195,6 +195,9 @@ roll_fore_fn <- function(begin_f, end_f, periods, mod, cores, pars=NULL) {
                  } else if (mod == 'ARIMA') {
                      fit <- Arima(y, order=c(2,1,5), seasonal=c(2,1,1))
                      return(forecast(fit, periods))
+                 } else if (mod == 'structts') {
+                     fit <- StructTS(y, type = 'BSM')
+                     return(forecast(fit, periods))
                  } else if (mod == 'TBATS') {
                      fit <- tbats(y, use.parallel = F)
                      return(forecast(fit, periods))
@@ -264,3 +267,54 @@ err_dt <- function(err_fn) {
     return(dt2)
 }    
 
+##  Monte Carlo forecasts
+mc_run <- function(orig, new) {    
+    ## estimate parameters
+    dlm2_mle <- dlmMLE(log(window(y_m, end = orig)),
+                   par=init_arma3,
+                   type = 'lt_arma3',
+                   init_level = log(window(y_m, end = orig))[1],
+                   init_slope = mean(diff(log(window(y_m, end = orig)))),
+                   build=freq_mod,
+                   hessian = T
+                   )
+    ## set up model
+    dlm2_fit <- freq_mod(dlm2_mle$par, type = 'lt_arma3',
+                     init_level = log(window(y_m, end = orig))[1],
+                     init_slope = mean(diff(log(window(y_m, end = orig))))
+                     )
+    ## kalman filter
+    dlm2_filt <- dlmFilter(log(window(y_m, end = orig)),
+                           dlm2_fit)
+    ## monte carlo forecasts
+    dlm2_mc_fore <- dlmForecast(dlm2_filt,
+                                nAhead = length(seq(orig + 1/12, 2018 + 11/12, by = 1/12)),
+                                sampleNew = new)
+    ## gather results, calculate mean predictions and intervals
+    out <- rbindlist(lapply(seq_along(dlm2_mc_fore$newObs),
+                               function(x) {
+                                   fore <- dlm2_mc_fore$newObs[[x]]
+                                   data.table(year = c(2016,
+                                                       floor(time(window(y_m, start = 2017, end = orig))),
+                                                       floor(time(fore))),
+                                              c(sum(window(y_m, start = 2016, end = 2016 + 11/12)),
+                                                as.numeric(window(y_m, start = 2017, end = orig)),
+                                                as.numeric(exp(fore)))
+                                              )[,
+                                                .(x, sum(V2)),
+                                                by = year
+                                                ]
+                               }))[,
+                                   ':=' (                                       
+                                       mean_fore = mean(V2[year > 2016]),
+                                       median_fore = median(V2[year > 2016]),
+                                       lo_fore = quantile(V2[year > 2016], 0.05),
+                                       up_fore = quantile(V2[year > 2016], 0.95)),
+                                   by = year
+                                   ][year == 2016,
+                                     4L:7L := V2
+                                     ][,
+                                       origin := orig
+                                       ]
+    return(out)
+}

@@ -48,6 +48,9 @@ Sys.setlocale("LC_TIME", "C")
 ## options(scipen = 999) # disable scientific notation
 ## options(digits = 5, scipen = 3)
 
+## set seed
+set.seed(123)
+
 ## a couple of links
 ## http://lenkiefer.com/2018/06/10/kalman-filter-for-a-dynamic-linear-model-in-r/
 ## https://otexts.com/fpp2/
@@ -231,8 +234,8 @@ mods <- c('local_level', 'local_trend', 'lt_smooth',
           'lt_arma2', 'lt_arma3', 'lt_wn_reg')
 
 ## priors of parameters
-init_arma2 <- c(-18, -9, -12, -6, -0.5, -0.3, 0.1, 0.1)
-init_arma3 <- c(-18, -9, -12, -6, -0.5, -0.3, 0.1, 0.1)
+init_arma2 <- c(-18, -9, -12, -6, -0.5, -0.4, 0.1, 0.1)
+init_arma3 <- c(-18, -9, -12, -6, -0.5, -0.4, 0.1, 0.1)
 init_reg_wn <- c(-18, -9, -12, rep(0, 2))
 
 for (mod in mods[c(7:8)]) {
@@ -291,6 +294,8 @@ for (mod in mods[c(7:8)]) {
     freq_smooth[[mod]] <- dlmSmooth(freq_filt[[mod]])
 }
 
+## dlmForecast(freq_filt[['lt_arma3']], sampleNew = 10)
+
 ## plot(apply(dropFirst(freq_filt[['lt_arma']]$m)[, 1:2], 1, sum))
 
 ## checkresiduals(residuals(freq_filt[[mods[2]]])$res)
@@ -319,18 +324,21 @@ end_fore <- break_point+12
 n_fore <- length(begin_fore:end_fore)
 
 ## estimated models
-model_names <- sort(c('ARIMA', 'DLM1', 'DLM2', 'ETS', 'Holt-Winters', 'Naïve'))
+model_names <- sort(c('ARIMA', 'DLM1', 'DLM2', 'ETS', 'Holt-Winters', 'Naïve', 'StructTS', 'TBATS'))
 
 ## rolling forecast of dlm models
 ## dlm0_fore_out <- roll_fore_fn(begin_fore, end_fore, n_periods, 'DLM0', n_cores)
 dlm1_fore_out <- roll_fore_fn(begin_fore, end_fore, n_periods, 'DLM1', n_cores)
 dlm2_fore_out <- roll_fore_fn(begin_fore, end_fore, n_periods, 'DLM2', n_cores)
 
+## for structural time series
+structts_fore_out <- roll_fore_fn(begin_fore, end_fore, n_periods, 'structts', n_cores)
+
 ## arima model
 arima_fore_out <- roll_fore_fn(begin_fore, end_fore, n_periods, 'ARIMA', n_cores) 
 
-# tbats model
-## tbats_fore_out <- roll_fore_fn(begin_fore, end_fore, n_periods, 'tbats', n_cores)
+## tbats model
+tbats_fore_out <- roll_fore_fn(begin_fore, end_fore, n_periods, 'TBATS', n_cores)
 
 ## ets model
 ets_fore_out <- roll_fore_fn(begin_fore, end_fore, n_periods, 'ETS', n_cores)
@@ -345,12 +353,14 @@ hw_fore_out <- roll_fore_fn(begin_fore, end_fore, n_periods, 'Holt-Winters', n_c
 rf_dt <- rbindlist(lapply(1:n_fore,
                           function(x) {
                               rbindlist(list(##fore_plot_dt(dlm0_fore_out[[x]][[2]], plot = 'DLM0'),
-                                             fore_plot_dt(dlm1_fore_out[[x]][[2]], plot = 'DLM1'),
-                                             fore_plot_dt(dlm2_fore_out[[x]][[2]], plot = 'DLM2'),
-                                             fore_plot_dt(arima_fore_out[[x]], plot = 'ARIMA'),
-                                             fore_plot_dt(naive_fore_out[[x]], plot = 'Naïve'),
-                                             fore_plot_dt(hw_fore_out[[x]], plot = 'Holt-Winters'),
-                                             fore_plot_dt(ets_fore_out[[x]], plot = 'ETS')
+                                  fore_plot_dt(dlm1_fore_out[[x]][[2]], plot = 'DLM1'),
+                                  fore_plot_dt(dlm2_fore_out[[x]][[2]], plot = 'DLM2'),
+                                  fore_plot_dt(arima_fore_out[[x]], plot = 'ARIMA'),
+                                  fore_plot_dt(structts_fore_out[[x]], plot = 'StructTS'),
+                                  fore_plot_dt(naive_fore_out[[x]], plot = 'Naïve'),
+                                  fore_plot_dt(hw_fore_out[[x]], plot = 'Holt-Winters'),
+                                  fore_plot_dt(ets_fore_out[[x]], plot = 'ETS'),
+                                  fore_plot_dt(tbats_fore_out[[x]], plot = 'TBATS')
                                         ))
                           }
                           )
@@ -380,14 +390,18 @@ rf_fit <- rbindlist(lapply(model_names,
                                               pred <- as.numeric(exp(dlm1_fore_out[[y]][[2]]$f))
                                           } else if (x == 'DLM2') {
                                                 pred <- as.numeric(exp(dlm2_fore_out[[y]][[2]]$f))
-                                          }else if (x == 'ARIMA') {
+                                          } else if (x == 'ARIMA') {
                                               pred <- as.numeric(exp(arima_fore_out[[y]]$mean))
+                                          } else if (x == 'StructTS') {
+                                              pred <- as.numeric(exp(structts_fore_out[[y]]$mean))
                                           } else if (x == 'Naïve') {
                                               pred <- as.numeric(exp(naive_fore_out[[y]]$mean))
                                           } else if (x == 'Holt-Winters') {
                                               pred <- as.numeric(exp(hw_fore_out[[y]]$mean))
                                           } else if (x == 'ETS') {
                                               pred <- as.numeric(exp(ets_fore_out[[y]]$mean))
+                                          } else if (x == 'TBATS') {
+                                              pred <- as.numeric(exp(tbats_fore_out[[y]]$mean))
                                           }
                                           return(data.table(mape_6 = mape(dt[1:6], pred[1:6]),
                                                             rmse_6 = rmse(dt[1:6],pred[1:6]),
@@ -431,8 +445,8 @@ two_year_fore <- rbindlist(mclapply(c('DLM2', 'ETS'),
                                              forecast = as.numeric(window(y_m, end = two_y_origin)),
                                              forecast_pl = as.numeric(window(y_m, end = two_y_origin)),
                                              forecast_pu = as.numeric(window(y_m, end = two_y_origin))
-                                          )]
-
+                                          )
+]
 
 ## add observations
 two_year_fore <- merge(two_year_fore,
@@ -441,10 +455,34 @@ two_year_fore <- merge(two_year_fore,
                                   ),
                        by = 't', all.x = T)
 
+
 ## information about the selected ets model
 ## ets_fore_info <- ets(window(log(y_m), end = 2016 + 11/12))
+## test <- forecast(ets_fore_info, simulate = T, bootstrap = T)
 ## summary(ets_fore_info)
 ## coefficients(ets_fore_info)[1:4]
+
+## monte carlo forecasts for three-month period in 2017
+mc_out <- rbindlist(mclapply(seq(2017 + 2/12, 2017 + 11/12, by = 3/12),
+                             function(x) {
+                                 mc_run(orig = x, new = 3000)
+                             },
+                             mc.cores = n_cores
+                             ))
+
+## create readable origin name
+mc_out[,
+       origin_char := factor(rep(paste(c('Mar', 'Jun', 'Sep', 'Dec'),
+                                '2017', sep = ' '),
+                                each = 9000),
+                             levels = rep(paste(c('Mar', 'Jun', 'Sep', 'Dec'),
+                                                '2017', sep = ' ')
+                                          )
+                             )
+       ]
+
+
+
 ```
 
 #Introduction
@@ -483,10 +521,10 @@ ggplot(melt(data.table(month = time(y_m),
     theme_bw() +
     ylab('') +
     xlab('') +
-    facet_grid(variable~., scales = 'free') +
+    facet_grid(variable~., scales = 'free') + 
     #theme(axis.text.x = element_text(angle = 75, hjust = 1)) +
-    scale_x_continuous(breaks = seq(1995, 2020, by = 5),
-                       labels = paste('Jan', seq(1995, 2020, by = 5), sep = '\n')
+    scale_x_continuous(breaks = seq(1995, 2020, by = 2),
+                       labels = paste('Jan', seq(1995, 2020, by = 2), sep = '\n')
                        )
 
 
@@ -663,8 +701,8 @@ ggplot(rbindlist(list(filt_plot_dt(freq_filt[['lt_arma2']])[t >= 1998][,mod:='DL
     facet_grid(mod~.) + 
     ylab('frequency of mobility') +
     xlab('month') + 
-    scale_x_continuous(breaks = seq(1998, 2018, by = 5),
-                       labels = paste('Jan', seq(1998, 2018, by = 5), sep = '\n')
+    scale_x_continuous(breaks = seq(1998, 2020, by = 2),
+                       labels = paste('Jan', seq(1998, 2020, by = 2), sep = '\n')
                        ) + 
     theme_bw()
        
@@ -704,8 +742,8 @@ grid.arrange(
     geom_line() +
     ylab('frequency of mobility') +
     xlab('month') + 
-    scale_x_continuous(breaks = seq(1995, 2020, by = 5),
-                       labels = paste('Jan', seq(1995, 2020, by = 5), sep = '\n')
+    scale_x_continuous(breaks = seq(1995, 2020, by = 4),
+                       labels = paste('Jan', seq(1995, 2020, by = 4), sep = '\n')
                        ) + 
     theme_bw() +
     ggtitle('DLM1'),
@@ -715,8 +753,8 @@ grid.arrange(
     geom_line() +
     ylab('frequency of mobility') +
     xlab('month') + 
-    scale_x_continuous(breaks = seq(1995, 2020, by = 5),
-                       labels = paste('Jan', seq(1995, 2020, by = 5), sep = '\n')
+    scale_x_continuous(breaks = seq(1995, 2020, by = 4),
+                       labels = paste('Jan', seq(1995, 2020, by = 4), sep = '\n')
                        ) + 
     theme_bw() +
     ggtitle('DLM1'),
@@ -726,8 +764,8 @@ grid.arrange(
     geom_line() +
     ylab('frequency of mobility') +
     xlab('month') + 
-    scale_x_continuous(breaks = seq(1995, 2020, by = 5),
-                       labels = paste('Jan', seq(1995, 2020, by = 5), sep = '\n')
+    scale_x_continuous(breaks = seq(1995, 2020, by = 4),
+                       labels = paste('Jan', seq(1995, 2020, by = 4), sep = '\n')
                        ) + 
     theme_bw() +
     ggtitle('DLM2'),
@@ -737,8 +775,8 @@ grid.arrange(
     geom_line() +
     ylab('frequency of mobility') +
     xlab('month') + 
-    scale_x_continuous(breaks = seq(1995, 2020, by = 5),
-                       labels = paste('Jan', seq(1995, 2020, by = 5), sep = '\n')
+    scale_x_continuous(breaks = seq(1995, 2020, by = 4),
+                       labels = paste('Jan', seq(1995, 2020, by = 4), sep = '\n')
                        ) + 
     theme_bw() +
     ggtitle('DLM2')
@@ -750,7 +788,7 @@ grid.arrange(
 
 ## Cross validation: evaluation over a rolling origin
 
-In this section we evaluated the forecasting accuracy of the models described in the previous sections. Our primary interests here are how well the models predict data points that have not been used for estimation (out-of-sample), and how performance varies with the length of the forecast horizon, whereby accuracy measures are calculated for several forecast lengths (in effect N-step forecast). For cross-sectional data such evaluations are commonly carried out by estimating the model on a training data set and evaluating it on an independent test data set. In order to control for effects arising from the composition of the training data, it is common to repeat this procedure with different training and test data sets using k-fold cross validation. Due to the serial autocorrelation and potential non-stationarity in the data, it is common to choose a test set that does not contain observations occuring prior to the observations in the training data [@bergmeir2012use]. Recent literature suggests that standard cross-validation can be applied to certain time series models [@bergmeir2018] - however, due the Markovian structure of the Kalman filtering algorithm, we suspect that the technique would not work for the state space models discussed in the previous section. Therefore we follow the conventional approach for evaluating time series accuracy; namely evaluation over a \textit{rolling forecasting origin} [@tashman2000out], where we succesively extend the training data and produce forecasts of the test data. The last point of the training data in each iteration is referred to as the \textit{origin} $T$, since the origin on which the forecast is based rolls forward in time. In this approach, the training data consists of observations between $t = 1, ..., T$ and forecasts are generated for time periods $T+1$, $T+2$, ..., $T+N$. This procedure is illustrated in Figure \@ref(fig:rolling-forecast-example). The movement along the x-axis shows how the origins (vertical dotted line) "roll" forward in time, where the model is estimated on the training data (black solid line). The model perfomance is then evaluated by averaging the prediction errors over different forecast horizon (dotted horizontal lines).
+In this section we evaluated the forecasting accuracy of the models described in the previous sections. Our primary interests here are how well the models predict data points that have not been used for estimation (out-of-sample), and how performance varies with the length of the forecast horizon, whereby accuracy measures are calculated for several forecast lengths (in effect N-step forecast). For cross-sectional data such evaluations are commonly carried out by estimating the model on a training data set and evaluating it on an independent test data set. In order to control for effects arising from the composition of the training data, it is common to repeat this procedure with different training and test data sets using k-fold cross validation. Due to the serial autocorrelation and potential non-stationarity in the data, it is common to choose a test set that does not contain observations occuring prior to the observations in the training data [@bergmeir2012use]. Recent literature suggests that standard cross-validation can be applied to certain time series models [@bergmeir2018], however, due the Markovian structure of the Kalman filtering algorithm, we suspect that the technique would not work for the state space models discussed in the previous section. Therefore we follow the conventional approach for evaluating time series accuracy; namely evaluation over a \textit{rolling forecasting origin} [@tashman2000out], where we succesively extend the training data and produce forecasts of the test data. The last point of the training data in each iteration is referred to as the \textit{origin} $T$, since the origin on which the forecast is based rolls forward in time. In this approach, the training data consists of observations between $t = 1, ..., T$ and forecasts are generated for time periods $T+1$, $T+2$, ..., $T+N$. This procedure is illustrated in Figure \@ref(fig:rolling-forecast-example). The movement along the x-axis shows how the origins (vertical dotted line) "roll" forward in time, where the model is estimated on the training data (black solid line). The model perfomance is then evaluated by averaging the prediction errors over different forecast horizon (dotted horizontal lines).
 
 ```{r rolling-forecast-example, fig.cap = "Illustration of rolling forecasting origin: training data (solid black line), origin (vertical dark grey line), forecast horizion (dotted horizontal lines) and test data (grey line)"}
 
@@ -771,15 +809,15 @@ plot_dt <- melt(rbindlist(lapply(seq(2016, 2016.75, by = 0.25),
                                                 train = c(window(y_m, end = x),
                                                           rep(NA, length(window(y_m, start = x + 1/12)))
                                                           ),
-                                                `n=6` = c(rep(NA, length(window(y_m, end = x))),
+                                                `N=6` = c(rep(NA, length(window(y_m, end = x))),
                                                        rep(7, 6),
                                                        rep(NA, length(window(y_m, start = x + 7/12)))
                                                        ),
-                                                `n=12` = c(rep(NA, length(window(y_m, end = x))),
+                                                `N=12` = c(rep(NA, length(window(y_m, end = x))),
                                                         rep(7.3, 12),
                                                         rep(NA, length(window(y_m, start = x + 13/12)))
                                                         ),
-                                                `n=18` = c(rep(NA, length(window(y_m, end = x))),
+                                                `N=18` = c(rep(NA, length(window(y_m, end = x))),
                                                         rep(7.6, 18),
                                                         rep(NA, length(window(y_m, start = x + 19/12)))
                                                         )
@@ -834,11 +872,11 @@ ggplot(plot_dt[t %between% c(2014, 2018)], aes(t, dt)) +
 
 ```
 
-We evaluate forecasting performance on three time horizons - $N=6$, $N=12$ and $N=18$ - meaning that, for each origin, we calculate three indicators of accuracy; one for a half year forecast, one for a year and one for one and a half year. We are interested in assessing the performance around the changepoint of the trend-cycle. From the previous section we identified this as March 2017 (see Figure \@ref(fig:dlm-smoothed)). In order to evaluate the performance of the models on both sides of the changepoint we include origins within 12 months before and after March 2017. Including the changepoint itself we have in total 25 forecasting origins: T = March 2016, February 2016, ..., June 2017.
+We evaluate forecasting performance on three time horizons: $N=6$, $N=12$ and $N=18$ - meaning that, for each origin, we calculate three indicators of accuracy; one for a half year forecast, one for a year and one for one and a half year. We are interested in assessing the performance around the changepoint of the trend-cycle. From the previous section we identified this as March 2017 (see Figure \@ref(fig:dlm-smoothed)). In order to evaluate the performance of the models on both sides of the changepoint we include origins within 12 months before and after March 2017. Including the changepoint itself we have in total 25 forecasting origins: T = March 2016, February 2016, ..., June 2017.
 
 In order to ensure independence between the test and training sample, we estimate the models on the relevant training data of each origin forecast. As such, it is possible that estimated parameter values differ between the different origins. The resulting mean and standard deviations, shown in Table \@ref(tab:par-comparison) in the Appendix, reveal that differences in training data has a very limited effect on the estimated parameters. This also gives us confidence that there is enough data for estimation even on the first origin.
 
-Performance of the DLMs is assessed by comparing forecasting accuracy with that of three other popular models. The first of these is a naïve seasonal model (Naïve), where the forecast of a specific month is simply the value of the same month of the previous year. Despite its simplicity this model is useful with data with no clear trends. Since the model assumes no trend, we expect this model to perform particularly well around the changepoint. The next model is the Holt-Winters method with multiplicative seasonality [@holt2004forecasting; @winters1960forecasting]. This model is an extention of the simple exponential smoothing model, allowing for forecasts with a trend. Using the function ${\tt HoltWinters()}$ in base *R*, the smoothing parameters of the model are selected automatically, for each origin, with the default initial values. This model type performs particularly well on data with a clear trend, and we therefore expect it to forecast accurately before the changepoint and increasingly worse around and after it. 
+The forecast performance of the DLMs is assessed by comparing forecasting accuracy with that of three other popular models. The first of these is a naïve seasonal model (Naïve), where the forecast of a specific month is simply the value of the same month of the previous year. Despite its simplicity this model is useful with data with no clear trends. Since the model assumes no trend, we expect this model to perform particularly well around the changepoint. The next model is the Holt-Winters method with multiplicative seasonality [@holt2004forecasting; @winters1960forecasting]. This model is an extention of the simple exponential smoothing model, allowing for forecasts with a trend. Using the function ${\tt HoltWinters()}$ in base *R*, the smoothing parameters of the model are selected automatically, for each origin, with the default initial values. This model type performs particularly well on data with a clear trend, and we therefore expect it to forecast accurately before the changepoint and increasingly worse around and after it. 
 
 Furthermore, exponential smoothing can also be formulated on state space form, allowing for a much more general models of exponential smoothing methods. We will refer to this model type as ETS (Error, Trend, Seasonal). An advantage of casting exponential smoothing models on the stochastic state space form is the possibility of generating prediction intervals - either analytically or by simulation. This furthermore allows information criteria to be used for model selection, meaning that all combination of trend-, seasonal and error components can be explored [@hyndman2002state]. The automatic model selection is carried out using the ${\tt ets()}$ function with default values for all arguments, meaning that selection is based on the corrected Akaike's Information Criterion (AICc). 
 
@@ -926,8 +964,8 @@ ggplot(melt(out,
     facet_grid(N~., scale = 'free') +
     theme_bw() +
     ylab('MAPE') +
-    ##scale_colour_brewer(palette = 'Set2') + 
-    scale_colour_manual(values = wes_palette("IsleofDogs1")) + 
+    scale_colour_brewer(palette = 'Set2') + 
+    ##scale_colour_manual(values = wes_palette("IsleofDogs1"))  + 
     scale_x_discrete(breaks = unique(out$origin)[seq(1, 25, by = 3)], 
                      labels = orig_nms)
 #    theme(legend.position = 'bottom')
@@ -947,13 +985,13 @@ ggplot(rf_dt[t >= 2017 & t < 2019,
     ##geom_smooth(aes(y=value), method = 'loess') +
     geom_line(aes(y = V3)) +
     geom_line(aes(y=actual_value), col = 'grey50') +
-    facet_wrap(~type) +
+    facet_wrap(~type, ncol = 4) +
 #    scale_colour_viridis(discrete = T) +
     theme_bw() +
-    scale_x_continuous(breaks = seq(2017, 2018 + 11/12, by = 4/12),
+    scale_x_continuous(breaks = seq(2017, 2018 + 11/12, by = 6/12),
                        labels = unique(unlist(lapply(c(2017, 2018),
                                               function(x) {
-                                                  paste(rep(c('Jan', 'May', 'Sep'), 2), x, sep = '\n')
+                                                  paste(rep(c('Jan', 'Jun'), 2), x, sep = '\n')
                                               })
                                        ))
                        ) +
@@ -970,10 +1008,11 @@ As mentioned in the Introduction, the realisation that 2017 possibly represented
 
 ```{r forecast-2017, fig.cap = "Two-year forecast (black line) of monthly (left) and yearly (right) frequency of mobility and test data (dark grey line) and 95 percent prediction interval"}
 
-p1 <- ggplot(two_year_fore[t >= 2010, ], aes(t, actual_value, group = type)) +
+p1 <- ggplot(two_year_fore[year >= 2010], aes(t, actual_value, group = type)) +
     geom_ribbon(aes(ymin = forecast_pl, ymax = forecast_pu),
                 fill = 'grey80', alpha = 0.4) +
-        geom_line(col = 'grey50') +
+    geom_line(col = 'black') +
+##    geom_line(data = data.table()) +
     geom_line(aes(y = forecast)) +
     scale_colour_manual(values = ) + 
     facet_wrap(~type, ncol = 1) +
@@ -993,8 +1032,8 @@ p2 <- ggplot(two_year_fore[,
                 ),
               by = c('year', 'type')
               ][year >= 2010], aes(year, actual)) +
-    geom_ribbon(aes(ymin = lower_bound, ymax = upper_bound),
-                fill = 'grey80', alpha = 0.4) + 
+    ## geom_ribbon(aes(ymin = lower_bound, ymax = upper_bound),
+    ##             fill = 'grey80', alpha = 0.4) + 
     geom_line(col = 'grey50') +
     geom_line(aes(y = forecast)) +
     facet_wrap(~type, ncol = 1) +
@@ -1012,6 +1051,27 @@ grid.arrange(p1, p2, ncol = 2)
 ##     facet_wrap(~mod, ncol = 1) +
 ##     ylab('Log(Frequency of mobility)') +
 ##     theme_bw()
+
+```
+
+
+```{r mc-intervals, fig.cap = "Monte Carlo"}
+
+ggplot(data.table(year = floor(time(window(y_m, start = 2010))),
+            as.numeric(window(y_m, start = 2010))
+            )[, sum(V2), by = year
+              ][year <= 2018],
+        aes(year, V1)) +
+     geom_line(data = mc_out[x %in% seq(1, 100)], aes(year, V2, group = x), col =  'grey80', alpha = 0.5) + 
+     geom_line(data = mc_out[x == 1], aes(year, mean_fore, group = x)) +
+     geom_line(data = mc_out[x ==1], aes(year, lo_fore, group = x), lty = 'dotted') +
+    geom_line(data = mc_out[x == 1], aes(year, up_fore, group = x), lty = 'dotted') +
+    geom_line(col = 'grey50') +
+    facet_wrap(~origin_char) + 
+    xlab('year') +
+    ylab('frequency of mobility (yearly)') + 
+    theme_bw()
+
 
 ```
 
@@ -1109,7 +1169,7 @@ grid.arrange(
     ggtitle('DLM1'),
     gg_acf_pacf(func='acf',
                 series=residuals(freq_filt[['lt_arma3']])$res, n_lags = '24') +
-    ggtitle('DLM1')
+    ggtitle('DLM2')
 )
     
 
@@ -1170,7 +1230,7 @@ knitr::kable(roll_pars,
 
 ```
 
-```{r trend-growth, fig.cap = "Filtering state estimates of the slope ($\\beta_t$)"}
+```{r trend-growth, fig.cap = "Filtering estimates of the slope ($\\beta_t$)"}
 
 beta_dt <- data.table(t = window(time(y_m), start = 1998, end = c(2018, 12)),
                    DLM1 = window(freq_filt[['lt_arma2']]$m[, 2],

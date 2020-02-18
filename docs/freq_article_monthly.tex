@@ -467,13 +467,13 @@ Parameter & DLM1 & DLM2\\
 $\sigma_{v}^{2}$ & 1.523e-08 & 1.523e-08\\
 $\sigma_{\mu}^{2}$ & 0 & 0.0001457\\
 $\sigma_{\beta}^{2}$ & 2.511e-06 & 0\\
-$\sigma_{S_{2}}^{2}$ & 7.723e-06 & 7.723e-06\\
+$\sigma_{S_{2}}^{2}$ & 7.721e-06 & 7.727e-06\\
 $\sigma^{2}_{u}$ & 0.001284 & 0.001022\\
 \addlinespace
-$\phi_{1}$ & -0.6428 & -0.6957\\
-$\phi_{2}$ & 0.03474 & -0.05385\\
-$\phi_{7}$ & -0.4429 & -0.4899\\
-$\phi_{12}$ & 0.451 & 0.4359\\
+$\phi_{1}$ & -0.643 & -0.6951\\
+$\phi_{2}$ & 0.03487 & -0.05413\\
+$\phi_{7}$ & -0.4429 & -0.4896\\
+$\phi_{12}$ & 0.4511 & 0.4358\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -570,7 +570,7 @@ non-stationarity in the data, it is common to choose a test set that
 does not contain observations occuring prior to the observations in the
 training data (Bergmeir and Benítez 2012). Recent literature suggests
 that standard cross-validation can be applied to certain time series
-models (Bergmeir, Hyndman, and Koo 2018) - however, due the Markovian
+models (Bergmeir, Hyndman, and Koo 2018), however, due the Markovian
 structure of the Kalman filtering algorithm, we suspect that the
 technique would not work for the state space models discussed in the
 previous section. Therefore we follow the conventional approach for
@@ -598,7 +598,7 @@ dark grey line), forecast horizion (dotted horizontal lines) and test
 data (grey line)}
 \end{figure}
 
-We evaluate forecasting performance on three time horizons - \(N=6\),
+We evaluate forecasting performance on three time horizons: \(N=6\),
 \(N=12\) and \(N=18\) - meaning that, for each origin, we calculate
 three indicators of accuracy; one for a half year forecast, one for a
 year and one for one and a half year. We are interested in assessing the
@@ -619,21 +619,21 @@ reveal that differences in training data has a very limited effect on
 the estimated parameters. This also gives us confidence that there is
 enough data for estimation even on the first origin.
 
-Performance of the DLMs is assessed by comparing forecasting accuracy
-with that of three other popular models. The first of these is a naïve
-seasonal model (Naïve), where the forecast of a specific month is simply
-the value of the same month of the previous year. Despite its simplicity
-this model is useful with data with no clear trends. Since the model
-assumes no trend, we expect this model to perform particularly well
-around the changepoint. The next model is the Holt-Winters method with
-multiplicative seasonality (Holt 2004; Winters 1960). This model is an
-extention of the simple exponential smoothing model, allowing for
-forecasts with a trend. Using the function \({\tt HoltWinters()}\) in
-base \emph{R}, the smoothing parameters of the model are selected
-automatically, for each origin, with the default initial values. This
-model type performs particularly well on data with a clear trend, and we
-therefore expect it to forecast accurately before the changepoint and
-increasingly worse around and after it.
+The forecast performance of the DLMs is assessed by comparing
+forecasting accuracy with that of three other popular models. The first
+of these is a naïve seasonal model (Naïve), where the forecast of a
+specific month is simply the value of the same month of the previous
+year. Despite its simplicity this model is useful with data with no
+clear trends. Since the model assumes no trend, we expect this model to
+perform particularly well around the changepoint. The next model is the
+Holt-Winters method with multiplicative seasonality (Holt 2004; Winters
+1960). This model is an extention of the simple exponential smoothing
+model, allowing for forecasts with a trend. Using the function
+\({\tt HoltWinters()}\) in base \emph{R}, the smoothing parameters of
+the model are selected automatically, for each origin, with the default
+initial values. This model type performs particularly well on data with
+a clear trend, and we therefore expect it to forecast accurately before
+the changepoint and increasingly worse around and after it.
 
 Furthermore, exponential smoothing can also be formulated on state space
 form, allowing for a much more general models of exponential smoothing
@@ -685,25 +685,25 @@ forecast error and ETS the smallest mean forecast error.
 
 \caption{\label{tab:error-comparison}Mean (and standard deviation) of RMSE and MAPE}
 \centering
-\begin{tabular}{llllllll}
+\begin{tabular}{llllllllll}
 \toprule
- & Forecast horizon & ARIMA & DLM1 & DLM2 & ETS & Holt-Winters & Naïve\\
+ & Forecast horizon & ARIMA & DLM1 & DLM2 & ETS & Holt-Winters & Naïve & StructTS & TBATS\\
 \midrule
-RMSE & N=6 & 0.4003 & 0.4315 & 0.3937 & 0.3781 & 0.4384 & 0.5693\\
- &  & (0.095) & (0.1655) & (0.1087) & (0.0629) & (0.1822) & (0.193)\\
- & N=12 & 0.5214 & 0.5841 & 0.4766 & 0.4676 & 0.609 & 0.5758\\
- &  & (0.1434) & (0.2339) & (0.0982) & (0.1016) & (0.2443) & (0.124)\\
- & N=18 & 0.6258 & 0.767 & 0.5297 & 0.5262 & 0.8085 & 0.6085\\
+RMSE & N=6 & 0.4003 & 0.4315 & 0.3937 & 0.3781 & 0.4384 & 0.5693 & 0.4143 & 0.4131\\
+ &  & (0.095) & (0.1655) & (0.1087) & (0.0629) & (0.1822) & (0.193) & (0.1003) & (0.0654)\\
+ & N=12 & 0.5214 & 0.5841 & 0.4766 & 0.4676 & 0.609 & 0.5758 & 0.5396 & 0.5136\\
+ &  & (0.1434) & (0.2339) & (0.0982) & (0.1016) & (0.2443) & (0.124) & (0.1327) & (0.1403)\\
+ & N=18 & 0.6258 & 0.767 & 0.5297 & 0.5262 & 0.8085 & 0.6085 & 0.6702 & 0.6129\\
 \addlinespace
- &  & (0.2435) & (0.3914) & (0.0884) & (0.1652) & (0.3599) & (0.1075)\\
- &  &  &  &  &  &  & \\
-MAPE & N=6 & 0.0391 & 0.0426 & 0.0358 & 0.0362 & 0.0443 & 0.0546\\
- &  & (0.0111) & (0.0171) & (0.0103) & (0.0079) & (0.0201) & (0.0196)\\
- & N=12 & 0.0514 & 0.0577 & 0.0427 & 0.0446 & 0.0608 & 0.0535\\
+ &  & (0.2435) & (0.3914) & (0.0884) & (0.1652) & (0.3599) & (0.1075) & (0.2245) & (0.231)\\
+ &  &  &  &  &  &  &  &  & \\
+MAPE & N=6 & 0.0391 & 0.0426 & 0.0358 & 0.0362 & 0.0443 & 0.0546 & 0.0409 & 0.0411\\
+ &  & (0.0111) & (0.0171) & (0.0103) & (0.0079) & (0.0201) & (0.0196) & (0.0106) & (0.0084)\\
+ & N=12 & 0.0514 & 0.0577 & 0.0427 & 0.0446 & 0.0608 & 0.0535 & 0.0526 & 0.0514\\
 \addlinespace
- &  & (0.0172) & (0.0262) & (0.0093) & (0.013) & (0.028) & (0.0115)\\
- & N=18 & 0.0618 & 0.0752 & 0.0489 & 0.0509 & 0.08 & 0.0571\\
- &  & (0.0269) & (0.041) & (0.0096) & (0.0188) & (0.0383) & (0.0122)\\
+ &  & (0.0172) & (0.0262) & (0.0093) & (0.013) & (0.028) & (0.0115) & (0.0157) & (0.0156)\\
+ & N=18 & 0.0618 & 0.0752 & 0.0489 & 0.0509 & 0.08 & 0.0571 & 0.0648 & 0.0611\\
+ &  & (0.0269) & (0.041) & (0.0096) & (0.0188) & (0.0383) & (0.0122) & (0.0239) & (0.0249)\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -783,6 +783,12 @@ errors, damped additive trend and additive seasonal effects.
 \caption{\label{fig:forecast-2017}Two-year forecast (black line) of monthly
 (left) and yearly (right) frequency of mobility and test data (dark grey
 line) and 95 percent prediction interval}
+\end{figure}
+
+\begin{figure}
+\centering
+\includegraphics{../figs/freq--mc-intervals-1.pdf}
+\caption{\label{fig:mc-intervals}Monte Carlo}
 \end{figure}
 
 At first glance, the point forecast of the monthly frequency (left part
@@ -933,7 +939,7 @@ $\phi_{12}$ & 0.4363 & 0.003109 & 0.4255 & 0.002562\\
 \begin{figure}
 \centering
 \includegraphics{../figs/freq--trend-growth-1.pdf}
-\caption{\label{fig:trend-growth}Filtering state estimates of the slope
+\caption{\label{fig:trend-growth}Filtering estimates of the slope
 (\(\beta_t\))}
 \end{figure}
 
