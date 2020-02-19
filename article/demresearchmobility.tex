@@ -71,7 +71,7 @@ Forecast accuracy is evaluated using time series cross-validation (evaluation ov
 \textbf{CONCLUSION} \\
 The analysis reveals that the model accurately forecasts the frequency of mobility at least a year ahead. \\
 \textbf{CONTRIBUTION}\\
-The paper shows how short- to medium-term forecasts can be used to inform long-term projections as used in subnational population projections. \\ 
+The paper shows how short- to medium-term forecasts of monthly data can be used to inform long-term projections as used in subnational population projections. \\ 
 \bigskip
 \textbf{This version}: {\today}
 
@@ -79,29 +79,28 @@ The paper shows how short- to medium-term forecasts can be used to inform long-t
 
 \section{Introduction}\label{introduction}
 
-The future development of migration is a key input to subnational population projections. It is also a major source of uncertainty: in fact, due to strong fluctuations of migration flows, a large part of the uncertainty in the projected population can be attributed to input data on migration \citep{beer1993forecast}. Although external migration is important for the population development on the national level, the key driver of spatial population change on a subnational level is internal migration \citet[see e.g., ][]{matthews2013progress, raymer2019spatial}. Long-run forecasts of internal migration are usually based on extrapolations of a long-term trend, and are almost always based on data on annual frequency. However, trend extrapolation is problematic if short- to-medium run fluctuations stretch into the long run or if the most recent data points in the time series represent the top or the bottom of a cycle \citep{canova1998detrending, hamilton2018}. In this setting an analysis of the short- to medium-term dynamics of internal migration, on a higher than annual frequency, can provide early warning signals about possible changes in the trend. 
+The future development of migration is a key input to subnational population projections. It is also a major source of uncertainty: due to strong fluctuations of migration flows, a large part of the uncertainty in the projected population can be attributed to migration \citep{beer1993forecast}, both external and internal. Long-run forecasts of internal migration, such as those used in subnational population projections, are usually based on extrapolations of a long-term trend, and are almost always based on annual data. However, trend extrapolation is problematic if short- to-medium run fluctuations stretch into the long run or if the most recent data points in the time series represent the top or the bottom of a cycle \citep{canova1998detrending, hamilton2018}. Of course, one of the problems with annual time series is that they are released once a year, and the top of a cycle may be somewhere in the middle of that year. In this paper we show how an analysis of the short- to medium-term dynamics of internal migration on monthly data can provide early warning signals about possible changes in the trend in the annual data.
 
 As is the case in most developed countries, the main driver of
 regional-level population change in the Netherlands is migration
-(external and internal). Due to the close relation between migration
+(external and internal) \citep{teriele2019}. Due to the close relation between migration
 decisions and labour- and housing market conditions, the volume of
-internal migration often moves along with the macroeconomic cycle. However,
+internal migration often moves along with the macroeconomic cycle \citep{husby2019trek}. However,
 recent research argues that the relationship between internal migration and labour market conditions has changed over time \citep{kaplan2017understanding}. Moreover, other
 factors than macroeconomic drivers may, at least in the long run, be just as important in explaining migration. For example, family considerations are important
 determinants of migration decisions on an individual level, meaning
 migration flows may well be affected by changes to family composition
-and aging \citep{mulder2018putting}. As such, there are many candidate determinants of internal migration and their relationship with internal migration flows may change over time.
+and aging \citep{mulder2018putting}. As such, there are many candidate determinants of internal migration and their relationship with internal migration flows may change over time. Therefore it is questionable whether the use of explanatory variables will improve the forecast accuracy \citep{makridakis2019forecasting}.
 
-Even if one succeeds in finding these determinants, it is far from certain that 
-their inclusion improves the accuracy of a population projections \citep{smith1997further}. Many official population projections are carried out with cohort-component
+Even if one succeeds in finding such explanatory variables, it is far from certain that  their inclusion improves the accuracy of the population projections \citep{smith1997further}. Many official population projections are carried out with cohort-component
 models, where the growth paths of the components are given as inputs to
 the model \citep[see e.g., ][]{de2005achtergronden}. A forecast of migration using explanatory variables requires knowledge of both the future trajectory of the explanatory variables and the future development of their relationship with migration.
-Consequently, in practice the growth path used as inputs in
-cohort-component models is often based on extrapolation of
+Consequently, the growth path used as inputs in
+cohort-component models is in morst practical cases based on extrapolation of
 long-term historic trends \citep{smith2013practitioner}.
 
 When working with the latest Dutch Regional Population Projections,
-published in September 2019 \citep{teriele2019}, we were questioning
+published in September 2019 \citep{teriele2019}, we were asking ourselves
 whether the last data point in the time series of annual frequency of
 mobility, namely end of 2016, represented the top of a
 cycle. We knew, for example, that a recent change to the Dutch student
@@ -110,33 +109,29 @@ otherwise very mobile
 group.\footnote{https://www.cbs.nl/nl-nl/nieuws/2018/04/studenten-gaan-minder-op-kamers}
  Obviously, if the last data points used to determine
 the long-term trend represent the top of a cycle, a trend extrapolation
-could overestimate the true long-term trend. This was the direct motivation behind this paper: could a short- to medium-term forecast of data with a higher frequency than the annual series give more information about the future development of internal migration?
+could overestimate the true long-term trend. This was the direct motivation behind this paper: could a short- to medium-term forecast of monthly data provide more information about the future development of internal migration on annual data?
 
-Univariate forecasting of time series involves decomposing the series into elements such as trend, cycle and seasonality, where these basic time series patterns are used to form a forecast \citep{zietz2014us}. One model type frequenctly used for such analyses is Dynamic Linear Models (DLM) which belong to the familiy of state space
-models \citep{petris2009dynamic, durbin2012time}. DLMs are linear models with a Gaussian error structure, where the relevant inferences are carried out using the Kalman algorithm. One advantage of this model type is that the stochastic nature of the Kalman algorithm allows for derivation of forecast distributions. Another advantage is that these models are easily modified: time series components can be added to or removed from the model if deemed necessary. 
+Univariate forecasting of time series involves decomposing the series into elements such as trend, cycle and seasonality, where these basic time series patterns are used to form a forecast \citep{zietz2014us}. One model type frequenctly used for such analyses is Dynamic Linear Models (DLM) which belong to the familiy of state space models \citep{petris2009dynamic, durbin2012time}. DLMs are linear models with a Gaussian error structure, where the relevant inferences are carried out using the Kalman algorithm. One advantage of this model type is that the stochastic nature of the Kalman algorithm allows for derivation of forecast distributions. Another advantage is that these models are easily extended: time series components can be added to or removed from the model if deemed necessary. 
 
-In this paper we propose a dynamic linear model for a short- to medium-run forecast of the frequency of migration, where short-to medium run is understood as a time horizon up to two year. We compare the forecasting performance on our model with that of four other popular models for univariate time-series
+In this paper we develop a dynamic linear model for a short- to medium-run forecast of the frequency of migration, where short-to medium run is understood as a time horizon up to two years. We compare the forecasting performance on our model with that of four other popular models for univariate time-series
 forecasting. These models used for comparison are all fit using automatic routines available
 in \emph{R}. As such, as a byproduct of the evaluation exercise, we
 evaluate the merits of our manual model selection compared to the
-automatic model selection in easy-to-use software packages.
+automatic model selection in easy-to-use software packages. The code used for the analysis in the paper is entirely self contained and is publicly available at \url{https://github.com/trondhusby/mobility_forecast}.
 
-In the paper we first show the time series data and discuss its
-patterns. Next we present the model, discuss its elements and the
-estimated parameters. Thereafter we evaluate the out-of-sample
-forecasting performance of the DLM, comparing it to that of four other
-models. Finally we discuss what the models tell us about the development
-of the frequency of mobility from 2017 onwards.
+The structure of the paper is as follows: section \ref{data} shows the time series data and presents the model; section \ref{results} shows the estimated parameters and results from basic inference with the; section \ref{discussion} presents results from an out-of-sample evaluation and illustrates how forecasts of monthly can inform future development on an annual scale; section \ref{conclusion} concludes.
 
-\section{Data}\label{data}
+
+\section{Data and modelling}\label{data}
+\subsection{Monthly time series of the frequency of mobility}\label{monthly-time-series-of-the-frequency-of-mobility}
 
 The time-series in this paper is the national-level frequency of
 mobility, defined as the sum of intra- and inter-municipal moves per
 1000 inhabitants. Open data available from the Statistics Netherlands
 allow us to calculate monthly time series of the from January 1995 to
 December 2019, meaning we have in total 300 observations at our
-disposal. More formally, we define the frequency of mobility $y_{t}$
-in month $t$ as the sum of inter- en intramunicipality moves between the
+disposal. More formally, we define the frequency of mobility
+in month $t$ as the sum of inter- en intra-municipality moves between the
 first and the last day of month $t$, divided by the population on the
 last day of $t$. Figure \ref{fig:freq-plot} shows the time series from January
 1995 to December 2019 as well as the seasonal differences. The dotted line in the figure shows
@@ -183,10 +178,10 @@ years, meaning the seasonality contains noise. Furthermore, the
 seasonality and the trend-cycle lead to autocorrelation. The next
 section shows how we adress these issues using the state space model.
 
-\section{Model description}\label{model-description}
+\subsection{Model description}\label{model-description}
 
-The state space model is a representation of a dynamic system where observed values are a linear function of an unobserved process (the state) and noise. In other words, if $y_{t}$ is an observed time series and $v_{t}$ is measurement error, then the true underlying process of $y_{t}$ is given by the vector $\theta_{t}$. The state is a Markov process, meaning that the state in time $t$ is only dependent on the state in $t-1$. The state space formulation allows us to carry out inference using the Kalman filter algorithm
-\citep{kalman1960contributions}. As mentioned, DLM is a special case of state space models where all errors are normally There are many ways of describing DLMs; the model
+The state space model is a representation of a dynamic system where observed values are a linear function of an unobserved process (the state) and noise. In other words, if $y_{t}$ is an observed time series and $v_{t}$ is measurement error, then the true underlying process of $y_{t}$ is given by the vector $\theta_{t}$. The state space formulation is necessary to carry out inference using the Kalman filter algorithm
+\citep{kalman1960contributions}, which is a computational recursive means to estimate the state $\theta_{t}$ in a way that minimizes the mean of the squared error. The filter supports estimations of past, present, and even future states. As mentioned above, DLMs form a special case of state space models where errors are normally distributed and indepentently distributed. There are many ways of describing DLMs; the model
 is implemented in \emph{R} using the \emph{dlm} package, therefore the
 description in this section follows the notation used in
 \citet{petris2009dynamic}.
@@ -194,7 +189,7 @@ description in this section follows the notation used in
 Let $y_{t}$ denote the logarithm of the frequency of mobility in month
 $t$, which are the observed values of underlying
 (unobserved) vector of states $\theta_{t}$. $y_{t}$ are
-conditionally independent given the state $\theta_{t}$. The state
+conditionally independent given the state $\theta_{t}$, and the state
 is a latent Markov process, meaning that the probability of
 moving to the next state depends only on the previous state. We can
 write this DLM as:
@@ -242,7 +237,7 @@ V = \begin{bmatrix} \sigma_{v}^{2} \end{bmatrix}
 \end{equation*}
 
 Seasonality is dealt with by including a trigonometric seasonal
-components to the model with a fixed periodicity of 12 months. One big
+components to the model with a fixed periodicity of 12 months. One
 advantage with the trigonometric specification, relative to simpler
 seasonal dummies, is that we allow autocorrelation to last through more
 lags, resulting in a smoother seasonal pattern. This way we filter out
@@ -308,7 +303,7 @@ which gives
 \mu_{1,t} = \phi_{1} \mu_{1,t-1} + \phi_{2} \mu_{1,t-2} + \phi_{7} \mu_{1,t-7} + \phi_{12} \mu_{1,t-12} + u_{t} \quad u \sim N(0, \sigma^{2}_{u})
 \end{align}
 
-Notice that the standard routine for creating autoregressive elements in
+Note that the standard routine for creating autoregressive elements in
 the \emph{dlm} package does not allow for `gaps' in the included lags. In
 order to estimate the model, we use the system matrices of
 an AR(12) where the parameter of lags not included in the model are set
@@ -332,7 +327,7 @@ to zero:
 
 Before we apply the Kalman filter for estimation and forecasting we first need to determine the
 unknown model parameters. We chose to estimate all of them using maximum
-likelihood \citep[see][ch.~4]{petris2009dynamic}. With the maximum likelihood estimate of the unknown parameters we can use the Kalman filter for inference. One important inferential tasks is to estimate the underlying process $\theta_{t}$ with data up to $t$. This is referred to as filtering. Another closely related task is smoothing, which entails estimating $\theta_{t}$ with all data. This section presents the estimated parameters and the resulting filtering and smoothing estimates of the frequency of mobility.
+likelihood \citep[see][ch.~4]{petris2009dynamic}. With the maximum likelihood estimate of the unknown parameters we can use the Kalman filter for inference. One important inferential tasks is to estimate $\theta_{t}$ with data up to $t$. This is referred to as filtering. Another closely related task is smoothing, which entails estimating $\theta_{t}$ with all data. This section presents the estimated parameters and the resulting filtering and smoothing estimates of the frequency of mobility.
 
 \subsection{Estimated parameters}\label{estimated-parameters}
 
@@ -368,14 +363,14 @@ precision of the observations. The estimated parameters of the autoregressive pa
 Parameter & DLM1 & DLM2\\
 \midrule
 $\sigma_{v}^{2}$ & 1.523e-08 & 1.523e-08\\
-$\sigma_{\mu}^{2}$ & 0 & 0.0001465\\
-$\sigma_{\beta}^{2}$ & 2.531e-06 & 0\\
-$\sigma_{S_{2}}^{2}$ & 7.704e-06 & 7.712e-06\\
-$\sigma^{2}_{u}$ & 0.001286 & 0.001022\\
-$\phi_{1}$ & -0.6459 & -0.6958\\
-$\phi_{2}$ & 0.0346 & -0.05614\\
-$\phi_{7}$ & -0.4456 & -0.492\\
-$\phi_{12}$ & 0.4517 & 0.4363\\
+$\sigma_{\mu}^{2}$ & 0 & 0.0001457\\
+$\sigma_{\beta}^{2}$ & 2.511e-06 & 0\\
+$\sigma_{S_{2}}^{2}$ & 7.721e-06 & 7.727e-06\\
+$\sigma^{2}_{u}$ & 0.001284 & 0.001022\\
+$\phi_{1}$ & -0.643 & -0.6951\\
+$\phi_{2}$ & 0.03487 & -0.05413\\
+$\phi_{7}$ & -0.4429 & -0.4896\\
+$\phi_{12}$ & 0.4511 & 0.4358\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -508,10 +503,12 @@ the estimated parameters. This also gives us confidence that there is
 enough data for estimation even on the first origin.
 
 Performance of the DLMs is assessed by comparing forecasting accuracy
-with that of three other popular models. The first of these is a naïve
+with that of six other popular models. The first of these is a naïve
 seasonal model (Naïve), where the forecast of a specific month is simply
 the value of the same month of the previous year. Despite its simplicity
-this model often performs very well, especially for economic and financial time series. The next model is the Holt-Winters method with
+this model often performs very well, especially for economic and financial time series.
+
+The next model is the Holt-Winters method with
 multiplicative seasonality
 \citep{holt2004forecasting, winters1960forecasting}. This model is an
 extension of the simple exponential smoothing model, allowing for
@@ -535,6 +532,10 @@ using the ${\tt ets()}$ function with default values for all
 arguments, meaning that selection is based on the corrected Akaike's
 Information Criterion (AICc).
 
+The Structural Time Series approach, as described in \citet{harvey1990forecasting}, is an alternative way of writing and estimating state space models. The function ${\tt StructTS()}$ available in base \textit{R} can be used to estimate some simple variants of this model type. We use this function to estimate a local linear growth model with simple dummies to control for seasonality.
+
+Another widely used model, the so-called TBATS model, extends the ETS model by allowing for more complicated representations of sesonality \citep{de2011forecasting}. It allows for the Fourier-specification of seasonality that we used in both of the DLMs. Also the TBATS model can be automatically specified using a similar routine as that of the ETS model.
+
 Finally we include a seasonal ARIMA model into the comparison.
 Identification of the model is carried out using the
 ${\tt auto.arima()}$ function on the whole sample \citep{hyndman2019},
@@ -557,7 +558,6 @@ than DLM2 in terms of RMSE and slightly worse in terms of MAPE. Since
 squared errors gives a heavier penalty to large forecast errors than
 absolute errors, this means that DLM2 produces the smallest median
 forecast error and ETS the smallest mean forecast error. For forecast horizons of 12 and 18 months, the table shows that the errors of DLM2 has a small variance compared to other models. This suggests that the forecasting performance of this model generalises across the different training data sets. 
-
 
 \begin{table}[H]
 
@@ -585,34 +585,6 @@ MAPE & N=6 & 0.0391 & 0.0426 & 0.0358 & 0.0362 & 0.0443 & 0.0546 & 0.0409 & 0.04
 \end{tabular}
 \end{table}
 
-
-%% \begin{table}[H]
-%% %{\scriptsize
-%% \caption{\label{tab:error-comparison}Mean (and standard deviation) of RMSE and MAPE}
-%% \centering
-%% %\begin{tabular}{llllllll}
-%% \begin{tabular}{p{1.2cm}p{1.2cm}p{1.2cm}p{1.2cm}p{1.2cm}p{1.2cm}p{1.2cm}p{1.2cm}}
-%% \toprule
-%%  & Forecast horizon & ARIMA & DLM1 & DLM2 & ETS & Holt- Winters & Naïve\\
-%% \midrule
-%% RMSE & N=6 & 0.4003 & 0.4315 & 0.3937 & 0.3781 & 0.4384 & 0.5693\\
-%%  &  & (0.095) & (0.1655) & (0.1087) & (0.0629) & (0.1822) & (0.193)\\
-%%  & N=12 & 0.5214 & 0.5841 & 0.4766 & 0.4676 & 0.609 & 0.5758\\
-%%  &  & (0.1434) & (0.2339) & (0.0982) & (0.1016) & (0.2443) & (0.124)\\
-%%  & N=18 & 0.6258 & 0.767 & 0.5297 & 0.5262 & 0.8085 & 0.6085\\
-%%  &  & (0.2435) & (0.3914) & (0.0884) & (0.1652) & (0.3599) & (0.1075)\\
-%% &  &  &  &  &  &  & \\
-%% \addlinespace
-%% MAPE & N=6 & 0.0391 & 0.0426 & 0.0358 & 0.0362 & 0.0443 & 0.0546\\
-%%  &  & (0.0111) & (0.0171) & (0.0103) & (0.0079) & (0.0201) & (0.0196)\\
-%%  & N=12 & 0.0514 & 0.0577 & 0.0427 & 0.0446 & 0.0608 & 0.0535\\
-%%  &  & (0.0172) & (0.0262) & (0.0093) & (0.013) & (0.028) & (0.0115)\\
-%%  & N=18 & 0.0618 & 0.0752 & 0.0489 & 0.0509 & 0.08 & 0.0571\\
-%%  &  & (0.0269) & (0.041) & (0.0096) & (0.0188) & (0.0383) & (0.0122)\\
-%% \bottomrule
-%% \end{tabular}
-%% %}
-%% \end{table}
 
 Figure \ref{fig:rmse-origins} delves further into the variation in
 forecasting performance across origins, showing the MAPE per origin and
@@ -712,51 +684,38 @@ Since we have identified March 2017 as the changepoint of the cycle, it is logic
 
 \section{Conclusion}\label{conclusion}
 
-In this paper we have developed a state space model for short-to medium
+In this paper we have developed two slightly different state space models for short-to medium
 term univariate forecast of monthly frequency of mobility in the
 Netherlands. The frequency of mobility is defined as the number of
 internally migrated persons countrywide (within- and
 between-municipality) per month divided by the population. This is an
 important input into the cohort-component model used for our regional
 population projections; the need for this modelling exercise arose as we
-suspected that the end of our yearly series represented the top of a
+expected that the end of our yearly series represented or was close to the top of a
 cycle.
 
-The results presented in the previous section show that the DLM quite accurately forecasts both monthly and yearly frequency of mobility until end 2018, based on data up to end 2016. In particular, the model would have given us a very accurate picture of the development
-of the frequency of mobility until end of 2017. More generally, the
-model performed comparably or even better than a number of popular
+The results presented in the previous section show that one of the models quite accurately forecasts both monthly and yearly frequency of mobility until end 2017, based on data up to end 2016. More generally, the model performed comparably or even better than a number of popular
 univariate forecasting in a time interval between end of 2016 to end of
 2017. One of the most remarkable feature about the forecasts of the DLM
 was the relatively limited deterioration in forecast accuracy as the
-forecast horizon increased.
+forecast horizon increased. We also showed how additional monthly data, released by Statistics Netherlands every month, allowed us to identify the changepoint of the cycle in the middle of a year.
 
-The most important reason was that the specification of the local linear growth component,
-ensured a certain ``conservatism'' for forecast horizons above 12
-months. The high signal-to-noise rate implied that the estimated local
-growth rate evolved slowly over time. The only other model mimicking
+Comparing the two DLMs, we saw that the specification of the local linear growth component played a crucial role. DLM2, which is in effect a linear trend model, ensured a certain conservatism for forecast horizons above 12 months (local trend model). The only other model mimicking
 this behaviour was the ETS model, itself also a state space model. An
-easy critique of this result is that a model that predicts that `what
+easy critique of these types of models is that a model that predicts that `what
 goes up must eventually come down' is of limited value. Yet such
 criticism misses the point that the local linear growth component in
 effect incorporates not only local, but to some extent global,
-characteristics of the time series. 
+characteristics of the time series.
 
-Although the focus of this paper was univariate forecasts, one of the
-biggest advantages of the structural model developed in this paper,
-relative to automatically selected models such as ETS, is the ease with
-which covariates can be included. Future research could focus on
-investigating whether model performance can be improved by including
-covariates for which there are reliable short- to medium-term forecasts, for example unemployment levels. Splitting up the time series into
-several age groups (dynamic hierarchical models) will probably make such
-an exercise easier, and is probably a fruitful venue for future
-research. A more theory-driven model with covariates could also provide
-extra information about the merits of the simpler univariate approach
-presented.
+Although the time series used in this paper was an aggregate measure of mobility, it is of course well known that migration follows highly age-specific patterns \citep[see e.g., ][]{matthews2013progress, raymer2019spatial}. Disaggregating the time series into age groups (dynamic hierarchical models) may improve the forecast accuracy, and could be interesting for future research.
 
-\renewcommand\refname{Bibliography}
+\section{Acknowledgements} We thank Andries de Jong, Anet Weterings and Edwin Buitelaar (all senior researchers at PBL) for helpful comments and suggestions on the manuscript. 
+
+\renewcommand\refname{References}
 \printbibliography
 
-\section{Appendix A}\label{appendix-a}
+\section*{Appendix A}\label{appendix-a}
 
 In addition to the cycle, there are strong seasonal patterns that seem
 to vary over time. The seasonal subseries plot in Figure
@@ -799,7 +758,7 @@ of mobility}
 \includegraphics[scale = 0.8]{../figs/freq--autocorr-plot-1.pdf}
 \end{figure}
 
-\section{Appendix B}\label{appendix-b}
+\section*{Appendix B}\label{appendix-b}
 
 \begin{figure}[H]
   \caption{\label{fig:residual-autocorr}Autocorrelation function of the

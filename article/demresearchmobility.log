@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.20 (TeX Live 2019) (preloaded format=pdflatex 2020.2.7)  18 FEB 2020 16:44
+This is pdfTeX, Version 3.14159265-2.6-1.40.20 (TeX Live 2019) (preloaded format=pdflatex 2020.2.7)  19 FEB 2020 10:59
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -887,7 +887,11 @@ Package biblatex Warning: 'babel/polyglossia' detected but 'csquotes' missing.
 
 \@quotelevel=\count423
 \@quotereset=\count424
-No file demresearchmobility.aux.
+(./demresearchmobility.aux
+
+LaTeX Warning: Label `fig:forecast-2017' multiply defined.
+
+)
 \openout1 = `demresearchmobility.aux'.
 
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 50.
@@ -906,7 +910,7 @@ LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 50.
 LaTeX Font Info:    ... okay on input line 50.
 Package biblatex Info: Trying to load language 'english'...
 Package biblatex Info: ... file 'english.lbx' found.
-(/usr/local/texlive/2019/texmf-dist/tex/latex/biblatex/lbx/english.lbx
+ (/usr/local/texlive/2019/texmf-dist/tex/latex/biblatex/lbx/english.lbx
 File: english.lbx 2019/12/01 v3.14 biblatex localization (PK/MW)
 )
 Package biblatex Info: Input encoding 'utf8' detected.
@@ -915,12 +919,12 @@ Package biblatex Info: Automatic encoding selection.
 \openout3 = `demresearchmobility.bcf'.
 
 Package biblatex Info: Trying to load bibliographic data...
-Package biblatex Info: ... file 'demresearchmobility.bbl' not found.
+Package biblatex Info: ... file 'demresearchmobility.bbl' found.
 
-No file demresearchmobility.bbl.
+(./demresearchmobility.bbl)
 Package biblatex Info: Reference section=0 on input line 50.
 Package biblatex Info: Reference segment=0 on input line 50.
-ABD: EveryShipout initializing macros
+ ABD: EveryShipout initializing macros
 (/usr/local/texlive/2019/texmf-dist/tex/context/base/mkii/supp-pdf.mkii
 [Loading MPS to PDF converter (version 2006.09.02).]
 \scratchcounter=\count425
@@ -983,209 +987,66 @@ LaTeX Font Info:    Trying to load font information for T1+cmtt on input line 5
 File: t1cmtt.fd 2019/12/16 v2.5j Standard LaTeX font definitions
 ) [1
 
-{/usr/local/texlive/2019/texmf-var/fonts/map/pdftex/updmap/pdftex.map}]
-
-LaTeX Warning: Citation 'beer1993forecast' on page 2 undefined on input line 82
-.
-
-
-LaTeX Warning: Citation 'matthews2013progress' on page 2 undefined on input lin
-e 82.
-
-
-LaTeX Warning: Citation 'raymer2019spatial' on page 2 undefined on input line 8
-2.
-
-
-LaTeX Warning: Citation 'canova1998detrending' on page 2 undefined on input lin
-e 82.
-
-
-LaTeX Warning: Citation 'hamilton2018' on page 2 undefined on input line 82.
-
-[2]
-
-LaTeX Warning: Citation 'kaplan2017understanding' on page 3 undefined on input 
-line 89.
-
-
-LaTeX Warning: Citation 'mulder2018putting' on page 3 undefined on input line 9
-3.
-
-
-LaTeX Warning: Citation 'smith1997further' on page 3 undefined on input line 96
-.
-
-
-LaTeX Warning: Citation 'de2005achtergronden' on page 3 undefined on input line
- 98.
-
-
-LaTeX Warning: Citation 'smith2013practitioner' on page 3 undefined on input li
-ne 101.
-
-
-LaTeX Warning: Citation 'teriele2019' on page 3 undefined on input line 104.
-
-[3]
-
-LaTeX Warning: Citation 'zietz2014us' on page 4 undefined on input line 115.
-
-
-LaTeX Warning: Citation 'petris2009dynamic' on page 4 undefined on input line 1
-16.
-
-
-LaTeX Warning: Citation 'durbin2012time' on page 4 undefined on input line 116.
-
-
-
-Overfull \hbox (33.7483pt too wide) in paragraph at lines 115--117
-\T1/cmr/m/n/12 long to the familiy of state space mod-els ([]; []).
- []
-
-
-LaTeX Warning: Reference `fig:freq-plot' on page 4 undefined on input line 141.
-
-
-[4]
-<../figs/freq--freq-plot-1.pdf, id=34, 445.665pt x 299.1175pt>
+{/usr/local/texlive/2019/texmf-var/fonts/map/pdftex/updmap/pdftex.map}] [2] [3]
+ [4]
+<../figs/freq--freq-plot-1.pdf, id=32, 445.665pt x 299.1175pt>
 File: ../figs/freq--freq-plot-1.pdf Graphic file (type pdf)
 <use ../figs/freq--freq-plot-1.pdf>
-Package pdftex.def Info: ../figs/freq--freq-plot-1.pdf  used on input line 151.
+Package pdftex.def Info: ../figs/freq--freq-plot-1.pdf  used on input line 146.
 
 (pdftex.def)             Requested size: 356.53249pt x 239.29431pt.
-
-Overfull \hbox (82.88539pt too wide) in paragraph at lines 172--172
+ [5 <../figs/freq--freq-plot-1.pdf>]
+Overfull \hbox (82.88539pt too wide) in paragraph at lines 167--167
 [][]$\T1/cmtt/m/n/10 https : / / www . cbs . nl / nl-[]nl / nieuws / 2018 / 26 
 / minder-[]mensen-[]verhuisd-[]in-[]eerste-[]kwartaal-[]2018$| 
  []
 
-[5 <../figs/freq--freq-plot-1.pdf>]
-
-LaTeX Warning: Citation 'kalman1960contributions' on page 6 undefined on input 
-line 189.
-
-
-LaTeX Warning: Citation 'petris2009dynamic' on page 6 undefined on input line 1
-92.
-
-[6]
-
-LaTeX Warning: Citation 'petris2009dynamic' on page 7 undefined on input line 2
-33.
-
-[7]
-
-LaTeX Warning: Citation 'petris2009dynamic' on page 8 undefined on input line 3
-35.
-
-[8]
-
-LaTeX Warning: Citation 'monahan1984note' on page 9 undefined on input line 341
-.
-
-
-LaTeX Warning: Citation 'young1991recursive' on page 9 undefined on input line 
-346.
-
-
-LaTeX Warning: Citation 'durbin2012time' on page 9 undefined on input line 352.
-
-
-
-LaTeX Warning: Reference `tab:estimated-parameters' on page 9 undefined on inpu
-t line 358.
-
-[9]
-
-LaTeX Warning: Reference `fig:dlm-filtered' on page 10 undefined on input line 
-399.
-
-<../figs/freq--dlm-filtered-1.pdf, id=65, 463.7325pt x 314.17375pt>
+[6] [7] [8] [9] [10]
+<../figs/freq--dlm-filtered-1.pdf, id=69, 463.7325pt x 314.17375pt>
 File: ../figs/freq--dlm-filtered-1.pdf Graphic file (type pdf)
 <use ../figs/freq--dlm-filtered-1.pdf>
 Package pdftex.def Info: ../figs/freq--dlm-filtered-1.pdf  used on input line 4
-12.
+07.
 (pdftex.def)             Requested size: 370.9865pt x 251.33932pt.
-[10]
-
-LaTeX Warning: Reference `fig:ci-comparison' on page 11 undefined on input line
- 415.
-
-
-LaTeX Warning: Citation 'petris2009dynamic' on page 11 undefined on input line 
-419.
-
-<../figs/freq--ci-comparison-1.pdf, id=69, 457.71pt x 313.17pt>
+<../figs/freq--ci-comparison-1.pdf, id=70, 457.71pt x 313.17pt>
 File: ../figs/freq--ci-comparison-1.pdf Graphic file (type pdf)
 <use ../figs/freq--ci-comparison-1.pdf>
 Package pdftex.def Info: ../figs/freq--ci-comparison-1.pdf  used on input line 
-425.
+420.
 (pdftex.def)             Requested size: 366.1685pt x 250.53633pt.
-[11 <../figs/freq--dlm-filtered-1.pdf>]
-
-LaTeX Warning: Reference `fig:dlm-smoothed' on page 12 undefined on input line 
-429.
-
-<../figs/freq--dlm-smoothed-1.pdf, id=80, 463.7325pt x 313.17pt>
+ [11 <../figs/freq--dlm-filtered-1.pdf>]
+<../figs/freq--dlm-smoothed-1.pdf, id=81, 463.7325pt x 313.17pt>
 File: ../figs/freq--dlm-smoothed-1.pdf Graphic file (type pdf)
 <use ../figs/freq--dlm-smoothed-1.pdf>
 Package pdftex.def Info: ../figs/freq--dlm-smoothed-1.pdf  used on input line 4
-44.
+39.
 (pdftex.def)             Requested size: 370.9865pt x 250.53633pt.
-[12 <../figs/freq--ci-comparison-1.pdf>]
+ [12 <../figs/freq--ci-comparison-1.pdf>]
 
-LaTeX Warning: Citation 'bergmeir2012use' on page 13 undefined on input line 46
-5.
+! Package inputenc Error: Unicode character ́ (U+0301)
+(inputenc)                not set up for use with LaTeX.
 
-
-LaTeX Warning: Citation 'bergmeir2018' on page 13 undefined on input line 467.
-
-
-LaTeX Warning: Citation 'tashman2000out' on page 13 undefined on input line 472
-.
-
-
-LaTeX Warning: Reference `fig:rolling-forecast-example' on page 13 undefined on
- input line 476.
+See the inputenc package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.460 training data \citep{bergmeir2012use}.
+                                             Recent literature suggests that
+You may provide a definition with
+\DeclareUnicodeCharacter 
 
 [13 <../figs/freq--dlm-smoothed-1.pdf>]
-<../figs/freq--rolling-forecast-example-1.pdf, id=105, 457.71pt x 313.17pt>
+<../figs/freq--rolling-forecast-example-1.pdf, id=106, 457.71pt x 313.17pt>
 File: ../figs/freq--rolling-forecast-example-1.pdf Graphic file (type pdf)
 <use ../figs/freq--rolling-forecast-example-1.pdf>
 Package pdftex.def Info: ../figs/freq--rolling-forecast-example-1.pdf  used on 
-input line 487.
+input line 482.
 (pdftex.def)             Requested size: 366.1685pt x 250.53633pt.
-
-
-LaTeX Warning: Reference `fig:dlm-smoothed' on page 14 undefined on input line 
-497.
-
-[14 <../figs/freq--rolling-forecast-example-1.pdf>]
-
-LaTeX Warning: Reference `tab:par-comparison' on page 15 undefined on input lin
-e 505.
-
-
-LaTeX Warning: Citation 'holt2004forecasting' on page 15 undefined on input lin
-e 516.
-
-
-LaTeX Warning: Citation 'winters1960forecasting' on page 15 undefined on input 
-line 516.
-
-
-LaTeX Warning: Citation 'hyndman2002state' on page 15 undefined on input line 5
-33.
-
-
-LaTeX Warning: Citation 'hyndman2019' on page 15 undefined on input line 540.
-
-[15]
-
-LaTeX Warning: Reference `tab:error-comparison' on page 16 undefined on input l
-ine 547.
+ [14 <../figs/freq--rolling-forecast-example-1.pdf>] [15]
+Overfull \hbox (48.17346pt too wide) in paragraph at lines 539--547
+\T1/cmr/m/n/12 whole sam-ple (Hyn-d-man and Khan-dakar 2008), and re-sults in a
+n ARIMA(2,1,5)(2,1,1).
+ []
 
 
 Overfull \hbox (11.0776pt too wide) in paragraph at lines 569--569
@@ -1443,137 +1304,104 @@ Overfull \hbox (57.2058pt too wide) in paragraph at lines 567--586
  []
 
 [16]
-
-LaTeX Warning: Reference `fig:rmse-origins' on page 17 undefined on input line 
-617.
-
-
-LaTeX Warning: Reference `tab:error-comparison' on page 17 undefined on input l
-ine 625.
-
-<../figs/freq--rmse-origins-1.pdf, id=123, 453.695pt x 315.1775pt>
+<../figs/freq--rmse-origins-1.pdf, id=124, 453.695pt x 315.1775pt>
 File: ../figs/freq--rmse-origins-1.pdf Graphic file (type pdf)
 <use ../figs/freq--rmse-origins-1.pdf>
 Package pdftex.def Info: ../figs/freq--rmse-origins-1.pdf  used on input line 6
-36.
+08.
 (pdftex.def)             Requested size: 362.9565pt x 252.14233pt.
-[17]
-
-LaTeX Warning: Reference `fig:forecast-2017-2018' on page 18 undefined on input
- line 646.
-
-<../figs/freq--forecast-2017-2018-1.pdf, id=127, 463.7325pt x 313.17pt>
+ [17]
+<../figs/freq--forecast-2017-2018-1.pdf, id=128, 463.7325pt x 313.17pt>
 File: ../figs/freq--forecast-2017-2018-1.pdf Graphic file (type pdf)
 <use ../figs/freq--forecast-2017-2018-1.pdf>
 Package pdftex.def Info: ../figs/freq--forecast-2017-2018-1.pdf  used on input 
-line 663.
+line 635.
 (pdftex.def)             Requested size: 370.9865pt x 250.53633pt.
-[18 <../figs/freq--rmse-origins-1.pdf>]
-
-LaTeX Warning: Reference `fig:forecast-2017' on page 19 undefined on input line
- 674.
-
-<../figs/freq--forecast-2017-1.pdf, id=138, 464.73625pt x 315.1775pt>
+ [18 <../figs/freq--rmse-origins-1.pdf>]
+<../figs/freq--forecast-2017-1.pdf, id=139, 464.73625pt x 315.1775pt>
 File: ../figs/freq--forecast-2017-1.pdf Graphic file (type pdf)
 <use ../figs/freq--forecast-2017-1.pdf>
 Package pdftex.def Info: ../figs/freq--forecast-2017-1.pdf  used on input line 
-685.
+657.
 (pdftex.def)             Requested size: 371.78949pt x 252.14233pt.
-[19 <../figs/freq--forecast-2017-2018-1.pdf>]
-
-LaTeX Warning: Reference `fig:forecast-2017' on page 20 undefined on input line
- 692.
-
-
-LaTeX Warning: Reference `fig:forecast-2017' on page 20 undefined on input line
- 703.
-
-[20 <../figs/freq--forecast-2017-1.pdf>]
-<../figs/freq--mc-intervals-1.pdf, id=163, 463.7325pt x 315.1775pt>
+ [19 <../figs/freq--forecast-2017-2018-1.pdf>] [20 <../figs/freq--forecast-2017
+-1.pdf>]
+<../figs/freq--mc-intervals-1.pdf, id=164, 463.7325pt x 315.1775pt>
 File: ../figs/freq--mc-intervals-1.pdf Graphic file (type pdf)
 <use ../figs/freq--mc-intervals-1.pdf>
-Package pdftex.def Info: ../figs/freq--mc-intervals-1.pdf  used on input line 7
-08.
+Package pdftex.def Info: ../figs/freq--mc-intervals-1.pdf  used on input line 6
+80.
 (pdftex.def)             Requested size: 370.9865pt x 252.14233pt.
+ [21 <../figs/freq--mc-intervals-1.pdf>] [22]
+
+! Package inputenc Error: Unicode character ́ (U+0301)
+(inputenc)                not set up for use with LaTeX.
+
+See the inputenc package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.717 
+      
+You may provide a definition with
+\DeclareUnicodeCharacter 
 
 
-LaTeX Warning: Reference `fig:forecast-2017' on page 21 undefined on input line
- 711.
+Overfull \hbox (0.11562pt too wide) in paragraph at lines 717--717
+[]\T1/cmr/m/n/12 Bergmeir, Christoph, and Jos� M Ben^^Ytez. 2012. On the use of
+ cross-validation
+ []
 
-[21 <../figs/freq--mc-intervals-1.pdf>]
-
-LaTeX Warning: Empty bibliography on input line 757.
-
-
-LaTeX Warning: Reference `fig:freq-month-plot' on page 22 undefined on input li
-ne 763.
-
-[22]
-
-LaTeX Warning: Reference `fig:autocorr-plot' on page 23 undefined on input line
- 777.
-
-
-LaTeX Warning: Citation 'hyndman2018forecasting' on page 23 undefined on input 
-line 786.
-
-<../figs/freq--freq-month-plot-1.pdf, id=180, 463.7325pt x 313.17pt>
+[23] [24]
+<../figs/freq--freq-month-plot-1.pdf, id=189, 463.7325pt x 313.17pt>
 File: ../figs/freq--freq-month-plot-1.pdf Graphic file (type pdf)
 <use ../figs/freq--freq-month-plot-1.pdf>
 Package pdftex.def Info: ../figs/freq--freq-month-plot-1.pdf  used on input lin
-e 792.
+e 751.
 (pdftex.def)             Requested size: 370.9865pt x 250.53633pt.
-[23]
-<../figs/freq--autocorr-plot-1.pdf, id=184, 459.7175pt x 315.1775pt>
+ [25]
+<../figs/freq--autocorr-plot-1.pdf, id=194, 459.7175pt x 315.1775pt>
 File: ../figs/freq--autocorr-plot-1.pdf Graphic file (type pdf)
 <use ../figs/freq--autocorr-plot-1.pdf>
 Package pdftex.def Info: ../figs/freq--autocorr-plot-1.pdf  used on input line 
-799.
+758.
 (pdftex.def)             Requested size: 367.77449pt x 252.14233pt.
-<../figs/freq--residual-autocorr-1.pdf, id=185, 459.7175pt x 315.1775pt>
+<../figs/freq--residual-autocorr-1.pdf, id=195, 459.7175pt x 315.1775pt>
 File: ../figs/freq--residual-autocorr-1.pdf Graphic file (type pdf)
 <use ../figs/freq--residual-autocorr-1.pdf>
 Package pdftex.def Info: ../figs/freq--residual-autocorr-1.pdf  used on input l
-ine 808.
+ine 767.
 (pdftex.def)             Requested size: 367.77449pt x 252.14233pt.
- [24 <../figs/freq--freq-month-plot-1.pdf> <../figs/freq--autocorr-plot-1.pdf>]
-<../figs/freq--qqnorm-1.pdf, id=204, 459.7175pt x 313.17pt>
+ [26 <../figs/freq--freq-month-plot-1.pdf> <../figs/freq--autocorr-plot-1.pdf>]
+<../figs/freq--qqnorm-1.pdf, id=213, 459.7175pt x 313.17pt>
 File: ../figs/freq--qqnorm-1.pdf Graphic file (type pdf)
 <use ../figs/freq--qqnorm-1.pdf>
-Package pdftex.def Info: ../figs/freq--qqnorm-1.pdf  used on input line 815.
+Package pdftex.def Info: ../figs/freq--qqnorm-1.pdf  used on input line 774.
 (pdftex.def)             Requested size: 367.77449pt x 250.53633pt.
- [25 <../figs/freq--residual-autocorr-1.pdf>]
-<../figs/freq--trend-growth-1.pdf, id=216, 459.7175pt x 313.17pt>
+ [27 <../figs/freq--residual-autocorr-1.pdf>]
+<../figs/freq--trend-growth-1.pdf, id=224, 459.7175pt x 313.17pt>
 File: ../figs/freq--trend-growth-1.pdf Graphic file (type pdf)
 <use ../figs/freq--trend-growth-1.pdf>
 Package pdftex.def Info: ../figs/freq--trend-growth-1.pdf  used on input line 8
-44.
+03.
 (pdftex.def)             Requested size: 367.77449pt x 250.53633pt.
- [26 <../figs/freq--qqnorm-1.pdf>] [27 <../figs/freq--trend-growth-1.pdf>] (./d
-emresearchmobility.aux)
+ [28 <../figs/freq--qqnorm-1.pdf>] [29 <../figs/freq--trend-growth-1.pdf>]
+(./demresearchmobility.aux)
 
-LaTeX Warning: There were undefined references.
-
-
-LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
-
-
-Package biblatex Warning: Please (re)run Biber on the file:
-(biblatex)                demresearchmobility
-(biblatex)                and rerun LaTeX afterwards.
+LaTeX Warning: There were multiply-defined labels.
 
 Package logreq Info: Writing requests to 'demresearchmobility.run.xml'.
 \openout1 = `demresearchmobility.run.xml'.
 
  ) 
 Here is how much of TeX's memory you used:
- 23704 strings out of 481248
- 467985 string characters out of 5918184
- 1333236 words of memory out of 5000000
- 38542 multiletter control sequences out of 15000+600000
- 550070 words of font info for 66 fonts, out of 8000000 for 9000
+ 23809 strings out of 481248
+ 471844 string characters out of 5918184
+ 1336425 words of memory out of 5000000
+ 38641 multiletter control sequences out of 15000+600000
+ 551058 words of font info for 68 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 60i,16n,60p,1243b,1624s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 60i,16n,60p,1218b,1608s stack positions out of 5000i,500n,10000p,200000b,80000s
 {/usr/local/texlive/2019/texmf-dist/fonts/enc/dvips/cm-super/cm-super-t1.enc}
 {/usr/local/texlive/2019/texmf-dist/fonts/enc/dvips/cm-super/cm-super-ts1.enc}<
 /usr/local/texlive/2019/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb></
@@ -1589,19 +1417,21 @@ ve/2019/texmf-dist/fonts/type1/public/cm-super/sfbx1095.pfb></usr/local/texlive
 /2019/texmf-dist/fonts/type1/public/cm-super/sfbx1200.pfb></usr/local/texlive/2
 019/texmf-dist/fonts/type1/public/cm-super/sfbx1440.pfb></usr/local/texlive/201
 9/texmf-dist/fonts/type1/public/cm-super/sfbx1728.pfb></usr/local/texlive/2019/
-texmf-dist/fonts/type1/public/cm-super/sfrm0700.pfb></usr/local/texlive/2019/te
-xmf-dist/fonts/type1/public/cm-super/sfrm0800.pfb></usr/local/texlive/2019/texm
-f-dist/fonts/type1/public/cm-super/sfrm1000.pfb></usr/local/texlive/2019/texmf-
-dist/fonts/type1/public/cm-super/sfrm1095.pfb></usr/local/texlive/2019/texmf-di
-st/fonts/type1/public/cm-super/sfrm1200.pfb></usr/local/texlive/2019/texmf-dist
-/fonts/type1/public/cm-super/sfrm1440.pfb></usr/local/texlive/2019/texmf-dist/f
-onts/type1/public/cm-super/sfrm2074.pfb></usr/local/texlive/2019/texmf-dist/fon
-ts/type1/public/cm-super/sfti1200.pfb></usr/local/texlive/2019/texmf-dist/fonts
-/type1/public/cm-super/sftt1000.pfb>
-Output written on demresearchmobility.pdf (27 pages, 595335 bytes).
+texmf-dist/fonts/type1/public/cm-super/sfcc1200.pfb></usr/local/texlive/2019/te
+xmf-dist/fonts/type1/public/cm-super/sfrm0700.pfb></usr/local/texlive/2019/texm
+f-dist/fonts/type1/public/cm-super/sfrm0800.pfb></usr/local/texlive/2019/texmf-
+dist/fonts/type1/public/cm-super/sfrm1000.pfb></usr/local/texlive/2019/texmf-di
+st/fonts/type1/public/cm-super/sfrm1095.pfb></usr/local/texlive/2019/texmf-dist
+/fonts/type1/public/cm-super/sfrm1200.pfb></usr/local/texlive/2019/texmf-dist/f
+onts/type1/public/cm-super/sfrm1440.pfb></usr/local/texlive/2019/texmf-dist/fon
+ts/type1/public/cm-super/sfrm2074.pfb></usr/local/texlive/2019/texmf-dist/fonts
+/type1/public/cm-super/sfti1200.pfb></usr/local/texlive/2019/texmf-dist/fonts/t
+ype1/public/cm-super/sftt1000.pfb></usr/local/texlive/2019/texmf-dist/fonts/typ
+e1/public/cm-super/sftt1200.pfb>
+Output written on demresearchmobility.pdf (29 pages, 656564 bytes).
 PDF statistics:
- 312 PDF objects out of 1000 (max. 8388607)
- 216 compressed objects within 3 object streams
+ 326 PDF objects out of 1000 (max. 8388607)
+ 226 compressed objects within 3 object streams
  0 named destinations out of 1000 (max. 500000)
  83 words of extra memory for PDF output out of 10000 (max. 10000000)
 

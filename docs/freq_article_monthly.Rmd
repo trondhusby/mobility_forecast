@@ -1060,7 +1060,7 @@ grid.arrange(p1, p2, ncol = 2)
 ggplot(data.table(year = floor(time(window(y_m, start = 2010))),
             as.numeric(window(y_m, start = 2010))
             )[, sum(V2), by = year
-              ][year <= 2018],
+              ][year %between% c(2014, 2018)],
         aes(year, V1)) +
      geom_line(data = mc_out[x %in% seq(1, 100)], aes(year, V2, group = x), col =  'grey80', alpha = 0.5) + 
      geom_line(data = mc_out[x == 1], aes(year, mean_fore, group = x)) +
