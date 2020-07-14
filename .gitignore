@@ -6,4 +6,5 @@
 *.rdx
 *__packages*
 *.Rhistory
+article/
 

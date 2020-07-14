@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.20 (TeX Live 2019) (preloaded format=pdflatex 2020.2.7)  19 FEB 2020 10:59
+This is pdfTeX, Version 3.14159265-2.6-1.40.20 (TeX Live 2019) (preloaded format=pdflatex 2020.2.7)  14 JUL 2020 14:54
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -169,7 +169,7 @@ Package biblatex Info: ... file 'blx-dm.def' found.
 File: blx-dm.def 2019/12/01 v3.14 biblatex localization (PK/MW)
 )
 Package biblatex Info: Trying to load biblatex style data model...
-Package biblatex Info: ... file 'chicago-authordate-trad.dbx' not found.
+Package biblatex Info: ... file 'authoryear-icomp.dbx' not found.
 Package biblatex Info: Trying to load biblatex custom data model...
 Package biblatex Info: ... file 'biblatex-dm.cfg' not found.
 \c@afterword=\count289
@@ -287,56 +287,48 @@ File: blx-natbib.def 2019/12/01 v3.14 biblatex compatibility (PK/MW)
 Package biblatex Info: Delimiter 'nameyeardelim' in context '' already defined,
  overwriting.
 )
-Package biblatex Info: Trying to load bibliography style 'chicago-authordate-tr
-ad'...
-Package biblatex Info: ... file 'chicago-authordate-trad.bbx' found.
+Package biblatex Info: Trying to load bibliography style 'authoryear-icomp'...
+Package biblatex Info: ... file 'authoryear-icomp.bbx' found.
 
-(/usr/local/texlive/2019/texmf-dist/tex/latex/biblatex-chicago/chicago-authorda
-te-trad.bbx
-File: chicago-authordate-trad.bbx 
-Package biblatex Info: Trying to load bibliography style 'chicago-authordate'..
-.
-Package biblatex Info: ... file 'chicago-authordate.bbx' found.
+(/usr/local/texlive/2019/texmf-dist/tex/latex/biblatex/bbx/authoryear-icomp.bbx
+File: authoryear-icomp.bbx 2019/12/01 v3.14 biblatex bibliography style (PK/MW)
 
-(/usr/local/texlive/2019/texmf-dist/tex/latex/biblatex-chicago/chicago-authorda
-te.bbx
-File: chicago-authordate.bbx 2018/01/11 v 3.10 biblatex bibliography style
-\lositemsep=\skip71
+Package biblatex Info: Trying to load bibliography style 'authoryear'...
+Package biblatex Info: ... file 'authoryear.bbx' found.
+(/usr/local/texlive/2019/texmf-dist/tex/latex/biblatex/bbx/authoryear.bbx
+File: authoryear.bbx 2019/12/01 v3.14 biblatex bibliography style (PK/MW)
+Package biblatex Info: Trying to load bibliography style 'standard'...
+Package biblatex Info: ... file 'standard.bbx' found.
+
+(/usr/local/texlive/2019/texmf-dist/tex/latex/biblatex/bbx/standard.bbx
+File: standard.bbx 2019/12/01 v3.14 biblatex bibliography style (PK/MW)
 \c@bbx:relatedcount=\count366
 \c@bbx:relatedtotal=\count367
-))
-Package biblatex Info: Trying to load citation style 'chicago-authordate-trad'.
-..
-Package biblatex Info: ... file 'chicago-authordate-trad.cbx' found.
+)))
+Package biblatex Info: Trying to load citation style 'authoryear-icomp'...
+Package biblatex Info: ... file 'authoryear-icomp.cbx' found.
 
-(/usr/local/texlive/2019/texmf-dist/tex/latex/biblatex-chicago/chicago-authorda
-te-trad.cbx
-File: chicago-authordate-trad.cbx 2018/01/11 v 3.10 biblatex citation style
-Package biblatex Info: Trying to load citation style 'chicago-dates-common'...
-Package biblatex Info: ... file 'chicago-dates-common.cbx' found.
-
-(/usr/local/texlive/2019/texmf-dist/tex/latex/biblatex-chicago/chicago-dates-co
-mmon.cbx
-File: chicago-dates-common.cbx 2018/01/11 v 3.10 biblatex citation style
+(/usr/local/texlive/2019/texmf-dist/tex/latex/biblatex/cbx/authoryear-icomp.cbx
+File: authoryear-icomp.cbx 2019/12/01 v3.14 biblatex citation style (PK/MW)
 Package biblatex Info: Redefining '\cite'.
 Package biblatex Info: Redefining '\parencite'.
 Package biblatex Info: Redefining '\footcite'.
 Package biblatex Info: Redefining '\footcitetext'.
-Package biblatex Info: Redefining '\footfullcite'.
-Package biblatex Info: Redefining '\fullcite'.
+Package biblatex Info: Redefining '\smartcite'.
 Package biblatex Info: Redefining '\textcite'.
 Package biblatex Info: Redefining '\textcites'.
 Package biblatex Info: Redefining '\cites'.
 Package biblatex Info: Redefining '\parencites'.
 Package biblatex Info: Redefining '\footcites'.
 Package biblatex Info: Redefining '\footcitetexts'.
-Package biblatex Info: Patching 'autolang=other' option.
-))
+Package biblatex Info: Redefining '\smartcites'.
+)
 Package biblatex Info: Trying to load configuration file...
 Package biblatex Info: ... file 'biblatex.cfg' found.
  (/usr/local/texlive/2019/texmf-dist/tex/latex/biblatex/biblatex.cfg
 File: biblatex.cfg 
-)) (/usr/local/texlive/2019/texmf-dist/tex/latex/tools/enumerate.sty
+))
+(/usr/local/texlive/2019/texmf-dist/tex/latex/tools/enumerate.sty
 Package: enumerate 2015/07/23 v3.00 enumerate extensions (DPC)
 \@enLab=\toks17
 )
@@ -376,19 +368,19 @@ Package: calc 2017/05/25 v4.3 Infix arithmetic (KKT,FJ)
 \calc@Bcount=\count375
 \calc@Adimen=\dimen138
 \calc@Bdimen=\dimen139
-\calc@Askip=\skip72
-\calc@Bskip=\skip73
+\calc@Askip=\skip71
+\calc@Bskip=\skip72
 LaTeX Info: Redefining \setlength on input line 80.
 LaTeX Info: Redefining \addtolength on input line 81.
 \calc@Ccount=\count376
-\calc@Cskip=\skip74
+\calc@Cskip=\skip73
 )
 (/usr/local/texlive/2019/texmf-dist/tex/latex/mathtools/mhsetup.sty
 Package: mhsetup 2017/03/31 v1.3 programming setup (MH)
 )
 (/usr/local/texlive/2019/texmf-dist/tex/latex/amsmath/amsmath.sty
 Package: amsmath 2020/01/20 v2.17e AMS math features
-\@mathmargin=\skip75
+\@mathmargin=\skip74
 
 For additional information on amsmath, use the `?' option.
 (/usr/local/texlive/2019/texmf-dist/tex/latex/amsmath/amstext.sty
@@ -438,8 +430,8 @@ LaTeX Font Info:    Redeclaring font encoding OMS on input line 734.
 \totwidth@=\dimen147
 \lineht@=\dimen148
 \@envbody=\toks21
-\multlinegap=\skip76
-\multlinetaggap=\skip77
+\multlinegap=\skip75
+\multlinetaggap=\skip76
 \mathdisplay@stack=\toks22
 LaTeX Info: Redefining \[ on input line 2859.
 LaTeX Info: Redefining \] on input line 2860.
@@ -450,7 +442,7 @@ LaTeX Info: Thecontrolsequence`\['isalreadyrobust on input line 129.
 LaTeX Info: Thecontrolsequence`\]'isalreadyrobust on input line 129.
 \g_MT_multlinerow_int=\count389
 \l_MT_multwidth_dim=\dimen149
-\origjot=\skip78
+\origjot=\skip77
 \l_MT_shortvdotswithinadjustabove_dim=\dimen150
 \l_MT_shortvdotswithinadjustbelow_dim=\dimen151
 \l_MT_above_intertext_sep=\dimen152
@@ -853,10 +845,10 @@ Package: float 2001/11/08 v1.3d Float enhancements (AL)
 )
 (/usr/local/texlive/2019/texmf-dist/tex/latex/tools/longtable.sty
 Package: longtable 2020/01/07 v4.13 Multi-page Table package (DPC)
-\LTleft=\skip79
-\LTright=\skip80
-\LTpre=\skip81
-\LTpost=\skip82
+\LTleft=\skip78
+\LTright=\skip79
+\LTpre=\skip80
+\LTpost=\skip81
 \LTchunksize=\count418
 \LTcapwidth=\dimen284
 \LT@head=\box62
@@ -877,9 +869,9 @@ line 40.
 )
 (/usr/local/texlive/2019/texmf-dist/tex/latex/titling/titling.sty
 Package: titling 2009/09/04 v2.1d maketitle typesetting
-\thanksmarkwidth=\skip83
-\thanksmargin=\skip84
-\droptitle=\skip85
+\thanksmarkwidth=\skip82
+\thanksmargin=\skip83
+\droptitle=\skip84
 )
 
 Package biblatex Warning: 'babel/polyglossia' detected but 'csquotes' missing.
@@ -887,30 +879,32 @@ Package biblatex Warning: 'babel/polyglossia' detected but 'csquotes' missing.
 
 \@quotelevel=\count423
 \@quotereset=\count424
-(./demresearchmobility.aux
 
-LaTeX Warning: Label `fig:forecast-2017' multiply defined.
+Package biblatex Warning: Conflicting options.
+(biblatex)                '<namepart>inits' conflicts with 'uniquename=full'.
+(biblatex)                Setting 'uniquename=init' on input line 51.
 
-)
+(./demresearchmobility.aux)
 \openout1 = `demresearchmobility.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 50.
-LaTeX Font Info:    ... okay on input line 50.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 50.
-LaTeX Font Info:    ... okay on input line 50.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 50.
-LaTeX Font Info:    ... okay on input line 50.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 50.
-LaTeX Font Info:    ... okay on input line 50.
-LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 50.
-LaTeX Font Info:    ... okay on input line 50.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 50.
-LaTeX Font Info:    ... okay on input line 50.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 50.
-LaTeX Font Info:    ... okay on input line 50.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 51.
+LaTeX Font Info:    ... okay on input line 51.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 51.
+LaTeX Font Info:    ... okay on input line 51.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 51.
+LaTeX Font Info:    ... okay on input line 51.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 51.
+LaTeX Font Info:    ... okay on input line 51.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 51.
+LaTeX Font Info:    ... okay on input line 51.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 51.
+LaTeX Font Info:    ... okay on input line 51.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 51.
+LaTeX Font Info:    ... okay on input line 51.
 Package biblatex Info: Trying to load language 'english'...
 Package biblatex Info: ... file 'english.lbx' found.
- (/usr/local/texlive/2019/texmf-dist/tex/latex/biblatex/lbx/english.lbx
+
+(/usr/local/texlive/2019/texmf-dist/tex/latex/biblatex/lbx/english.lbx
 File: english.lbx 2019/12/01 v3.14 biblatex localization (PK/MW)
 )
 Package biblatex Info: Input encoding 'utf8' detected.
@@ -922,8 +916,8 @@ Package biblatex Info: Trying to load bibliographic data...
 Package biblatex Info: ... file 'demresearchmobility.bbl' found.
 
 (./demresearchmobility.bbl)
-Package biblatex Info: Reference section=0 on input line 50.
-Package biblatex Info: Reference segment=0 on input line 50.
+Package biblatex Info: Reference section=0 on input line 51.
+Package biblatex Info: Reference segment=0 on input line 51.
  ABD: EveryShipout initializing macros
 (/usr/local/texlive/2019/texmf-dist/tex/context/base/mkii/supp-pdf.mkii
 [Loading MPS to PDF converter (version 2006.09.02).]
@@ -950,7 +944,7 @@ Package caption Info: End \AtBeginDocument code.
 ! Argument of \reserved@a has an extra }.
 <inserted text> 
                 \par 
-l.54 ...@pbl.nl}} and Hans Visser\footnotemark[1]}
+l.55 ...@pbl.nl}} and Hans Visser\footnotemark[1]}
                                                   
 I've run across a `}' that doesn't seem to match anything.
 For example, `\def\a#1{...}' and `\a}' would produce
@@ -964,88 +958,70 @@ Runaway argument?
 ! Paragraph ended before \reserved@a was complete.
 <to be read again> 
                    \par 
-l.54 ...@pbl.nl}} and Hans Visser\footnotemark[1]}
+l.55 ...@pbl.nl}} and Hans Visser\footnotemark[1]}
                                                   
 I suspect you've forgotten a `}', causing me to apply this
 control sequence to too much text. How can we recover?
 My plan is to forget the whole thing and hope for the best.
 
-! Undefined control sequence.
-\Url Error ->\url used in a moving argument. 
-                                             
-l.56 \maketitle
-               
-The control sequence at the end of the top line
-of your error message was never \def'ed. If you have
-misspelled it (e.g., `\hobx'), type `I' and the correct
-spelling (e.g., `I\hbox'). Otherwise just continue,
-and I'll forget about whatever was undefined.
 
-LaTeX Font Info:    Trying to load font information for T1+cmtt on input line 5
-6.
-(/usr/local/texlive/2019/texmf-dist/tex/latex/base/t1cmtt.fd
+Underfull \hbox (badness 10000) in paragraph at lines 65--81
+
+ []
+
+[1
+
+{/usr/local/texlive/2019/texmf-var/fonts/map/pdftex/updmap/pdftex.map}]
+[2]
+LaTeX Font Info:    Trying to load font information for T1+cmtt on input line 1
+22.
+ (/usr/local/texlive/2019/texmf-dist/tex/latex/base/t1cmtt.fd
 File: t1cmtt.fd 2019/12/16 v2.5j Standard LaTeX font definitions
-) [1
-
-{/usr/local/texlive/2019/texmf-var/fonts/map/pdftex/updmap/pdftex.map}] [2] [3]
- [4]
-<../figs/freq--freq-plot-1.pdf, id=32, 445.665pt x 299.1175pt>
+) [3]
+<../figs/freq--freq-plot-1.pdf, id=24, 445.665pt x 299.1175pt>
 File: ../figs/freq--freq-plot-1.pdf Graphic file (type pdf)
 <use ../figs/freq--freq-plot-1.pdf>
-Package pdftex.def Info: ../figs/freq--freq-plot-1.pdf  used on input line 146.
+Package pdftex.def Info: ../figs/freq--freq-plot-1.pdf  used on input line 148.
 
 (pdftex.def)             Requested size: 356.53249pt x 239.29431pt.
- [5 <../figs/freq--freq-plot-1.pdf>]
-Overfull \hbox (82.88539pt too wide) in paragraph at lines 167--167
+ [4 <../figs/freq--freq-plot-1.pdf>]
+Overfull \hbox (82.88539pt too wide) in paragraph at lines 168--168
 [][]$\T1/cmtt/m/n/10 https : / / www . cbs . nl / nl-[]nl / nieuws / 2018 / 26 
 / minder-[]mensen-[]verhuisd-[]in-[]eerste-[]kwartaal-[]2018$| 
  []
 
-[6] [7] [8] [9] [10]
-<../figs/freq--dlm-filtered-1.pdf, id=69, 463.7325pt x 314.17375pt>
+[5] [6] [7] [8] [9]
+<../figs/freq--dlm-filtered-1.pdf, id=62, 463.7325pt x 314.17375pt>
 File: ../figs/freq--dlm-filtered-1.pdf Graphic file (type pdf)
 <use ../figs/freq--dlm-filtered-1.pdf>
 Package pdftex.def Info: ../figs/freq--dlm-filtered-1.pdf  used on input line 4
 07.
 (pdftex.def)             Requested size: 370.9865pt x 251.33932pt.
-<../figs/freq--ci-comparison-1.pdf, id=70, 457.71pt x 313.17pt>
+<../figs/freq--ci-comparison-1.pdf, id=63, 457.71pt x 313.17pt>
 File: ../figs/freq--ci-comparison-1.pdf Graphic file (type pdf)
 <use ../figs/freq--ci-comparison-1.pdf>
 Package pdftex.def Info: ../figs/freq--ci-comparison-1.pdf  used on input line 
 420.
 (pdftex.def)             Requested size: 366.1685pt x 250.53633pt.
- [11 <../figs/freq--dlm-filtered-1.pdf>]
-<../figs/freq--dlm-smoothed-1.pdf, id=81, 463.7325pt x 313.17pt>
+ [10 <../figs/freq--dlm-filtered-1.pdf>]
+<../figs/freq--dlm-smoothed-1.pdf, id=74, 463.7325pt x 313.17pt>
 File: ../figs/freq--dlm-smoothed-1.pdf Graphic file (type pdf)
 <use ../figs/freq--dlm-smoothed-1.pdf>
 Package pdftex.def Info: ../figs/freq--dlm-smoothed-1.pdf  used on input line 4
 39.
 (pdftex.def)             Requested size: 370.9865pt x 250.53633pt.
- [12 <../figs/freq--ci-comparison-1.pdf>]
-
-! Package inputenc Error: Unicode character ́ (U+0301)
-(inputenc)                not set up for use with LaTeX.
-
-See the inputenc package documentation for explanation.
-Type  H <return>  for immediate help.
- ...                                              
-                                                  
-l.460 training data \citep{bergmeir2012use}.
-                                             Recent literature suggests that
-You may provide a definition with
-\DeclareUnicodeCharacter 
-
-[13 <../figs/freq--dlm-smoothed-1.pdf>]
-<../figs/freq--rolling-forecast-example-1.pdf, id=106, 457.71pt x 313.17pt>
+ [11 <../figs/freq--ci-comparison-1.pdf>] [12 <../figs/freq--dlm-smoothed-1.pdf
+>]
+<../figs/freq--rolling-forecast-example-1.pdf, id=98, 457.71pt x 313.17pt>
 File: ../figs/freq--rolling-forecast-example-1.pdf Graphic file (type pdf)
 <use ../figs/freq--rolling-forecast-example-1.pdf>
 Package pdftex.def Info: ../figs/freq--rolling-forecast-example-1.pdf  used on 
 input line 482.
 (pdftex.def)             Requested size: 366.1685pt x 250.53633pt.
- [14 <../figs/freq--rolling-forecast-example-1.pdf>] [15]
-Overfull \hbox (48.17346pt too wide) in paragraph at lines 539--547
-\T1/cmr/m/n/12 whole sam-ple (Hyn-d-man and Khan-dakar 2008), and re-sults in a
-n ARIMA(2,1,5)(2,1,1).
+ [13 <../figs/freq--rolling-forecast-example-1.pdf>] [14]
+Overfull \hbox (51.69759pt too wide) in paragraph at lines 539--547
+\T1/cmr/m/n/12 whole sam-ple ([]Hyn-d-man and Khan-dakar, 2008), and re-sults i
+n an ARIMA(2,1,5)(2,1,1).
  []
 
 
@@ -1299,139 +1275,119 @@ Overfull \hbox (4.5726pt too wide) in paragraph at lines 583--584
  []
 
 
-Overfull \hbox (57.2058pt too wide) in paragraph at lines 567--586
- [][] 
+Overfull \hbox (31.17467pt too wide) in paragraph at lines 566--586
+ []|  [] 
  []
 
-[16]
-<../figs/freq--rmse-origins-1.pdf, id=124, 453.695pt x 315.1775pt>
+[15]
+<../figs/freq--rmse-origins-1.pdf, id=117, 453.695pt x 315.1775pt>
 File: ../figs/freq--rmse-origins-1.pdf Graphic file (type pdf)
 <use ../figs/freq--rmse-origins-1.pdf>
 Package pdftex.def Info: ../figs/freq--rmse-origins-1.pdf  used on input line 6
 08.
 (pdftex.def)             Requested size: 362.9565pt x 252.14233pt.
- [17]
-<../figs/freq--forecast-2017-2018-1.pdf, id=128, 463.7325pt x 313.17pt>
+ [16]
+<../figs/freq--forecast-2017-2018-1.pdf, id=121, 463.7325pt x 313.17pt>
 File: ../figs/freq--forecast-2017-2018-1.pdf Graphic file (type pdf)
 <use ../figs/freq--forecast-2017-2018-1.pdf>
 Package pdftex.def Info: ../figs/freq--forecast-2017-2018-1.pdf  used on input 
 line 635.
 (pdftex.def)             Requested size: 370.9865pt x 250.53633pt.
- [18 <../figs/freq--rmse-origins-1.pdf>]
-<../figs/freq--forecast-2017-1.pdf, id=139, 464.73625pt x 315.1775pt>
+ [17 <../figs/freq--rmse-origins-1.pdf>]
+<../figs/freq--forecast-2017-1.pdf, id=132, 464.73625pt x 315.1775pt>
 File: ../figs/freq--forecast-2017-1.pdf Graphic file (type pdf)
 <use ../figs/freq--forecast-2017-1.pdf>
 Package pdftex.def Info: ../figs/freq--forecast-2017-1.pdf  used on input line 
 657.
 (pdftex.def)             Requested size: 371.78949pt x 252.14233pt.
- [19 <../figs/freq--forecast-2017-2018-1.pdf>] [20 <../figs/freq--forecast-2017
+ [18 <../figs/freq--forecast-2017-2018-1.pdf>] [19 <../figs/freq--forecast-2017
 -1.pdf>]
-<../figs/freq--mc-intervals-1.pdf, id=164, 463.7325pt x 315.1775pt>
+<../figs/freq--mc-intervals-1.pdf, id=157, 463.7325pt x 315.1775pt>
 File: ../figs/freq--mc-intervals-1.pdf Graphic file (type pdf)
 <use ../figs/freq--mc-intervals-1.pdf>
 Package pdftex.def Info: ../figs/freq--mc-intervals-1.pdf  used on input line 6
 80.
 (pdftex.def)             Requested size: 370.9865pt x 252.14233pt.
- [21 <../figs/freq--mc-intervals-1.pdf>] [22]
-
-! Package inputenc Error: Unicode character ́ (U+0301)
-(inputenc)                not set up for use with LaTeX.
-
-See the inputenc package documentation for explanation.
-Type  H <return>  for immediate help.
- ...                                              
-                                                  
-l.717 
-      
-You may provide a definition with
-\DeclareUnicodeCharacter 
-
-
-Overfull \hbox (0.11562pt too wide) in paragraph at lines 717--717
-[]\T1/cmr/m/n/12 Bergmeir, Christoph, and Jos� M Ben^^Ytez. 2012. On the use of
- cross-validation
+ [20 <../figs/freq--mc-intervals-1.pdf>] [21]
+Overfull \hbox (7.94467pt too wide) in paragraph at lines 710--710
+[][]\T1/cmr/m/n/12 Holt, C. C. (2004). ``Fore-cast-ing sea-son-als and trends b
+y ex-po-nen-tially weighted
  []
 
-[23] [24]
-<../figs/freq--freq-month-plot-1.pdf, id=189, 463.7325pt x 313.17pt>
+[22] [23]
+<../figs/freq--freq-month-plot-1.pdf, id=181, 463.7325pt x 313.17pt>
 File: ../figs/freq--freq-month-plot-1.pdf Graphic file (type pdf)
 <use ../figs/freq--freq-month-plot-1.pdf>
 Package pdftex.def Info: ../figs/freq--freq-month-plot-1.pdf  used on input lin
-e 751.
+e 744.
 (pdftex.def)             Requested size: 370.9865pt x 250.53633pt.
- [25]
-<../figs/freq--autocorr-plot-1.pdf, id=194, 459.7175pt x 315.1775pt>
+ [24]
+<../figs/freq--autocorr-plot-1.pdf, id=186, 459.7175pt x 315.1775pt>
 File: ../figs/freq--autocorr-plot-1.pdf Graphic file (type pdf)
 <use ../figs/freq--autocorr-plot-1.pdf>
 Package pdftex.def Info: ../figs/freq--autocorr-plot-1.pdf  used on input line 
-758.
+751.
 (pdftex.def)             Requested size: 367.77449pt x 252.14233pt.
-<../figs/freq--residual-autocorr-1.pdf, id=195, 459.7175pt x 315.1775pt>
+<../figs/freq--residual-autocorr-1.pdf, id=187, 459.7175pt x 315.1775pt>
 File: ../figs/freq--residual-autocorr-1.pdf Graphic file (type pdf)
 <use ../figs/freq--residual-autocorr-1.pdf>
 Package pdftex.def Info: ../figs/freq--residual-autocorr-1.pdf  used on input l
-ine 767.
+ine 760.
 (pdftex.def)             Requested size: 367.77449pt x 252.14233pt.
- [26 <../figs/freq--freq-month-plot-1.pdf> <../figs/freq--autocorr-plot-1.pdf>]
-<../figs/freq--qqnorm-1.pdf, id=213, 459.7175pt x 313.17pt>
+ [25 <../figs/freq--freq-month-plot-1.pdf> <../figs/freq--autocorr-plot-1.pdf>]
+<../figs/freq--qqnorm-1.pdf, id=206, 459.7175pt x 313.17pt>
 File: ../figs/freq--qqnorm-1.pdf Graphic file (type pdf)
 <use ../figs/freq--qqnorm-1.pdf>
-Package pdftex.def Info: ../figs/freq--qqnorm-1.pdf  used on input line 774.
+Package pdftex.def Info: ../figs/freq--qqnorm-1.pdf  used on input line 767.
 (pdftex.def)             Requested size: 367.77449pt x 250.53633pt.
- [27 <../figs/freq--residual-autocorr-1.pdf>]
-<../figs/freq--trend-growth-1.pdf, id=224, 459.7175pt x 313.17pt>
+ [26 <../figs/freq--residual-autocorr-1.pdf>]
+<../figs/freq--trend-growth-1.pdf, id=217, 459.7175pt x 313.17pt>
 File: ../figs/freq--trend-growth-1.pdf Graphic file (type pdf)
 <use ../figs/freq--trend-growth-1.pdf>
-Package pdftex.def Info: ../figs/freq--trend-growth-1.pdf  used on input line 8
-03.
+Package pdftex.def Info: ../figs/freq--trend-growth-1.pdf  used on input line 7
+96.
 (pdftex.def)             Requested size: 367.77449pt x 250.53633pt.
- [28 <../figs/freq--qqnorm-1.pdf>] [29 <../figs/freq--trend-growth-1.pdf>]
+ [27 <../figs/freq--qqnorm-1.pdf>] [28 <../figs/freq--trend-growth-1.pdf>]
 (./demresearchmobility.aux)
-
-LaTeX Warning: There were multiply-defined labels.
-
 Package logreq Info: Writing requests to 'demresearchmobility.run.xml'.
 \openout1 = `demresearchmobility.run.xml'.
 
  ) 
 Here is how much of TeX's memory you used:
- 23809 strings out of 481248
- 471844 string characters out of 5918184
- 1336425 words of memory out of 5000000
- 38641 multiletter control sequences out of 15000+600000
- 551058 words of font info for 68 fonts, out of 8000000 for 9000
+ 23293 strings out of 481248
+ 459158 string characters out of 5918184
+ 1171070 words of memory out of 5000000
+ 38128 multiletter control sequences out of 15000+600000
+ 548475 words of font info for 61 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 60i,16n,60p,1218b,1608s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 60i,16n,60p,1200b,1606s stack positions out of 5000i,500n,10000p,200000b,80000s
 {/usr/local/texlive/2019/texmf-dist/fonts/enc/dvips/cm-super/cm-super-t1.enc}
-{/usr/local/texlive/2019/texmf-dist/fonts/enc/dvips/cm-super/cm-super-ts1.enc}<
-/usr/local/texlive/2019/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb></
-usr/local/texlive/2019/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi12.pfb></u
-sr/local/texlive/2019/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi8.pfb></usr
-/local/texlive/2019/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb></usr/l
-ocal/texlive/2019/texmf-dist/fonts/type1/public/amsfonts/cm/cmr6.pfb></usr/loca
-l/texlive/2019/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb></usr/local/t
-exlive/2019/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/local/te
-xlive/2019/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy8.pfb></usr/local/texl
-ive/2019/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt12.pfb></usr/local/texli
-ve/2019/texmf-dist/fonts/type1/public/cm-super/sfbx1095.pfb></usr/local/texlive
-/2019/texmf-dist/fonts/type1/public/cm-super/sfbx1200.pfb></usr/local/texlive/2
-019/texmf-dist/fonts/type1/public/cm-super/sfbx1440.pfb></usr/local/texlive/201
-9/texmf-dist/fonts/type1/public/cm-super/sfbx1728.pfb></usr/local/texlive/2019/
-texmf-dist/fonts/type1/public/cm-super/sfcc1200.pfb></usr/local/texlive/2019/te
-xmf-dist/fonts/type1/public/cm-super/sfrm0700.pfb></usr/local/texlive/2019/texm
-f-dist/fonts/type1/public/cm-super/sfrm0800.pfb></usr/local/texlive/2019/texmf-
-dist/fonts/type1/public/cm-super/sfrm1000.pfb></usr/local/texlive/2019/texmf-di
-st/fonts/type1/public/cm-super/sfrm1095.pfb></usr/local/texlive/2019/texmf-dist
-/fonts/type1/public/cm-super/sfrm1200.pfb></usr/local/texlive/2019/texmf-dist/f
-onts/type1/public/cm-super/sfrm1440.pfb></usr/local/texlive/2019/texmf-dist/fon
-ts/type1/public/cm-super/sfrm2074.pfb></usr/local/texlive/2019/texmf-dist/fonts
-/type1/public/cm-super/sfti1200.pfb></usr/local/texlive/2019/texmf-dist/fonts/t
-ype1/public/cm-super/sftt1000.pfb></usr/local/texlive/2019/texmf-dist/fonts/typ
-e1/public/cm-super/sftt1200.pfb>
-Output written on demresearchmobility.pdf (29 pages, 656564 bytes).
+</usr/local/texlive/2019/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb><
+/usr/local/texlive/2019/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi12.pfb></
+usr/local/texlive/2019/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi8.pfb></us
+r/local/texlive/2019/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb></usr/
+local/texlive/2019/texmf-dist/fonts/type1/public/amsfonts/cm/cmr6.pfb></usr/loc
+al/texlive/2019/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb></usr/local/
+texlive/2019/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/local/t
+exlive/2019/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy8.pfb></usr/local/tex
+live/2019/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt12.pfb></usr/local/texl
+ive/2019/texmf-dist/fonts/type1/public/cm-super/sfbx1095.pfb></usr/local/texliv
+e/2019/texmf-dist/fonts/type1/public/cm-super/sfbx1200.pfb></usr/local/texlive/
+2019/texmf-dist/fonts/type1/public/cm-super/sfbx1440.pfb></usr/local/texlive/20
+19/texmf-dist/fonts/type1/public/cm-super/sfbx1728.pfb></usr/local/texlive/2019
+/texmf-dist/fonts/type1/public/cm-super/sfcc1200.pfb></usr/local/texlive/2019/t
+exmf-dist/fonts/type1/public/cm-super/sfrm0700.pfb></usr/local/texlive/2019/tex
+mf-dist/fonts/type1/public/cm-super/sfrm0800.pfb></usr/local/texlive/2019/texmf
+-dist/fonts/type1/public/cm-super/sfrm1000.pfb></usr/local/texlive/2019/texmf-d
+ist/fonts/type1/public/cm-super/sfrm1095.pfb></usr/local/texlive/2019/texmf-dis
+t/fonts/type1/public/cm-super/sfrm1200.pfb></usr/local/texlive/2019/texmf-dist/
+fonts/type1/public/cm-super/sfti1200.pfb></usr/local/texlive/2019/texmf-dist/fo
+nts/type1/public/cm-super/sftt1000.pfb></usr/local/texlive/2019/texmf-dist/font
+s/type1/public/cm-super/sftt1200.pfb>
+Output written on demresearchmobility.pdf (28 pages, 623339 bytes).
 PDF statistics:
- 326 PDF objects out of 1000 (max. 8388607)
- 226 compressed objects within 3 object streams
+ 310 PDF objects out of 1000 (max. 8388607)
+ 213 compressed objects within 3 object streams
  0 named destinations out of 1000 (max. 500000)
  83 words of extra memory for PDF output out of 10000 (max. 10000000)
 

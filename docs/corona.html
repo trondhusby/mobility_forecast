@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta property="og:title" content="Estimating excess deaths with Kalman filter" />
+<meta property="og:type" content="book" />
+
+
+
+
+
+<meta name="author" content="Trond, Hans, Lenny" />
+
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  TeX: { equationNumbers: { autoNumber: "AMS" } }
+});
+</script>
+  <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_CHTML-full" type="text/javascript"></script>
+
+<meta name="description" content="Estimating excess deaths with Kalman filter">
+
+<title>Estimating excess deaths with Kalman filter</title>
+
+<script src="libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="libs/bootstrap-3.3.5/css/bootstrap.min.css" rel="stylesheet" />
+<script src="libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="libs/navigation-1.1/tabsets.js"></script>
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+  height: auto;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container-fluid main-container">
+
+
+<div class="row">
+<div class="col-sm-12">
+<!--bookdown:toc:end-->
+<!--bookdown:toc:start-->
+</div>
+</div>
+<div class="row">
+<div class="col-sm-12">
+<div id="header">
+<h1 class="title">Estimating excess deaths with Kalman filter</h1>
+<h4 class="author"><em>Trond, Hans, Lenny</em></h4>
+<h4 class="date"><em>26.05</em></h4>
+</div>
+<div class="figure"><span id="fig:plot-data"></span>
+<img src="../figs/corona--plot-data-1.png" alt="Descriptive plot" width="672" />
+<p class="caption">
+Figure 1: Descriptive plot
+</p>
+</div>
+<div class="figure"><span id="fig:cor-plot"></span>
+<img src="../figs/corona--cor-plot-1.png" alt="Totale en geregistreerde Corona-sterfte" width="672" />
+<p class="caption">
+Figure 2: Totale en geregistreerde Corona-sterfte
+</p>
+</div>
+<p><img src="../figs/corona--acf-plot-1.png" width="672" /></p>
+<p><img src="../figs/corona--plot-data-weeks-1.png" width="672" /></p>
+<p>Model</p>
+<p><span class="math display">\[
+\begin{aligned}
+&amp;y_{t} = \alpha_{t} + \beta_{t} x_{t} + g_{t} + y_{t}^{ar} + v_{t} &amp; v_{t} \sim N(0, \sigma_{v}^{2}) \\
+&amp;\alpha_{t} = \alpha_{t-1} + w_{\alpha, t} &amp; w_{\alpha, t} \sim N(0, \sigma_{\alpha}^{2}) \\
+&amp;\beta_{t} = \beta_{t-1} + w_{\beta, t} &amp; w_{\beta, t} \sim N(0, \sigma_{\beta}^{2}) \\
+&amp;g_{t} = \sum_{j=1}^{2} \left( a_{j} \cos \left( t \frac{2 \pi j}{52.18} \right) + b_{j} \sin \left( t \frac{2 \pi j}{52.18} \right) \right) + w_{g, t} &amp; w_{g, t} \sim N(0, 0) \\
+&amp;y_{t}^{ar} = \phi y_{t-1} + w_{ar,t} &amp; w_{ar,t} \sim N(0, \sigma_{ar}^{2})
+\end{aligned}
+\]</span></p>
+<p>Fitting procedure</p>
+<ul>
+<li><span class="math inline">\(y_{t}\)</span> is the weekly data on mortality from the CBS (series 70895ned), from 1995 to 2020 (week 20)</li>
+<li><span class="math inline">\(x_{t}\)</span> is weekly data (aggregated from daily series) on Corona-deaths as registered by the RIVM. Downloaded from the global database maintained by the Johns Hopkins institute.</li>
+<li>Lag order of <span class="math inline">\(y_{t}^{ar}\)</span> and number of harmonics <span class="math inline">\(j\)</span> in <span class="math inline">\(g_{t}\)</span> determined by running several ARIMA models, selecting the number of lags and harmonics that minimises the AICc</li>
+<li>5 unknown parameters (variances and <span class="math inline">\(\phi\)</span>) estimated by maximum likelihood estimation</li>
+<li>Structural parameters (<span class="math inline">\(\alpha_{t}\)</span>, <span class="math inline">\(\beta_{t}\)</span>, parameters in <span class="math inline">\(g_{t}\)</span>) estimated with (1) Kalman filter and (2) Kalman smoothing using singular value decomposition</li>
+</ul>
+<table>
+<caption><span id="tab:estimated-parameters">Table 1: </span>Estimated variances and AR parameter</caption>
+<thead>
+<tr class="header">
+<th align="left">Parameter</th>
+<th align="right">Value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left"><span class="math inline">\(\sigma_{v}\)</span></td>
+<td align="right">2.2295</td>
+</tr>
+<tr class="even">
+<td align="left"><span class="math inline">\(\sigma_{\alpha}\)</span></td>
+<td align="right">6.8820</td>
+</tr>
+<tr class="odd">
+<td align="left"><span class="math inline">\(\sigma_{\beta}\)</span></td>
+<td align="right">0.1771</td>
+</tr>
+<tr class="even">
+<td align="left"><span class="math inline">\(\sigma_{ar}\)</span></td>
+<td align="right">106.3487</td>
+</tr>
+<tr class="odd">
+<td align="left"><span class="math inline">\(\phi\)</span></td>
+<td align="right">0.8333</td>
+</tr>
+</tbody>
+</table>
+<div class="figure"><span id="fig:residuals-check"></span>
+<img src="../figs/corona--residuals-check-1.png" alt="Standardised residuals" width="672" />
+<p class="caption">
+Figure 3: Standardised residuals
+</p>
+</div>
+<div class="figure"><span id="fig:plot-filtered-vs-actual"></span>
+<img src="../figs/corona--plot-filtered-vs-actual-1.png" alt="Filtering estimate (green), observed deaths (red), 95 percent prediction interval (grey)" width="672" />
+<p class="caption">
+Figure 4: Filtering estimate (green), observed deaths (red), 95 percent prediction interval (grey)
+</p>
+</div>
+<div class="figure"><span id="fig:plot-smoothed-vs-actual"></span>
+<img src="../figs/corona--plot-smoothed-vs-actual-1.png" alt="Smoothing estimate (green), observed deaths (green), 95 percent confidence interval (grey)" width="672" />
+<p class="caption">
+Figure 5: Smoothing estimate (green), observed deaths (green), 95 percent confidence interval (grey)
+</p>
+</div>
+<!-- ```{r plot-coefficients, fig.cap = "Smoothing estimate of regression coefficients" } -->
+<!-- ggplot(melt(data.table(t = as.character(time(covid_filt$f)), -->
+<!--                 alpha =  dropFirst(covid_smooth$s)[,1], -->
+<!--                 beta =  dropFirst(covid_smooth$s)[,2], -->
+<!--                 cbs_deaths = covid_filt$y, -->
+<!--                 rivm_deaths = nl_dt[year >= start_yr[1], covid_deaths] -->
+<!--                 )[rivm_deaths > 0], -->
+<!--             id.vars = 't'), aes(as.numeric(t), value)) + -->
+<!--     geom_line() + -->
+<!--     scale_x_continuous(breaks = as.numeric(time(window(cbs_deaths_ts, start = c(2020, 1)))), -->
+<!--                        labels = seq(1, nl_dt[year == 2020, max(week)]) -->
+<!--                        ) + -->
+<!--     facet_wrap(~variable, scales = 'free') + -->
+<!--     theme_bw() -->
+<!-- ``` -->
+<div class="figure"><span id="fig:plot-coefficients2"></span>
+<img src="../figs/corona--plot-coefficients2-1.png" alt="Smoothing estimate of beta - dynamic" width="672" />
+<p class="caption">
+Figure 6: Smoothing estimate of beta - dynamic
+</p>
+</div>
+<div class="figure"><span id="fig:plot-coefficients4"></span>
+<img src="../figs/corona--plot-coefficients4-1.png" alt="Smoothing estimate of beta - dummy" width="672" />
+<p class="caption">
+Figure 7: Smoothing estimate of beta - dummy
+</p>
+</div>
+<div class="figure"><span id="fig:oversterftea"></span>
+<img src="../figs/corona--oversterftea-1.png" alt="Smoothed alpha and observations -dynamic" width="672" />
+<p class="caption">
+Figure 8: Smoothed alpha and observations -dynamic
+</p>
+</div>
+<div class="figure"><span id="fig:oversterfteb"></span>
+<img src="../figs/corona--oversterfteb-1.png" alt="Smoothed alpha and observations - dummy model" width="672" />
+<p class="caption">
+Figure 9: Smoothed alpha and observations - dummy model
+</p>
+</div>
+<div class="figure"><span id="fig:oversterfte1"></span>
+<img src="../figs/corona--oversterfte1-1.png" alt="Actual (green) and expected (red) deaths in 2020" width="672" />
+<p class="caption">
+Figure 10: Actual (green) and expected (red) deaths in 2020
+</p>
+</div>
+<div class="figure"><span id="fig:oversterfte3a"></span>
+<img src="../figs/corona--oversterfte3a-1.png" alt="Deaths until week 20 in years 2013 - 2020. Grey lines years 2013 - 2019, black line 2020 (dotted line expected deaths) - Dynamic" width="672" />
+<p class="caption">
+Figure 11: Deaths until week 20 in years 2013 - 2020. Grey lines years 2013 - 2019, black line 2020 (dotted line expected deaths) - Dynamic
+</p>
+</div>
+<div class="figure"><span id="fig:oversterfte3b"></span>
+<img src="../figs/corona--oversterfte3b-1.png" alt="Deaths until week 20 in years 2013 - 2020. Grey lines years 2013 - 2019, black line 2020 (dotted line expected deaths) - Dummy" width="672" />
+<p class="caption">
+Figure 12: Deaths until week 20 in years 2013 - 2020. Grey lines years 2013 - 2019, black line 2020 (dotted line expected deaths) - Dummy
+</p>
+</div>
+<div class="figure"><span id="fig:oversterfte4"></span>
+<img src="../figs/corona--oversterfte4-1.png" alt="Excess deaths" width="672" />
+<p class="caption">
+Figure 13: Excess deaths
+</p>
+</div>
+<div class="figure"><span id="fig:oversterfte5"></span>
+<img src="../figs/corona--oversterfte5-1.png" alt="Excess Death (tom week 19)" width="672" />
+<p class="caption">
+Figure 14: Excess Death (tom week 19)
+</p>
+</div>
+<div class="figure"><span id="fig:oversterfte6"></span>
+<img src="../figs/corona--oversterfte6-1.png" alt="Excess Deaths dynamic" width="672" />
+<p class="caption">
+Figure 15: Excess Deaths dynamic
+</p>
+</div>
+<div class="figure"><span id="fig:oversterfte7"></span>
+<img src="../figs/corona--oversterfte7-1.png" alt="Excess Death (tom week 19)" width="672" />
+<p class="caption">
+Figure 16: Excess Death (tom week 19)
+</p>
+</div>
+<div class="figure"><span id="fig:oversterfte8"></span>
+<img src="../figs/corona--oversterfte8-1.png" alt="Economist Figure" width="672" />
+<p class="caption">
+Figure 17: Economist Figure
+</p>
+</div>
+<p style="text-align: center;">
+</p>
+</div>
+</div>
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+$(document).ready(function () {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+});
+
+</script>
+
+</body>
+</html>

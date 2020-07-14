@@ -1,0 +1,1025 @@
+---
+title: Estimating excess deaths with Kalman filter
+author: Trond, Hans, Lenny
+date: 26.05
+
+output:
+  bookdown::html_book:
+    toc: FALSE
+    keep_tex: TRUE
+---
+
+
+```{r settings, include = F}
+
+## house keeping
+library(cbsodataR)
+library(dlm)
+library(data.table)
+library(ggplot2)
+library(forecast)
+library(rmarkdown)
+library(knitr)
+library(gridExtra)
+library(readxl)
+
+## set global rchunk options
+opts_chunk$set(fig.path='../figs/corona--',
+               cache.path='../cache/corona-',
+#               fig.show='hold',
+               results='hide',
+               message=FALSE,
+               warning=FALSE,
+               echo=FALSE,
+               par=TRUE )
+
+## some links
+## https://www.parool.nl/nederland/belgische-viroloog-nederland-onderschat-aantal-coronadoden~b42f770c/
+## https://www.cbs.nl/en-gb/corporate/2020/16/how-cbs-reports-on-mortality-during-the-coronavirus-crisis
+## http://past.rinfinance.com/agenda/2012/workshop/Zivot+Yollin.pdf
+## https://nos.nl/artikel/2334716-de-coronacijfers-van-22-mei-sterfte-inmiddels-lager-dan-andere-jaren.html
+## https://robjhyndman.com/hyndsight/forecasting-weekly-data/
+
+```
+
+```{r read-data, cache = T}
+
+## data from RIVM: downloaded 08.06.2020
+rivm_dt <- fread('../data/overledenen-per-dag.csv'
+                 )[,
+                   datum := seq(as.IDate("2020-02-27"), as.IDate("2020-06-08"), by="days")
+                   ][,
+                     week := week(datum + 1)
+                     ]
+
+## read johns hopkins data
+if(!file.exists('../data/covid_deaths_dt.rds')) {
+    ## url string
+    jhu_url <- "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_deaths_global.csv"
+    ## download, create long and clean up date column
+    deaths_raw <- melt(fread(jhu_url
+                             )[,
+                               -c(1L, 3L, 4L)
+                               ],
+                       id = 1L
+                       )[,
+                         date := as.IDate(variable, "%m/%d/%y")
+                         ]
+    setnames(deaths_raw, 1, "country")
+    ## aggregate
+    covid_dt <- deaths_raw[,
+                           .(deaths = sum(value)),
+                           by = c('country', 'date')
+                           ]
+    saveRDS(covid_dt, '../data/covid_deaths_dt.rds')
+} else {
+    covid_dt <- readRDS('../data/covid_deaths_dt.rds')
+}
+
+## find number of deaths from cumulative
+covid_dt[,
+         ':=' (year = 2020, week = week(date+1))
+         ][,
+           deaths_day := deaths - shift(deaths),
+           by = country
+           ]
+
+## aggregate deaths per week
+## nl_dt <- covid_dt[country == 'Netherlands',
+##                   .(covid_deaths = sum(deaths_day)),
+##                   by = c('year', 'week')
+##                   ]
+nl_dt <- rivm_dt[,
+                 .(year = 2020, covid_deaths = sum(`tot en met gisteren`)),
+                 by = week
+                 ]
+
+## read cbsodata
+if(!file.exists('../data/cbs_deaths_dt.rds')) {
+    cbs_dt <- data.table(cbs_get_data('70895ned',
+                                      Geslacht = "1100",
+                                      LeeftijdOp31December = "10000",
+                                      Perioden = has_substring("W") | has_substring("X"))
+                         )[,
+                           timestamp := Sys.time()
+                           ]
+    saveRDS(cbs_dt, '../data/cbs_deaths_dt.rds')
+} else {
+    cbs_dt <- readRDS('../data/cbs_deaths_dt.rds')
+}
+
+## find number of days of each week
+week_labels <- data.frame(attributes(cbs_dt$Perioden)$labels)
+week_labels$lbl <- row.names(week_labels)
+week_labels$w_length <- unlist(lapply(1:nrow(week_labels),
+                                      function(x) {
+                                          tmp <- gsub("[\\(\\)]", "",
+                                                      regmatches(week_labels$lbl[x],
+                                                                 gregexpr("\\(.*?\\)", week_labels$lbl[x])
+                                                                 )[[1]]
+                                                      )
+                                          if (length(tmp) > 0) {
+                                              return(tmp)
+                                          } else {
+                                              return ('7 dagen')
+                                          }
+                                      }))
+week_labels <- as.data.table(week_labels)
+
+## add week length
+setkeyv(week_labels, names(week_labels)[1])
+setkey(cbs_dt, Perioden)
+cbs_dt[week_labels,
+       w_length := substr(i.w_length, 1, 1)
+       ][,
+         Perioden := gsub('X', 'W', Perioden)
+         ]
+setkey(cbs_dt, Perioden)
+
+## move deaths from week 53 or 0 to week 52 or 1 depending on week length
+cbs_dt[, ':=' (year = as.numeric(substr(Perioden, 1, 4)),
+               week = as.numeric(substr(Perioden, 7, 8))
+               )
+       ][,
+         ':=' (week_update1 = Overledenen_1 + shift(Overledenen_1),
+               week_update2 = Overledenen_1 + shift(Overledenen_1, -1))
+         ][week == 1 & w_length < 7,
+           Overledenen_1 := week_update1
+           ][week == 52 & w_length < 7,
+             Overledenen_1 := week_update2
+             ][,
+               ':=' (week_update1 = NULL, week_update2 = NULL)
+               ]
+
+## merge
+nl_dt <- merge(cbs_dt[week %in% seq(1, 52),.(cbs_deaths = Overledenen_1, year, week)],
+               nl_dt,
+               by = c('year', 'week'),
+               all = T
+               )[,
+                 year_week := paste(year, week, sep = '_')
+                 ][!is.na(cbs_deaths)
+                   ][is.na(covid_deaths),
+                     covid_deaths := 0
+                     ]
+
+## create time series objects
+covid_deaths_ts <- ts(as.numeric(nl_dt$covid_deaths),
+                      start = c(1995, 1), frequency = 52)
+covid_deaths_lag <- ts(as.numeric(c(0, nl_dt$covid_deaths[-nrow(nl_dt)])),
+                       start = c(1995, 1), frequency = 52)
+covid_deaths_d <- ifelse(covid_deaths_ts == 0, 0, 1) # dummy
+cbs_deaths_ts <- ts(nl_dt$cbs_deaths, start = c(1995, 1), frequency = 52)
+
+## griepepidemien 2014:2019
+## https://www.rivm.nl/monitoring-sterftecijfers-nederland
+## https://www.rivm.nl/bibliotheek/rapporten/2015-0042.pdf
+## https://www.rivm.nl/nieuws/langdurige-griepepidemie-2017-2018-voorbij
+
+## find begin and end week of each epidemic
+begin_end_list <- list(c(2017, 51, 2018, 14),
+                       c(2016, 48, 2017, 10),
+                       c(2016, 1, 2016, 10),
+                       c(2014, 50, 2015, 17),
+                       c(2012, 52, 2013, 16)
+                       )
+
+begin_end_griep <- rbindlist(lapply(begin_end_list,
+                                    function(x) {
+                                        data.table(begin_y = x[1],
+                                                   begin_w = x[2],
+                                                   end_y = x[3],
+                                                   end_w = x[4]
+                                                   )
+                                    }
+                                    )
+                             )
+
+## initiate dummy variable
+combined_d <- ifelse(covid_deaths_d == 1, 1, 0)
+
+## set dummy equal to 1 in griep weeks
+for (i in 1:nrow(begin_end_griep)) {
+    tmp <- window(time(covid_deaths_ts),
+                  start = c(begin_end_griep$begin_y[i], begin_end_griep$begin_w[i]),
+                  end = c(begin_end_griep$end_y[i], begin_end_griep$end_w[i])
+                  )
+    combined_d <- ts(ifelse(time(combined_d) %in% tmp, 1, combined_d),
+                     start = c(1995, 1), frequency = 52)
+}
+
+## data from CBS
+cbs_oversterfte <- data.table(read_excel('../data/Berekening oversterfte CBS.xlsx', range = 'F3:I13', col_names = F))
+
+## data from The Economist
+## https://www.economist.com/graphic-detail/2020/04/16/tracking-covid-19-excess-deaths-across-countries
+##economist_oversterfe <- fread("https://raw.githubusercontent.com/TheEconomist/covid-19-excess-deaths-tracker/master/output-data/excess-deaths/netherlands_excess_deaths.csv")
+
+
+```
+
+```{r some-functions}
+
+## measures of forecast error
+rmse <- function(y_true, y_pred) {
+    sqrt(mean((y_pred - y_true)^2))
+}
+
+mape <- function(y_true, y_pred) {
+    mean(abs((y_true - y_pred) / y_true))
+}
+
+r2 <-  function(y_true, y_pred) {
+    cor(y_true, y_pred)^2
+}
+
+## confidence intervals
+ci_20p <- function(val, side) {
+    if (side == 'lwr') {
+        quantile(val, probs = seq(0, 1, 0.1))[2]
+    } else if (side == 'upr') {
+        quantile(val, probs = seq(0, 1, 0.1))[10] 
+    }
+}
+
+ci_5p <- function(val, side) {
+    if (side == 'lwr') {
+        quantile(val, probs = seq(0, 1, 0.025))[2] 
+    } else if (side == 'upr') {
+        quantile(val, probs = seq(0, 1, 0.025))[40] 
+    }
+}
+
+ci_1p <- function(x, side) {
+    if (side == 'lwr') {
+        quantile(x, probs = seq(0, 1, 0.005))[2] 
+    } else if (side == 'upr') {
+        quantile(x, probs = seq(0, 1, 0.005))[200] 
+    }   
+}
+
+```
+
+```{r model-selection, cache = T}
+
+## run model 
+bestfit <- list(aicc=Inf)
+for(i in 1:25)
+{
+  fit <- auto.arima(cbs_deaths_ts, xreg=fourier(cbs_deaths_ts, K=i), seasonal=FALSE)
+  if(fit$aicc < bestfit$aicc)
+    bestfit <- fit
+  else break;
+}
+
+```
+
+```{r fit-model1, cache = T}
+
+## initial level of Kalman filter parameters
+start_yr <- c(1995, 1)
+level0 <- window(cbs_deaths_ts, start = start_yr)[1]
+slope0 <- coefficients(lm(cbs_deaths_ts ~ covid_deaths_ts))[2]
+## init_val <- c(1.571097963,  4.373803720, -2.106434495,  0.837304892,  0.087786938,
+##                0.044173110, -0.077161199,  0.007833452,  9.300978708)
+init_val <- c(1.571097963,  4.373803720, -2.106434495,  0.837304892, 9.300978708)
+##init_val <- c(1.571097963,  -4.373803720, -2.106434495,  0.837304892, -9.300978708)
+
+## build function
+covid_mod <- function(parm) {
+    dlm <-dlmModReg(window(covid_deaths_ts, start = start_yr),
+                    dW = exp(parm[2 : 3]),
+                    m0 = c(level0, slope0)) +
+        ## dlmModReg(window(combined_d, start = start_yr),
+        ##           dW = exp(parm[6]),
+        ##           addInt = F) +
+        dlmModARMA(ar=ARtransPars(parm[c(4)]),
+                   ma=NULL,
+                   sigma2=exp(parm[5])) +
+        dlmModTrig(s=52, q = 2, dW = 0)
+    V(dlm) <- exp(parm[1])
+    return(dlm)
+}
+
+## fit model
+covid_fit <- dlmMLE(window(cbs_deaths_ts, start = start_yr),
+                    parm = init_val,
+                    build = covid_mod, hessian = T)
+
+## create model with fitted parameters
+covid_dlm <- covid_mod(covid_fit$par)
+
+## kalman filter
+covid_filt <- dlmFilter(window(cbs_deaths_ts, start = start_yr), covid_dlm)
+
+## smoothing
+covid_smooth <- dlmSmooth(covid_filt)
+
+## bootstrap samples
+covid_bs <- replicate(1000, dlmBSample(covid_filt))
+
+## check the residuals
+## checkresiduals(residuals(covid_filt)$res)
+
+## standard errors for mle estimates with Delta method
+## avarLog <- solve(covid_fit$hessian)
+## exp_pars <- c(exp(covid_fit$par[1:3]), covid_fit$par[4], exp(covid_fit$par[5]))
+## avar <- diag(exp_pars) %*% avarLog %*% diag(exp_pars)
+## covid_dlm_se <- sqrt(diag(avar)) 
+
+## ## extract std errors - dlmSvd2var gives list of MSE matrices
+## mse.list = dlmSvd2var(covid_smooth$U.S, covid_smooth$D.S)
+## se.mat = t(sapply(mse.list, FUN=function(x) sqrt(diag(x))))
+
+## ## check beta
+## ggplot(data.table(t = as.numeric(time(covid_filt$y)),
+##                   beta = dropFirst(covid_smooth$s)[,2],
+##                   lwr = dropFirst(covid_smooth$s)[,2] - qnorm(0.025, lower = FALSE) * as.numeric(dropFirst(se.mat)[,2]),
+##                   upr = dropFirst(covid_smooth$s)[,2] + qnorm(0.025, lower = FALSE) * as.numeric(dropFirst(se.mat)[,2])
+##                   )[t >= 2020 + 10/52],
+##        aes(t, beta)) +
+##        geom_line() +
+##        geom_errorbar(aes(ymin = lwr, ymax = upr), col = 'red') +
+##     theme_bw()
+
+## ## check alpha
+## ggplot(data.table(t = as.numeric(time(covid_filt$y)),
+##                   beta = dropFirst(covid_smooth$s)[,1],
+##                   lwr = dropFirst(covid_smooth$s)[,1] - qnorm(0.025, lower = FALSE) * as.numeric(dropFirst(se.mat)[,1]),
+##                   upr = dropFirst(covid_smooth$s)[,1] + qnorm(0.025, lower = FALSE) * as.numeric(dropFirst(se.mat)[,1]))[t >= 2015],                      
+##        aes(t, beta)) +
+##        geom_line() +
+##        geom_errorbar(aes(ymin = lwr, ymax = upr), col = 'red') +
+##        theme_bw()
+
+```
+
+```{r fit-model2, cache = T}
+
+## static regression model
+
+## initial level of Kalman filter parameters
+start_yr <- c(1995, 1)
+level0 <- window(cbs_deaths_ts, start = start_yr)[1]
+slope0 <- coefficients(lm(cbs_deaths_ts ~ covid_deaths_ts))[2]
+## init_val <- c(1.571097963,  4.373803720, -2.106434495,  0.837304892,  0.087786938,
+##                0.044173110, -0.077161199,  0.007833452,  9.300978708)
+init_val <- c(1.571097963,  4.373803720, 0.837304892, 9.300978708)
+
+## build function
+covid_mod_s <- function(parm) {
+    dlm <-dlmModReg(window(covid_deaths_ts, start = start_yr),
+                    dW = c(exp(parm[2]), 0), 
+                    m0 = c(level0, slope0)) +
+        dlmModARMA(ar=ARtransPars(parm[2]),
+                   ma=NULL,
+                   sigma2=exp(parm[3])) +
+        dlmModTrig(s=52, q = 2, dW = 0)
+    V(dlm) <- exp(parm[1])
+    return(dlm)
+}
+
+## fit model
+covid_fit_s <- dlmMLE(window(cbs_deaths_ts, start = start_yr),
+                    parm = init_val,
+                    build = covid_mod_s)
+
+## create model with fitted parameters
+covid_dlm_s <- covid_mod_s(covid_fit_s$par)
+
+## kalman filter
+covid_filt_s <- dlmFilter(window(cbs_deaths_ts, start = start_yr), covid_dlm_s)
+
+## smoothing
+covid_smooth_s <- dlmSmooth(covid_filt_s)
+
+## bootstrap samples
+covid_bs_s <- replicate(1000, dlmBSample(covid_filt_s))
+
+## p1 <- ggplot(data.table(t = as.numeric(time(covid_filt_s$y)),
+##            y = as.numeric(covid_filt_s$y),
+##            pred = apply(t(apply(dropFirst(covid_smooth_s$s), 1, function(x) x*covid_dlm_s$FF))[,-2], 1, sum))[t >= 2020],
+##        aes(t, y)) +
+##     geom_line() +
+##     geom_line(aes(y = pred), lty = 'dotted') +
+##     theme_bw()
+```
+
+
+```{r fit-model3, cache = T}
+
+
+## dummy variable version
+start_yr <- start_yr <- c(2010, 1)
+## initial level of Kalman filter parameters
+init_val <- c(1.6057549,  3.8639435, 12.1585084,  0.8294332,  9.3343791)
+
+## build function
+covid_mod_d <- function(parm) {
+    dlm <-dlmModReg(window(combined_d, start = start_yr),
+                    dW = exp(parm[2 : 3]),
+                    m0 = c(level0, slope0)) +
+        dlmModARMA(ar=ARtransPars(parm[4]),
+                   ma=NULL,
+                   sigma2=exp(parm[5])) +
+        dlmModTrig(s=52, q = 2, dW = 0)
+    V(dlm) <- exp(parm[1])
+    return(dlm)
+}
+
+## fit model
+covid_fit_d <- dlmMLE(window(cbs_deaths_ts, start = start_yr),
+                    parm = init_val,
+                    build = covid_mod_d)
+
+## create model with fitted parameters
+covid_dlm_d <- covid_mod_d(covid_fit_d$par)
+
+## kalman filter
+covid_filt_d <- dlmFilter(window(cbs_deaths_ts, start = start_yr), covid_dlm_d)
+
+## smoothing
+covid_smooth_d <- dlmSmooth(covid_filt_d)
+
+## extract std errors - dlmSvd2var gives list of MSE matrices
+## mse.list = dlmSvd2var(covid_smooth_d$U.S, covid_smooth_d$D.S)
+## se.mat = t(sapply(mse.list, FUN=function(x) sqrt(diag(x))))
+
+## check beta
+## ggplot(data.table(t = as.numeric(time(covid_filt_d$y)),
+##                   beta = dropFirst(covid_smooth_d$s)[,2],
+##                   lwr = dropFirst(covid_smooth_d$s)[,2] - qnorm(0.025, lower = FALSE) * as.numeric(dropFirst(se.mat)[,2]),
+##                   upr = dropFirst(covid_smooth_d$s)[,2] + qnorm(0.025, lower = FALSE) * as.numeric(dropFirst(se.mat)[,2])
+##                   )[t %in% time(combined_d)[combined_d > 0]],
+##        aes(factor(t), beta, group = 1)) +
+##        geom_line() +
+##        geom_ribbon(aes(ymin = lwr, ymax = upr), fill = 'red', alpha = 0.4) +
+##     theme_bw()
+
+
+## extract std errors - dlmSvd2var gives list of MSE matrices
+## mse.list = dlmSvd2var(covid_smooth_d$U.S, covid_smooth_d$D.S)
+## se.mat = t(sapply(mse.list, FUN=function(x) sqrt(diag(x))))
+
+## check alpha
+## ggplot(data.table(t = as.numeric(time(covid_filt_d$y)),
+##                   beta = dropFirst(covid_smooth_d$s)[,1],
+##                   lwr = dropFirst(covid_smooth_d$s)[,1] - qnorm(0.025, lower = FALSE) * as.numeric(dropFirst(se.mat)[,1]),
+##                   upr = dropFirst(covid_smooth_d$s)[,1] + qnorm(0.025, lower = FALSE) * as.numeric(dropFirst(se.mat)[,1]))[t >= 2010],                      
+##        aes(t, beta)) +
+##        geom_line() +
+##        geom_ribbon(aes(ymin = lwr, ymax = upr), col = 'red', alpha = 0.4) +
+##        theme_bw()
+
+
+
+## bootstrap samples
+covid_bs_d <- replicate(1000, dlmBSample(covid_filt_d))
+
+```
+
+
+```{r plot-data, fig.cap = "Descriptive plot"}
+
+## quick plot
+ggplot(data.table(t = time(covid_deaths_ts),
+                  covid_deaths = covid_deaths_ts,
+                  cbs_deaths = cbs_deaths_ts)[t >= 2000],
+       aes(t, cbs_deaths, group = 1)) +
+    geom_line(col = "#00AFBB") +
+    geom_line(aes(y=covid_deaths), col = "#E7B800") +
+    theme_bw()
+
+```
+
+```{r cor-plot, fig.cap = "Totale en geregistreerde Corona-sterfte", cache = T}
+
+ggplot(melt(data.table(week = round(as.numeric((time(covid_deaths_ts) - trunc(time(covid_deaths_ts)))*52)+1),
+                       year = as.numeric(trunc(time(covid_deaths_ts))),
+                  covid = as.numeric(covid_deaths_ts),
+                  totaal = as.numeric(cbs_deaths_ts))[year == 2020],
+         id.vars = 'week')[variable != 'year'],
+       aes(week, value)) +
+    geom_col(aes(fill = variable), position = 'dodge2') +
+    ##scale_colour_distiller(palette = 'RdYlGn') + 
+    ##geom_smooth(method= 'lm', fill = NA) +
+    xlab('week (2020)') +
+    ylab('overleden personen') + 
+    theme_bw()
+```
+
+
+
+```{r acf-plot}
+
+grid.arrange(ggAcf(cbs_deaths_ts) + theme_bw(),
+             ggPacf(cbs_deaths_ts) + theme_bw()
+             )
+
+```
+
+
+```{r plot-data-weeks}
+
+## subset to week 1 - 20
+cbs_deaths_subset <- NULL
+for (idx in seq(2010, 2020)) {
+    if (idx == 2010) {
+        cbs_deaths_subset <- window(cbs_deaths_ts, start= c(idx, 1), end = c(idx, 21))
+    } else {
+        cbs_deaths_subset <- ts(c(cbs_deaths_subset, window(cbs_deaths_ts, start= c(idx, 1), end = c(idx, 21))),
+                  start = start(cbs_deaths_subset),
+                  frequency = 21
+                  )
+    }
+}
+
+
+## customize ggsubplot
+data <- data.frame(y = as.numeric(cbs_deaths_subset), year = trunc(time(cbs_deaths_subset)), 
+                   season = as.numeric(cycle(cbs_deaths_subset)))
+seasonwidth <- (max(data$year) - min(data$year)) * 1.05
+data$time <- data$season + 0.025 + (data$year - min(data$year))/seasonwidth
+avgLines <- stats::aggregate(data$y, by = list(data$season),
+                             FUN = median)
+colnames(avgLines) <- c("season", "avg")
+data <- merge(data, avgLines, by = "season")
+
+p <- ggplot2::ggplot(ggplot2::aes_(x = ~time, y = ~y,
+                                   group = ~season), data = data, na.rm = TRUE)
+p <- p + ggplot2::theme(panel.grid.major.x = ggplot2::element_blank())
+p <- p + ggplot2::geom_line(aes(col = year), size = 0.8)
+
+p + ggplot2::geom_line(ggplot2::aes_(y = ~avg),
+                       col = "black") +
+    scale_colour_distiller(palette = 'Spectral', direction  =1) +
+    theme_bw() +
+    xlab('week') +
+    ylab('deaths')
+
+```
+
+
+
+Model
+
+$$
+\begin{aligned}
+&y_{t} = \alpha_{t} + \beta_{t} x_{t} + g_{t} + y_{t}^{ar} + v_{t} & v_{t} \sim N(0, \sigma_{v}^{2}) \\
+&\alpha_{t} = \alpha_{t-1} + w_{\alpha, t} & w_{\alpha, t} \sim N(0, \sigma_{\alpha}^{2}) \\
+&\beta_{t} = \beta_{t-1} + w_{\beta, t} & w_{\beta, t} \sim N(0, \sigma_{\beta}^{2}) \\
+&g_{t} = \sum_{j=1}^{2} \left( a_{j} \cos \left( t \frac{2 \pi j}{52.18} \right) + b_{j} \sin \left( t \frac{2 \pi j}{52.18} \right) \right) + w_{g, t} & w_{g, t} \sim N(0, 0) \\
+&y_{t}^{ar} = \phi y_{t-1} + w_{ar,t} & w_{ar,t} \sim N(0, \sigma_{ar}^{2})
+\end{aligned}
+$$
+
+Fitting procedure
+
+* $y_{t}$ is the weekly data on mortality from the CBS (series 70895ned), from 1995 to 2020 (week 20)
+* $x_{t}$ is weekly data (aggregated from daily series) on Corona-deaths as registered by the RIVM. Downloaded from the global database maintained by the Johns Hopkins institute.
+* Lag order of $y_{t}^{ar}$ and number of harmonics $j$ in $g_{t}$ determined by running several ARIMA models, selecting the number of lags and harmonics that minimises the AICc
+* 5 unknown parameters (variances and $\phi$) estimated by maximum likelihood estimation
+* Structural parameters ($\alpha_{t}$, $\beta_{t}$, parameters in $g_{t}$) estimated with (1) Kalman filter and (2) Kalman smoothing using singular value decomposition
+
+
+```{r estimated-parameters, results = 'asis'}
+
+pars <- c(sqrt(exp(covid_fit$par[c(1:3, 5)])),
+          covid_fit$par[c(4)]
+          )
+
+tbl <- data.table(Parameter = c("$\\sigma_{v}$",
+                                "$\\sigma_{\\alpha}$",
+                                "$\\sigma_{\\beta}$",
+                                "$\\sigma_{ar}$",
+                                "$\\phi$"
+                                ),
+                      Value = pars)
+
+mdl_fit <- c(paste0('RMSE = ', round(rmse(covid_filt$y, covid_filt$f), 2), ','),
+             paste0(' MAPE = ', round(mape(covid_filt$y, covid_filt$f), 2), ','),
+             paste0(' R2 = ', round(r2(covid_filt$f,covid_filt$y), 2))
+             )
+
+knitr::kable(tbl,
+             booktabs = T, escape = F, digits = c(0, 4),
+             caption = 'Estimated variances and AR parameter'
+             )  %>%
+    kableExtra::footnote(general = mdl_fit,
+                         general_title = "",
+                         footnote_as_chunk = T
+                         )
+
+```
+
+
+```{r residuals-check, fig.cap = 'Standardised residuals'}
+
+## check the residuals
+checkresiduals(residuals(covid_filt)$res)
+
+```
+
+```{r plot-filtered-vs-actual, fig.cap = "Filtering estimate (green), observed deaths (red), 95 percent prediction interval (grey)"}
+
+ggplot(data.table(t = time(covid_filt$f),
+                  prediction = covid_filt$f,
+                  data = covid_filt$y,
+                  upr = covid_filt$f - qnorm(0.025, lower = FALSE) * residuals(covid_filt)$sd,
+                  lwr = covid_filt$f + qnorm(0.025, lower = FALSE) * residuals(covid_filt)$sd
+                  )[t>=2010, ],
+       aes(t, data)) +
+    geom_ribbon(aes(ymin = lwr, ymax = upr), fill = 'grey', alpha = 0.5) +
+    geom_line(col = 'red') +
+    geom_line(aes(y=prediction), col = "#00AFBB") +
+    coord_cartesian(ylim = c(1500, 5500)) +
+    ##geom_text(label = paste('RMSE=', round(rmse(covid_filt$y, covid_filt$f), 2)), x = 2012.1, y = 5000) +
+    ##geom_text(label = paste('MAPE=', round(mape(covid_filt$y, covid_filt$f), 2)), x = 2012.1, y = 4750) +
+    ##geom_text(label = paste('R2=', round(r2(covid_filt$f,covid_filt$y), 2)), x = 2012.1, y = 4500) + 
+    theme_bw()
+
+```
+
+```{r plot-smoothed-vs-actual, fig.cap = "Smoothing estimate (green), observed deaths (green), 95 percent confidence interval (grey)"}
+
+## extract std errors - dlmSvd2var gives list of MSE matrices
+mse.list = dlmSvd2var(covid_smooth$U.S, covid_smooth$D.S)
+se.mat = t(sapply(mse.list, FUN=function(x) sqrt(diag(x))))
+
+## create x matrix for smoothing estimate
+prediction_matrix <- lapply(seq(1, ncol(covid_smooth$s)),
+                            function(x) {
+                                if (x == 2) {
+                                    covid_dlm$FF[x] * dropFirst(covid_smooth$s[,x]) * covid_deaths_ts
+                                } else {
+                                    covid_dlm$FF[x] * dropFirst(covid_smooth$s[,x])
+                                }
+                            })
+
+prediction_matrix <- do.call(cbind, prediction_matrix)
+
+ggplot(data.table(t = as.numeric(as.character(time(covid_filt$f))),
+                  smooth = apply(prediction_matrix, 1,sum),
+                  data = as.numeric(covid_filt$y),
+                  upr = apply(prediction_matrix + qnorm(0.025, lower = FALSE) * as.numeric(dropFirst(se.mat)), 1, sum),
+                  lwr = apply(prediction_matrix - qnorm(0.025, lower = FALSE) * as.numeric(dropFirst(se.mat)), 1, sum)
+                  )[t >= 2010], aes(t, data)) +
+    geom_ribbon(aes(ymax = upr, ymin = lwr), fill = 'grey', alpha = 0.5) + 
+    geom_line(col = "red") +
+    geom_line(aes(y = data), col = "#00AFBB") +
+    theme_bw()
+
+```
+
+<!-- ```{r plot-coefficients, fig.cap = "Smoothing estimate of regression coefficients" } -->
+
+<!-- ggplot(melt(data.table(t = as.character(time(covid_filt$f)), -->
+<!--                 alpha =  dropFirst(covid_smooth$s)[,1], -->
+<!--                 beta =  dropFirst(covid_smooth$s)[,2], -->
+<!--                 cbs_deaths = covid_filt$y, -->
+<!--                 rivm_deaths = nl_dt[year >= start_yr[1], covid_deaths] -->
+<!--                 )[rivm_deaths > 0], -->
+<!--             id.vars = 't'), aes(as.numeric(t), value)) + -->
+<!--     geom_line() + -->
+<!--     scale_x_continuous(breaks = as.numeric(time(window(cbs_deaths_ts, start = c(2020, 1)))), -->
+<!--                        labels = seq(1, nl_dt[year == 2020, max(week)]) -->
+<!--                        ) + -->
+<!--     facet_wrap(~variable, scales = 'free') + -->
+<!--     theme_bw() -->
+
+<!-- ``` -->
+
+```{r plot-coefficients2, fig.cap = "Smoothing estimate of beta - dynamic", cache = T}
+
+ggplot(data.table(t = as.numeric(as.character(time(covid_filt$f))),
+                  beta =  apply(dropFirst(covid_bs[,2,]), 1, mean),
+                  lwr = apply(dropFirst(covid_bs[,2,]), 1,
+                              function(x) ci_5p(x, side = 'lwr')
+                              ),
+                  upr = apply(dropFirst(covid_bs[,2,]), 1,
+                              function(x) ci_5p(x, side = 'upr')
+                              )
+                  )[t >= 2020 + 10/52], aes(t, beta)) +
+    geom_line() +
+    geom_errorbar(aes(ymax = upr, ymin = lwr), col = 'red', alpha = 0.4) + 
+    scale_x_continuous(breaks = as.numeric(time(window(cbs_deaths_ts, start = c(2020, 1)))),
+                       labels = seq(1, nl_dt[year == 2020, max(week)])
+                       ) +
+    theme_bw()
+
+
+```
+
+```{r plot-coefficients4, fig.cap = "Smoothing estimate of beta - dummy", cache = T}
+
+ggplot(data.table(t = as.numeric(as.character(time(covid_filt_d$f))),
+                  beta =  apply(dropFirst(covid_bs_d[,2,]), 1, mean),
+                  lwr = apply(dropFirst(covid_bs_d[,2,]), 1,
+                              function(x) ci_5p(x, side = 'lwr')
+                              ),
+                  upr = apply(dropFirst(covid_bs_d[,2,]), 1,
+                              function(x) ci_5p(x, side = 'upr')
+                              )
+                  )[t >= 2020 + 10/52], aes(t, beta)) +
+    geom_line() +
+    geom_errorbar(aes(ymax = upr, ymin = lwr), col = 'red', alpha = 0.4) + 
+    scale_x_continuous(breaks = as.numeric(time(window(cbs_deaths_ts, start = c(2020, 1)))),
+                       labels = seq(1, nl_dt[year == 2020, max(week)])
+                       ) +
+    theme_bw()
+
+```
+
+
+```{r oversterftea, fig.cap = "Smoothed alpha and observations -dynamic" }
+
+##extract std errors - dlmSvd2var gives list of MSE matrices
+mse.list = dlmSvd2var(covid_smooth$U.S, covid_smooth$D.S)
+se.mat = t(sapply(mse.list, FUN=function(x) sqrt(diag(x))))
+
+## check alpha
+ggplot(data.table(t = as.numeric(time(covid_filt$y)),
+                  alpha = dropFirst(covid_smooth$s)[,1],
+                  y = as.numeric(covid_filt$y),
+                  lwr = dropFirst(covid_smooth$s)[,1] - qnorm(0.025, lower = FALSE) * as.numeric(dropFirst(se.mat)[,1]),
+                  upr = dropFirst(covid_smooth$s)[,1] + qnorm(0.025, lower = FALSE) * as.numeric(dropFirst(se.mat)[,1]))[t >= 2015], aes(t, alpha)) +
+    geom_line(aes(y=y, x=t)) +
+    geom_line(lty = 'dotted') +
+    geom_ribbon(aes(ymin = lwr, ymax = upr), fill = 'red', alpha = 0.4) +
+    theme_bw()
+
+```
+
+```{r oversterfteb, fig.cap = "Smoothed alpha and observations - dummy model" }
+
+
+##extract std errors - dlmSvd2var gives list of MSE matrices
+mse.list = dlmSvd2var(covid_smooth_d$U.S, covid_smooth_d$D.S)
+se.mat = t(sapply(mse.list, FUN=function(x) sqrt(diag(x))))
+
+## check alpha
+ggplot(data.table(t = as.numeric(time(covid_filt_d$y)),
+                  alpha = dropFirst(covid_smooth_d$s)[,1],
+                  y = as.numeric(covid_filt_d$y),
+                  lwr = dropFirst(covid_smooth_d$s)[,1] - qnorm(0.025, lower = FALSE) * as.numeric(dropFirst(se.mat)[,1]),
+                  upr = dropFirst(covid_smooth_d$s)[,1] + qnorm(0.025, lower = FALSE) * as.numeric(dropFirst(se.mat)[,1]))[t >= 2015], aes(t, alpha)) +
+    geom_line(aes(y=y, x=t)) +
+    geom_line(lty = 'dotted') +
+    geom_ribbon(aes(ymin = lwr, ymax = upr), fill = 'red', alpha = 0.4) +
+    theme_bw()
+
+
+
+```
+
+```{r oversterfte1, fig.cap = "Actual (green) and expected (red) deaths in 2020" }
+
+ggplot(melt(data.table(t = as.numeric(as.character(time(covid_filt$f))),
+                       smoothed =  apply(t(apply(dropFirst(covid_smooth$s),
+                                              1,
+                                              function(x) x*covid_dlm$FF))[,-2],
+                                      1, sum),
+                y =  as.numeric(covid_filt$y)
+                )[t >= 2020],
+            id.vars = 't'), aes(t, value)) +
+    geom_line(aes(col = variable)) +
+    scale_x_continuous(breaks = as.numeric(time(window(cbs_deaths_ts, start = c(2020, 1)))),
+                       labels = seq(1, nl_dt[year == 2020, max(week)])
+                       ) +
+    xlab('week') +
+    guides(col = F) + 
+    theme_bw()
+
+```
+
+```{r oversterfte3a, fig.cap = "Deaths until week 20 in years 2013 - 2020. Grey lines years 2013 - 2019, black line 2020 (dotted line expected deaths) - Dynamic", cache = T}
+
+smooth_dt_dyn <- apply(covid_bs[,-2,], 3,
+                   function(x) {
+                       apply(dropFirst(x), 1,
+                             function(y) {
+                                 sum(y*covid_dlm$FF[,-2])
+                             })
+                   })
+
+plot_dt_dyn <- data.table(year = round(as.numeric(trunc(time(covid_filt$y)))),
+                      week = round(as.numeric((time(covid_filt$y) - trunc(time(covid_filt$y)))*52 + 1)),
+                      smooth = apply(smooth_dt_dyn, 1, mean),
+                      cbs_deaths = covid_filt$y,
+                      lwr = apply(smooth_dt_dyn, 1, function(x) ci_5p(x, side = 'lwr')),
+                      upr = apply(smooth_dt_dyn, 1, function(x) ci_5p(x, side = 'upr'))
+                      )[!(year == 2020 & week >= 9),
+                        ':=' (
+                            smooth = NA, lwr = NA, upr = NA)
+                        ]
+
+ggplot(plot_dt_dyn[year > 2009 & week <= 21],
+       aes(as.factor(round(week)), smooth, group = year)) +
+    geom_line(aes(y = cbs_deaths, col = ifelse(year >= 2020, 'grey', 'black'))) +
+    geom_line(aes(lty = ifelse(year >= 2020, 'solid', 'dotted'), col = ifelse(year >= 2020, 'grey', 'black'))) +
+    ##geom_errorbar(aes(ymax = upr, ymin = lwr), col = 'red', alpha = 0.4) +
+    geom_ribbon(aes(ymax = upr, ymin = lwr), fill = 'red', alpha = 0.1) +
+    ## geom_line(aes(y=upr), lty = 'dotted', col = 'red', alpha = 1) +
+    ## geom_line(aes(y=lwr), lty = 'dotted', col = 'red', alpha = 1) + 
+    scale_color_manual(values=c("grey", "black")) + 
+    guides(lty = F, col = F) + 
+    xlab('week') +
+    ylab('sterfte') + 
+    theme_bw()
+
+```
+
+```{r oversterfte3b, fig.cap = "Deaths until week 20 in years 2013 - 2020. Grey lines years 2013 - 2019, black line 2020 (dotted line expected deaths) - Dummy", cache = T}
+
+smooth_dt_dum <- apply(covid_bs_d[,-2,], 3,
+                   function(x) {
+                       apply(dropFirst(x), 1,
+                             function(y) {
+                                 sum(y*covid_dlm_d$FF[,-2])
+                             })
+                   })
+
+plot_dt_dum <- data.table(year = round(as.numeric(trunc(time(covid_filt_d$y)))),
+                      week = round(as.numeric((time(covid_filt_d$y) - trunc(time(covid_filt_d$y)))*52 + 1)),
+                      smooth = apply(smooth_dt_dum, 1, mean),
+                      cbs_deaths = covid_filt_d$y,
+                      lwr = apply(smooth_dt_dum, 1, function(x) ci_5p(x, side = 'lwr')),
+                      upr = apply(smooth_dt_dum, 1, function(x) ci_5p(x, side = 'upr'))
+                      )[!(year == 2020 & week >= 9),
+                        ':=' (
+                            smooth = NA, lwr = NA, upr = NA)
+                        ]
+
+ggplot(plot_dt_dum[year > 2009 & week <= 21],
+       aes(as.factor(round(week)), smooth, group = year)) +
+    geom_line(aes(y = cbs_deaths, col = ifelse(year >= 2020, 'grey', 'black'))) +
+    geom_line(aes(lty = ifelse(year >= 2020, 'solid', 'dotted'), col = ifelse(year >= 2020, 'grey', 'black'))) +
+    ##geom_errorbar(aes(ymax = upr, ymin = lwr), col = 'red', alpha = 0.4) +
+    geom_ribbon(aes(ymax = upr, ymin = lwr), fill = 'red', alpha = 0.1) +
+    ## geom_line(aes(y=upr), lty = 'dotted', col = 'red', alpha = 1) +
+    ## geom_line(aes(y=lwr), lty = 'dotted', col = 'red', alpha = 1) + 
+    scale_color_manual(values=c("grey", "black")) + 
+    guides(lty = F, col = F) + 
+    xlab('week') +
+    ylab('sterfte') + 
+    theme_bw()
+
+```
+
+```{r oversterfte4, fig.cap = "Excess deaths", cache = T}
+
+## weekly betas
+beta <- rbind(data.table(t = as.numeric(time(covid_filt$y)),
+                         beta = dropFirst(covid_bs[,2,]),
+                         covid_deaths = as.numeric(covid_filt$mod$X),
+                         model = 'Dynamisch'
+                         ),
+              data.table(t = as.numeric(time(covid_filt_s$y)),
+                         beta = dropFirst(covid_bs_s[,2,]),
+                         covid_deaths = as.numeric(covid_filt_s$mod$X),
+                         model = 'Statisch'
+                         ),
+              data.table(t = as.numeric(time(covid_filt_d$y)),
+                         beta = dropFirst(covid_bs_d[,2,]),
+                         covid_deaths = as.numeric(covid_filt_d$mod$X),
+                         model = 'Interventie'
+                         )
+              )
+             
+beta_long <- rbindlist(list(melt(beta, id.vars = c('t', 'model', 'covid_deaths')
+                                 )[,oversterfte:=covid_deaths*value],
+                            data.table(t = 2020 + (cbs_oversterfte[,1]-1)/52,
+                                       model = 'CBS',
+                                       covid_deaths = NA,
+                                       variable = 'beta',
+                                       value = rep(1, nrow(cbs_oversterfte)),
+                                       oversterfte = cbs_oversterfte[,4]
+                                       )
+                            ))
+
+## calculate confidence intervals
+beta_long[, ':=' (mid = mean(oversterfte),
+                  lwr = ci_5p(oversterfte, 'lwr'),
+                  upr = ci_5p(oversterfte, 'upr')
+                 ),
+          by = c('t', 'model')
+          ]
+
+## calculate mean and CI interval 
+totals <- beta_long[t >= 2020 + 10/52 & t <= 2020 + 18/52,
+                     sum(oversterfte),
+                     by=c('variable', 'model')
+                     ][,
+                       .(lwr = ifelse(model == 'CBS',
+                                      0,
+                                      ci_5p(V1, 'lwr')                        
+                                      ),
+                         mid = mean(V1),
+                         upr = ifelse(model == 'CBS',
+                                      0,
+                                      ci_5p(V1, 'upr')
+                                      )
+                         ),
+                       by = model
+                       ]
+
+## data.table(t = as.numeric(time(window(cbs_deaths_ts, start = c(2020, 1)))),
+##            ind = 1:21
+##            )[
+##    ,.(t, ind, ifelse(t >= 2020 + 10/52 & t <= 2020 + 18/52, 'Yes', 'No'))
+##              ]
+
+## plot
+ggplot(beta_long[t >= 2020 + 10/52, lapply(.SD, function(x) unique(x)),
+          .SDcols = c(names(beta_long)[7:9]),
+          by = c('t', 'model')
+          ][t>=2020 + 9/52],
+       aes(t, mid, group = 1)) +
+    geom_col(size = 4, position = 'dodge', width = 0.015) +
+    geom_errorbar(aes(ymin = lwr, ymax = upr, col = ifelse(model == 'cbs', NA, 'red')), width = 0.01, alpha = 0.4) +
+    scale_x_continuous(breaks = as.numeric(time(window(cbs_deaths_ts, start = c(2020, 1)))),
+                       labels = seq(1, nl_dt[year == 2020, max(week)])
+                       ) +
+    facet_wrap(~model, ncol = 2) +
+    scale_colour_manual(values = c('red', NA)) +
+    guides(colour = F) + 
+    ylab('oversterfte') +
+    xlab('week (2020)') + 
+    theme_bw()
+
+##ggsave('../figs/oversterfte_ex.png')
+
+##grid.arrange(p1, p2, ncol = 2)
+
+```
+
+```{r oversterfte5, fig.cap = "Excess Death (tom week 19)", cache = T}
+
+ggplot(melt(totals, id.vars = 'model'), aes(variable, value)) +
+    geom_col(alpha = 0.4) + 
+    facet_wrap(~model) +
+    geom_text(aes(label = round(value)), vjust = 3) + 
+    xlab('') +
+    ylab('Totale oversterfte') + 
+    theme_bw()
+
+
+```
+
+```{r oversterfte6, fig.cap = "Excess Deaths dynamic", cache = T}
+
+## plot
+ggplot(beta_long[t >= 2020 + 10/52, lapply(.SD, function(x) unique(x)),
+          .SDcols = c(names(beta_long)[7:9]),
+          by = c('t', 'model')
+          ][t>=2020 + 9/52 & model == 'Dynamisch'],
+       aes(t, mid, group = 1)) +
+    geom_col(size = 4, position = 'dodge', width = 0.015) +
+    geom_errorbar(aes(ymin = lwr, ymax = upr, col = ifelse(model == 'cbs', NA, 'red')), width = 0.01, alpha = 0.4) +
+    scale_x_continuous(breaks = as.numeric(time(window(cbs_deaths_ts, start = c(2020, 1)))),
+                       labels = seq(1, nl_dt[year == 2020, max(week)])
+                       ) +
+    scale_colour_manual(values = c('red', NA)) +
+    guides(colour = F) + 
+    ylab('Oversterfte') +
+    xlab('Week (2020)') + 
+    theme_bw()
+
+
+```
+
+```{r oversterfte7, fig.cap = "Excess Death (tom week 19)", cache = T}
+
+ggplot(melt(totals, id.vars = 'model')[model == 'Dynamisch'], aes(variable, value)) +
+    geom_col(alpha = 0.4) + 
+    xlab('') +
+    ylab('Totale oversterfte') +
+    geom_text(aes(label = round(value)), vjust = 3) + 
+    theme_bw()
+
+
+```
+
+```{r oversterfte8, fig.cap = "Economist Figure", cache = T}
+
+ggplot(data.table(plot_dt_dyn,
+                  covid_sterfte = as.numeric(covid_filt$mod$X)
+                  )[year >= 2020],
+       aes(factor(week), cbs_deaths, group = 1)) +
+    geom_line() +
+    geom_ribbon(aes(ymax = as.numeric(cbs_deaths),
+                    ymin = as.numeric(cbs_deaths) - covid_sterfte),
+                fill = 'grey', alpha = 0.4
+                ) +
+    geom_ribbon(aes(ymax = upr,
+                    ymin = lwr),
+                fill = 'red', alpha = 0.4
+                ) +
+    geom_line(aes(y=smooth), lty = 'dotted') +
+    theme_bw()
+
+
+
+```
+
+

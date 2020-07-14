@@ -1011,10 +1011,10 @@ As mentioned in the Introduction, the realisation that 2017 possibly represented
 p1 <- ggplot(two_year_fore[year >= 2010], aes(t, actual_value, group = type)) +
     geom_ribbon(aes(ymin = forecast_pl, ymax = forecast_pu),
                 fill = 'grey80', alpha = 0.4) +
-    geom_line(col = 'black') +
+    geom_line(col = 'grey50') +
 ##    geom_line(data = data.table()) +
     geom_line(aes(y = forecast)) +
-    scale_colour_manual(values = ) + 
+    #scale_colour_manual(values = ) + 
     facet_wrap(~type, ncol = 1) +
     theme_bw() +
     ylab('frequency of mobility (monthly)') +

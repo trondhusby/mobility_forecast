@@ -7,5 +7,5 @@ filename=$(basename "$file")
 extension="${filename##*.}"
 filename="${filename%.*}"
 
-Rscript -e "rmarkdown::render('$file')"
+Rscript -e "rmarkdown::render('$file', clean = FALSE)"
 

@@ -1,19 +1,19 @@
 [0] Config.pm:304> INFO - This is Biber 2.14
 [0] Config.pm:307> INFO - Logfile is 'demresearchmobility.blg'
-[88] biber:322> INFO - === wo feb 19, 2020, 10:59:46
-[105] Biber.pm:415> INFO - Reading 'demresearchmobility.bcf'
-[218] Biber.pm:943> INFO - Found 29 citekeys in bib section 0
-[235] Biber.pm:4256> INFO - Processing section 0
-[235] Utils.pm:75> INFO - Globbing data source 'mobility.bib'
-[235] Utils.pm:91> INFO - Globbed data source 'mobility.bib' to mobility.bib
-[247] Biber.pm:4455> INFO - Looking for bibtex format file 'mobility.bib' for section 0
-[248] bibtex.pm:1653> INFO - LaTeX decoding ...
-[302] bibtex.pm:1471> INFO - Found BibTeX data source 'mobility.bib'
-[305] Utils.pm:304> WARN - Duplicate entry key: 'de2011forecasting' in file 'mobility.bib', skipping ...
-[548] UCollate.pm:68> INFO - Overriding locale 'de_DE' defaults 'normalization = NFD' with 'normalization = prenormalized'
-[549] UCollate.pm:68> INFO - Overriding locale 'de_DE' defaults 'variable = shifted' with 'variable = non-ignorable'
-[549] Biber.pm:4084> INFO - Sorting list 'nty/global//global/global' of type 'entry' with template 'nty' and locale 'de_DE'
-[549] Biber.pm:4090> INFO - No sort tailoring available for locale 'de_DE'
-[588] bbl.pm:652> INFO - Writing 'demresearchmobility.bbl' with encoding 'UTF-8'
-[604] bbl.pm:755> INFO - Output to demresearchmobility.bbl
-[605] Biber.pm:128> INFO - WARNINGS: 1
+[91] biber:322> INFO - === di jul 14, 2020, 14:54:55
+[107] Biber.pm:415> INFO - Reading 'demresearchmobility.bcf'
+[194] Biber.pm:943> INFO - Found 30 citekeys in bib section 0
+[210] Biber.pm:4256> INFO - Processing section 0
+[211] Utils.pm:75> INFO - Globbing data source 'mobility.bib'
+[211] Utils.pm:91> INFO - Globbed data source 'mobility.bib' to mobility.bib
+[223] Biber.pm:4455> INFO - Looking for bibtex format file 'mobility.bib' for section 0
+[224] bibtex.pm:1653> INFO - LaTeX decoding ...
+[283] bibtex.pm:1471> INFO - Found BibTeX data source 'mobility.bib'
+[286] Utils.pm:304> WARN - Duplicate entry key: 'de2011forecasting' in file 'mobility.bib', skipping ...
+[534] UCollate.pm:68> INFO - Overriding locale 'de_DE' defaults 'normalization = NFD' with 'normalization = prenormalized'
+[534] UCollate.pm:68> INFO - Overriding locale 'de_DE' defaults 'variable = shifted' with 'variable = non-ignorable'
+[534] Biber.pm:4084> INFO - Sorting list 'nyt/global//global/global' of type 'entry' with template 'nyt' and locale 'de_DE'
+[534] Biber.pm:4090> INFO - No sort tailoring available for locale 'de_DE'
+[578] bbl.pm:652> INFO - Writing 'demresearchmobility.bbl' with encoding 'UTF-8'
+[602] bbl.pm:755> INFO - Output to demresearchmobility.bbl
+[602] Biber.pm:128> INFO - WARNINGS: 1
