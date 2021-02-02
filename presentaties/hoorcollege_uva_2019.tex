@@ -18,7 +18,7 @@
   Netherlands Environmental Assesment Agency (PBL) \\[5ex]
   \texttt{trond.husby@pbl.nl}
 }
-\date[\today]{Amsterdam 16 September, 2019}
+\date[\today]{Amsterdam 16 September, 2020}
 
 % set path to figures
 \newcommand*{\figs}{../figs}%
@@ -81,8 +81,8 @@
 \begin{frame}{Who am I}
   \begin{itemize}
   \item Norwegian, living in the Netherlands for 10 years 
-  \item PBL for 3.5 years
-  \item Working with the population projections for 1.5 year
+  \item PBL for 4 years
+  \item Working with the population projections for 2 year
     \item Economist by training (VU Amsterdam)
     \end{itemize}
 \end{frame}
@@ -94,9 +94,8 @@
   \begin{minipage}[t]{0.48\linewidth}%
     \begin{itemize}
     \item It's my job...
-    \item Population change is important for economic questions
-    \item Challenging topic: large uncertainties
-    \item Population growth and migration is a never ending source of relevant research questions
+    \item Population change is important for many policy questions, for example on the housing market  
+    \item The underlying drivers of population changes are, to a researcher, themselves interesting
     \end{itemize}
 \end{minipage}%
 \hfill%
@@ -188,6 +187,13 @@ might cast doubt on that) but projecting twenty years up to 2031 is completely u
   \end{itemize}
 \end{frame}
 
+\begin{frame}{Cohort-component model}
+  \begin{figure}
+    \includegraphics[scale = 0.4]{\figs/{smith_cohort_component_model.png}}
+    \source{Smith et al. (2013). A Practitioner's Guide to State and Local Population Projections}
+    \end{figure}
+  
+  \end{frame}
 
 \begin{frame}{The origins and definition of uncertainty}
   \begin{itemize}
@@ -234,15 +240,39 @@ might cast doubt on that) but projecting twenty years up to 2031 is completely u
     \end{enumerate}
 \end{frame}
 
-\begin{frame}{Projecting growth components: models}
-    \begin{minipage}[t]{0.48\linewidth}%
-      Let's say we want to project internal migration frequency (moves per 1000 inhabitants) into the future. Three possible models:
-      \small
-      \begin{itemize}
-        \item $\text{frequency}_{t+1} = f(\text{frequency}_{t}, \text{frequency}_{t-1}, ...,\text{error}_{t})$ \\
-      \item $\text{frequency} = f(\text{housing-market}, \text{labour-market}, \text{month}, ...,\text{error})$ \\
-        \item $\text{frequency}_{t+1} = f(\text{frequency}_{t}, \text{housing-market}, \text{labour-market}, \text{month}, ...,\text{error}_{t})$
-        \end{itemize}
+\begin{frame}{Trend change: break down or break dance?}
+  \begin{minipage}[t]{0.48\linewidth}%
+    The fraction of within-municipality moves for some municipalities hosting an asylum-seeker centre. What is the fraction in 2030?
+\end{minipage}%
+\hfill%
+\begin{minipage}[t]{0.48\linewidth}
+  \vspace{-1cm}
+  \centering
+  \includegraphics[scale = 0.4]{\figs/{within_mun_fraction.png}}    
+\end{minipage}    
+\end{frame}
+
+\begin{frame}{Trend change: break down or break dance?}
+  \begin{minipage}[t]{0.48\linewidth}%
+    {\semitransp{The fraction of within-municipality moves for some municipalities hosting an asylum-seeker centre. What is the fraction in 2030?}} Relatively small municipalities where a large proportion moved from another municipality and moved quickly to another municipality.
+\end{minipage}%
+\hfill%
+\begin{minipage}[t]{0.48\linewidth}
+  \vspace{-1cm}
+  \centering
+  \includegraphics[scale = 0.4]{\figs/{within_mun_fraction.png}}    
+\end{minipage}    
+\end{frame}
+
+
+\begin{frame}{Trend change: break down or break dance?}
+  \begin{minipage}[t]{0.48\linewidth}%
+    \begin{itemize}
+    \item The frequency of internal migration: number of (in this case, monthly) moves per 1000 inhabitants
+    \item What is the fraction in 2030?
+      \item sdf
+      \end{itemize}
+      
 \end{minipage}%
 \hfill%
 \begin{minipage}[t]{0.48\linewidth}
@@ -253,49 +283,6 @@ might cast doubt on that) but projecting twenty years up to 2031 is completely u
 
 \end{frame}
 
-\begin{frame}{Projecting growth components: time-series decomposition}
-    \begin{minipage}[t]{0.48\linewidth}%
-      \textbf{Trend + seasonal + cycle + error}
-      \small
-      \begin{itemize}
-      \item \textit{Trend}: a long-term increase or decrease in the data, does not have to be linear
-      \item \textit{Seasonal}: time series is affected by seasonal factors such as the time of the year or the day of the week. Seasonality is always of a fixed and known frequency.
-        \item \textit{Cycle}: data exhibit rises and falls that are not of a fixed frequency. Fluctuations are usually due to economic conditions
-        \end{itemize}
-     
-\end{minipage}%
-\hfill%
-\begin{minipage}[t]{0.48\linewidth}
-  \vspace{0cm}
-  \centering
-  \includegraphics[scale = 0.4]{\figs/{freq--dlm-smoothed-1.pdf}}    
-\end{minipage}    
-
-\end{frame}
-
-\begin{frame}{Identifying the trend}
-  \begin{minipage}[t]{0.48\linewidth}%
-    The fraction of within-municipality moves for some municipalities hosting an asylum-seeker centre. What is the fraction in 2028?
-\end{minipage}%
-\hfill%
-\begin{minipage}[t]{0.48\linewidth}
-  \vspace{-1cm}
-  \centering
-  \includegraphics[scale = 0.4]{\figs/{within_mun_fraction.png}}    
-\end{minipage}    
-\end{frame}
-
-\begin{frame}{Identifying the trend}
-  \begin{minipage}[t]{0.48\linewidth}%
-    {\semitransp{The fraction of within-municipality moves for some municipalities hosting an asylum-seeker centre. What is the fraction in 2028?}} Relatively small municipalities where a large proportion moved from another municipality and moved quickly to another municipality.
-\end{minipage}%
-\hfill%
-\begin{minipage}[t]{0.48\linewidth}
-  \vspace{-1cm}
-  \centering
-  \includegraphics[scale = 0.4]{\figs/{within_mun_fraction.png}}    
-\end{minipage}    
-\end{frame}
 
 \begin{frame}{Questions}
   \begin{enumerate}

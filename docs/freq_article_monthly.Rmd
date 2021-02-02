@@ -3,7 +3,7 @@ title: 'Forecasting internal migration with a state space model'
 author: Trond
 
 output:
-  bookdown::pdf_book:
+  bookdown::html_document2:
     toc: FALSE
     keep_tex: TRUE
    
