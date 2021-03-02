@@ -18,6 +18,12 @@ ARtransPars_custom <- function(num_vec, non_zeros = NULL) {
     return(num_vec)
 }
 
+## function used to calculate coverage probability
+n_between_fn <- function(actual, upper, lower) {
+  tmp <- ifelse(actual <= upper & actual > lower, 1, 0)
+  return(sum(tmp))
+}
+
 ## utility functions for model estimation
 freq_mod <- function(par, type, init_level, init_slope) {
     if (type == 'local_level') {
@@ -112,22 +118,31 @@ fore_plot_dt <- function(freq_fore, plot = 'DLM2') {
         ## forecast level
         fore <- exp(freq_fore$f)
         fore_t <- time(freq_fore$f)
-        fsd <- exp(sqrt(unlist(freq_fore$Q)))
-        pl <- fore + qnorm(0.05, sd = fsd)
-        pu <- fore + qnorm(0.95, sd = fsd)
+        ciTheory_80 <- (outer(sapply(freq_fore$Q, FUN=function(x) sqrt(diag(x))), qnorm(c(0.1,0.9))) +
+                        as.vector(t(freq_fore$f)))
+        ciTheory_95 <- (outer(sapply(freq_fore$Q, FUN=function(x) sqrt(diag(x))), qnorm(c(0.025,0.975))) +
+             as.vector(t(freq_fore$f)))
+        pl_80 <- exp(ciTheory_80[,1])
+        pu_80 <- exp(ciTheory_80[,2])
+        pl_95 <- exp(ciTheory_95[,1])
+        pu_95 <- exp(ciTheory_95[,2])
     } else {
         fore <- exp(freq_fore$mean)
         fore_t <- time(freq_fore$mean)
-        pl <- exp(freq_fore$lower[,2])
-        pu <- exp(freq_fore$upper[,2])
+        pl_80 <- exp(freq_fore$lower[,1])
+        pu_80 <- exp(freq_fore$upper[,1])
+        pl_95 <- exp(freq_fore$lower[,2])
+        pu_95 <- exp(freq_fore$upper[,2])
     }
     dt <- data.table(t = c(time(y), fore_t),
                      mod = paste(year(tf_year_month), months(tf_year_month)),
                      type = plot,
                      #data = c(y, rep(NA, length(fore))),
                      forecast = c(rep(NA, length(y)), as.numeric(fore)),
-                     forecast_pl = c(rep(NA, length(y)), as.numeric(pl)),
-                     forecast_pu = c(rep(NA, length(y)), as.numeric(pu))
+                     forecast_pl_80 = c(rep(NA, length(y)), as.numeric(pl_80)),
+                     forecast_pu_80 = c(rep(NA, length(y)), as.numeric(pu_80)),
+                     forecast_pl_95 = c(rep(NA, length(y)), as.numeric(pl_95)),
+                     forecast_pu_95 = c(rep(NA, length(y)), as.numeric(pu_95))
                      )    
     return(dt)
 }
@@ -256,7 +271,8 @@ err_dt <- function(err_fn) {
                                 )
                               )
                         )
-             )
+             ),
+        use.names = F
     )
     ## [,
     ##   lapply(.SD,
@@ -268,7 +284,7 @@ err_dt <- function(err_fn) {
 }    
 
 ##  Monte Carlo forecasts
-mc_run <- function(orig, new) {    
+mc_run_dlm <- function(orig, new) {    
     ## estimate parameters
     dlm2_mle <- dlmMLE(log(window(y_m, end = orig)),
                    par=init_arma3,
@@ -308,11 +324,56 @@ mc_run <- function(orig, new) {
                                    ':=' (                                       
                                        mean_fore = mean(V2[year > 2016]),
                                        median_fore = median(V2[year > 2016]),
-                                       lo_fore = quantile(V2[year > 2016], 0.05),
-                                       up_fore = quantile(V2[year > 2016], 0.95)),
+                                       lo_80_fore = quantile(V2[year > 2016], 0.1),
+                                       up_80_fore = quantile(V2[year > 2016], 0.9),
+                                       lo_95_fore = quantile(V2[year > 2016], 0.025),
+                                       up_95_fore = quantile(V2[year > 2016], 0.975)),
                                    by = year
                                    ][year == 2016,
-                                     4L:7L := V2
+                                     4L:9L := V2
+                                     ][,
+                                       origin := orig
+                                       ]
+    return(out)
+}
+
+## monte carlo forecast of ETS model
+mc_run_ets <- function(orig, new) {    
+    ## estimate model
+    ets_fit <- ets(log(window(y_m, end = orig)))
+
+    ## simulate future sample paths
+    n_sim <- length(seq(orig + 1/12, 2018 + 11/12, by = 1/12))
+    ets_mc_fore <- lapply(seq(1, new),
+                          function(x) {
+                              simulate(ets_fit, future = T, nsim = n_sim)
+                          })
+                    
+    ## gather results, calculate mean predictions and intervals
+    out <- rbindlist(lapply(seq_along(ets_mc_fore),
+                               function(x) {
+                                   fore <- ets_mc_fore[[x]]
+                                   data.table(year = c(2016,
+                                                       floor(time(window(y_m, start = 2017, end = orig))),
+                                                       floor(time(fore))),
+                                              c(sum(window(y_m, start = 2016, end = 2016 + 11/12)),
+                                                as.numeric(window(y_m, start = 2017, end = orig)),
+                                                as.numeric(exp(fore)))
+                                              )[,
+                                                .(x, sum(V2)),
+                                                by = year
+                                                ]
+                               }))[,
+                                   ':=' (                                       
+                                       mean_fore = mean(V2[year > 2016]),
+                                       median_fore = median(V2[year > 2016]),
+                                       lo_80_fore = quantile(V2[year > 2016], 0.1),
+                                       up_80_fore = quantile(V2[year > 2016], 0.9),
+                                       lo_95_fore = quantile(V2[year > 2016], 0.025),
+                                       up_95_fore = quantile(V2[year > 2016], 0.975)),
+                                   by = year
+                                   ][year == 2016,
+                                     4L:9L := V2
                                      ][,
                                        origin := orig
                                        ]

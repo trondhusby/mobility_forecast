@@ -12,8 +12,9 @@ bibliography: freq_bib.bib
 
 
 
+```{r settings, include = F, cache = F}
 
-```{r settings, include=FALSE, cache=FALSE}
+#devtools::install_github('business-science/tidyquant')
 
 ## general settings
 library(cbsodataR)
@@ -28,9 +29,7 @@ library(knitr)
 library(parallel)
 library(forecast)
 library(kableExtra)
-library(xlsx)
 library(wesanderson)
-library(tidyquant)
 
 ## set global rchunk options
 opts_chunk$set(fig.path='../figs/freq--',
@@ -99,11 +98,14 @@ mig_dt_hf2 <- data.table(cbs_get_data('84547NED',
                                       Geslacht="T001038", ## gender-total
                                       Leeftijd31December="10000") ## age-total
                          )
+
 bev_dt_hf2 <- data.table(cbs_get_data('83474NED'))
 ```
 
 
+
 ```{r data-wrangling}
+
 
 ## subset and clean up
 freq_dt <- bev_dt_hf[!grepl('2018', Perioden),
@@ -144,78 +146,13 @@ freq_dt <- melt(
 
 setkey(freq_dt, variable, month)
 
-## create time series object: limit to December 2019
-## y_m <-  ts(freq_dt[variable == 'freq' & as.numeric(substr(month, 1, 4)) <= 2019,
-##                    value],
-##             start = c(1995, 1),
-##             frequency = 12         
-##            )
 y_m <-  ts(freq_dt[variable == 'moves' & as.numeric(substr(month, 1, 4)) <= 2019,
                    value],
             start = c(1995, 1),
             frequency = 12         
            )
 
-## limit variable to December 2018
-## y_m <- window(y_m, end = 2018 + 11/12)
-
-## u_m <- ts(unemp_dt[grepl('MM', Perioden) & Leeftijd == 53715, NietSeizoengecorrigeerd_7],
-##             start = c(2003, 1),
-##             frequency = 12         
-##             )
-
-## w_m <- ts(wn_dt[grepl('MM', Perioden), PrijsindexBestaandeKoopwoningen_1],
-##             start = c(1995, 1),
-##             frequency = 12         
-##             )
-
-## ggAcf(data.table(window(y_m, start = 2003), u_m)) + theme_bw()
-
-## ggAcf(data.table(y_m, w_m)) + theme_bw()
-
-## dcast(unemp_dt[grepl('MM', Perioden),.(Perioden, Leeftijd, NietSeizoengecorrigeerd_7)],
-##       'Perioden ~ Leeftijd', value.var = 'NietSeizoengecorrigeerd_7')
-
-## library(vars)
-
-## VARselect(data.frame(y_m, w_m), lag.max = 10, type = 'const')
-## var7 <- VAR(data.frame(y_m, w_m), p=7, type = 'const')
-## var8 <- VAR(data.frame(y_m, w_m), p=8, type = 'const')
-## serial.test(var8, lags.pt=10, type="PT.asymptotic")
-
-## forecast(var7)
-
-## ggplot(unemp_dt[grepl('MM', Perioden)],
-##        aes(Perioden, NietSeizoengecorrigeerd_7, group = Leeftijd)) +
-##     geom_line() +
-##     facet_wrap(~Leeftijd) +
-##     theme_bw()
-
-## wn_dt[,.(Perioden, PrijsindexBestaandeKoopwoningen_1)]
-
-## ggAcf(data.frame(y_m, w_m)) + theme_bw()
-
-## ggAcf(merge(freq_dt[variable == 'freq'][,-'variable'],
-##       unemp_dt[,.(Perioden, NietSeizoengecorrigeerd_7)],
-##       by.x = 'month',
-##       by.y = 'Perioden')) +
-##     theme_bw()
-
-## ggAcf(dcast(smoothed_dt[Gemeente == 'Amsterdam', .(Maand, Onderwerp, Trend)],
-##             'Maand ~ Onderwerp')[,-'Maand']
-##       ) +
-##     theme_bw() +
-##     ggtitle('Cross correlaties Amsterdam')
-
-## write to csv file
-## if (!file.exists('../data/mobility_frequencies.xlsx')) {
-##     write.xlsx(freq_dt[variable == 'freq',
-##                        .(time = time(y_m), frequency = value)],
-##                '../data/mobility_frequencies.xlsx',
-##                row.names = F
-##                )
-## }
-          
+         
 ```
 
 ```{r dlm-functions}
@@ -269,6 +206,7 @@ for (mod in mods[c(7:8)]) {
                              init_level = level0, init_slope = slope0,
                              build=freq_mod, hessian = T,
                              lower = c(-Inf, rep(-Inf,7))
+                             ##lower = c(1e-6, rep(0,7))
                              )
     }
     if (mod == 'lt_arma3') {
@@ -293,16 +231,21 @@ for (mod in mods[c(7:8)]) {
         message(paste0(mod, ' did not converge'))
     }
     freq_fit[[mod]] <- freq_mod(fit[[mod]]$par, type = mod,
-                                init_level = level0, init_slope = slope0
-                                )
+                                      init_level = level0, init_slope = slope0
+                                      )
     freq_filt[[mod]] <- dlmFilter(log(y_m), freq_fit[[mod]])
     freq_smooth[[mod]] <- dlmSmooth(freq_filt[[mod]])
 }
 
-## dlmForecast(freq_filt[['lt_arma3']], sampleNew = 10)
+
+## fore <- dlmForecast(freq_filt[['lt_arma3']], nAhead = 10, sampleNew = 1)
+
+## ciTheory <- (outer(sapply(fore$Q, FUN=function(x) sqrt(diag(x))), qnorm(c(0.1,0.9))) +
+##              as.vector(t(fore$f)))
 
 ## plot(apply(dropFirst(freq_filt[['lt_arma']]$m)[, 1:2], 1, sum))
 
+## checkresiduals(residuals(freq_filt[['lt_arma3']])$res)
 ## checkresiduals(residuals(freq_filt[['lt_arma2']])$res)
 
 ## tsdiag(freq_filt[['lt_arma3']])
@@ -375,10 +318,57 @@ rf_dt <- rbindlist(lapply(1:n_fore,
                        t := round(as.numeric(t), 3)
                        ]
 
+
 ## add actual values
 rf_dt <- merge(rf_dt,
                data.table(t=round(as.numeric(time(y_m)), 3), actual_value=y_m),
                by = 't', all.x = T)
+
+## coverage proability
+cov_prob <- lapply(c(6, 12, 18),
+                   function(x) {
+                     rf_dt[!is.na(forecast),
+                           .(within_80 = n_between_fn(as.numeric(actual_value)[1:x],
+                                                      forecast_pu_80[1:x],
+                                                      forecast_pl_80[1:x]),
+                             within_95 = n_between_fn(as.numeric(actual_value)[1:x],
+                                                      forecast_pu_95[1:x],
+                                                      forecast_pl_95[1:x]),
+                             n = x
+                             ),
+                           by = .(type, mod)
+                           ][,
+                             .(p_within_80 = unique(sum(within_80)/sum(n)),
+                               p_within_95 = unique(sum(within_95)/sum(n)),
+                               n = x),
+                             by = type]
+                   }) %>%
+  rbindlist()
+
+## holt-winters and naive are problematic..
+cov_prob[type %in% c('Holt-Winters', 'Naïve'),
+         ':=' (
+           p_within_80 = NA,
+           p_within_95 = NA)
+         ]
+
+## prediction errors
+error_dt <- lapply(c(6, 12, 18),
+                   function(x) {
+                     rf_dt[!is.na(forecast),
+                           .(n = x,
+                             as.numeric(actual_value)[1:x],
+                             forecast[1:x]),
+                           by = .(type, mod)]
+                   }) %>%
+  rbindlist() %>%
+  .[,
+    .(mape = mape(V2, V3),
+      rmse = rmse(V2, V3)),
+    by = .(type, n)
+    ]
+
+                 
 
 ## calculate forecast error
 rf_fit <- rbindlist(lapply(model_names,
@@ -425,9 +415,9 @@ rf_fit <- rbindlist(lapply(model_names,
                            )
                     )
 
-## two-year ahead forecast to calculate yearly frequency
-## hmmmmmm..... doesn't work
+## 
 
+## two-year ahead forecast to calculate yearly frequency
 two_y_origin <- 2016 + 11/12
 two_year_fore <- rbindlist(mclapply(c('DLM2', 'ETS'),
                                     function(x) {
@@ -449,11 +439,14 @@ two_year_fore <- rbindlist(mclapply(c('DLM2', 'ETS'),
                                            year = floor(t)
                                        )][is.na(forecast),
                                           ':=' (
-                                             forecast = as.numeric(window(y_m, end = two_y_origin)),
-                                             forecast_pl = as.numeric(window(y_m, end = two_y_origin)),
-                                             forecast_pu = as.numeric(window(y_m, end = two_y_origin))
-                                          )
-]
+                                            forecast = as.numeric(window(y_m, end = two_y_origin)),
+                                            forecast_pl_80 = as.numeric(window(y_m, end = two_y_origin)),
+                                            forecast_pu_80 = as.numeric(window(y_m, end = two_y_origin)),
+                                            forecast_pl_95 = as.numeric(window(y_m, end = two_y_origin)),
+                                            forecast_pu_95 = as.numeric(window(y_m, end = two_y_origin))
+                                          ),
+                                          by = type
+                                          ]
 
 ## add observations
 two_year_fore <- merge(two_year_fore,
@@ -462,32 +455,66 @@ two_year_fore <- merge(two_year_fore,
                                   ),
                        by = 't', all.x = T)
 
+#ets_yearly <- 
+## data.table(floor(time(window(y_m, end = 2016 + 11/12))),
+##            window(y_m, end = 2016 + 11/12)
+##            )[,
+##              .(y = sum(V2)),
+##              by = V1
+##              ]$y %>%
+##   ts(., start = 1995, end = 2016) %>%
+##   ets(.) %>%
+##   forecast(., h = 2)
 
-## information about the selected ets model
+## ## information about the selected ets model
 ## ets_fore_info <- ets(window(log(y_m), end = 2016 + 11/12))
-## test <- forecast(ets_fore_info, simulate = T, bootstrap = T)
-## summary(ets_fore_info)
-## coefficients(ets_fore_info)[1:4]
+## test <- forecast(ets_fore_info, simulate = T, bootstrap = F)
+
+## test <- simulate(ets_fore_info, future = TRUE, nsum = 10)
+
+
+## two_year_fore[type == 'ETS' & t >= 2017,
+##               .(floor(t), forecast, actual_value)
+##               ][,
+##                 .(sum(forecast), sum(actual_value)),
+##                 by = V1
+##                 ]
+
+## percentage: 80; multiplier 1.28
+## percentage: 95; multiplier 1.96
+
 
 ## monte carlo forecasts for three-month period in 2017
-mc_out <- rbindlist(mclapply(seq(2017 + 2/12, 2017 + 11/12, by = 3/12),
+mc_out_dlm <- rbindlist(mclapply(seq(2017 + 2/12, 2017 + 11/12, by = 3/12),
                              function(x) {
-                                 mc_run(orig = x, new = 3000)
+                                 mc_run_dlm(orig = x, new = 3000)
                              },
                              mc.cores = n_cores
-                             ))
+                             ))[,
+                                origin_char := factor(rep(paste(c('Mar', 'Jun', 'Sep', 'Dec'),
+                                                                '2017', sep = ' '),
+                                                          each = 9000),
+                                                      levels = rep(paste(c('Mar', 'Jun', 'Sep', 'Dec'),
+                                                                         '2017', sep = ' ')
+                                                                   )
+                                                      )
+                                ]
 
-## create readable origin name
-mc_out[,
-       origin_char := factor(rep(paste(c('Mar', 'Jun', 'Sep', 'Dec'),
-                                '2017', sep = ' '),
-                                each = 9000),
-                             levels = rep(paste(c('Mar', 'Jun', 'Sep', 'Dec'),
-                                                '2017', sep = ' ')
-                                          )
-                             )
-       ]
-
+## monte carlo forecasts for three-month period in 2017
+mc_out_ets <- rbindlist(mclapply(seq(2017 + 2/12, 2017 + 11/12, by = 3/12),
+                             function(x) {
+                                 mc_run_ets(orig = x, new = 3000)
+                             },
+                             mc.cores = n_cores
+                             ))[,
+                                origin_char := factor(rep(paste(c('Mar', 'Jun', 'Sep', 'Dec'),
+                                                                '2017', sep = ' '),
+                                                          each = 9000),
+                                                      levels = rep(paste(c('Mar', 'Jun', 'Sep', 'Dec'),
+                                                                         '2017', sep = ' ')
+                                                                   )
+                                                      )
+                                ]
 
 
 ```
@@ -516,13 +543,13 @@ The frequency of mobility $y_{t}$ in month $t$ is in this paper defined as the s
 ```{r freq-plot, fig.cap = 'Frequency of mobility (upper panel) and seasonal differences (lower panel) and two-year moving averages (dotted line)'}
 
 ggplot(melt(data.table(month = time(y_m),
-                  `frequency of mobility` = y_m,
+                  `moves` = y_m,
                   `seasonal difference` = c(rep(NA, 12), diff(y_m, 12))
 #                  `monthly difference` = c(rep(NA, 1), diff(y_m, 1))
                   ), id.vars = 'month'),
        aes(month, value)) +
     geom_line() +
-    geom_ma(ma_fun = SMA, n = 24, col = 'black') +
+    #geom_ma(ma_fun = SMA, n = 24, col = 'black') +
     ##autolayer(ma(y_m, 12)) + 
     theme_bw() +
     ylab('') +
@@ -536,9 +563,9 @@ ggplot(melt(data.table(month = time(y_m),
 
 ```
 
-The upper panel shows that there are between 11 and 7 moves per 1000 inhabitants per month. The plot suggests that the frequency of mobility is cyclical with uneven period length. We see clearly from the plot that the time series is non-stationary and a Dickey Fuller test confirms this. The financial crisis, which hit the Dutch housing market hard, can be seen in the dip from 2008 onwards, with the recovery from the crisis set in during the year of 2014. The dotted line, which in this panel can be interpreted as the trend-cycle, illustrates clearly the connection between mobility and the macroeconomy: the dip from 2008 onwards and the recovery from 2014 follows the financial crisis which hit both labour and housing markets in the same periods.
+The upper panel shows that there are between 11 and 7 moves per 1000 inhabitants per month. The plot suggests that the moves is cyclical with uneven period length. We see clearly from the plot that the time series is non-stationary and a Dickey Fuller test confirms this. The financial crisis, which hit the Dutch housing market hard, can be seen in the dip from 2008 onwards, with the recovery from the crisis set in during the year of 2014. The dotted line, which in this panel can be interpreted as the trend-cycle, illustrates clearly the connection between mobility and the macroeconomy: the dip from 2008 onwards and the recovery from 2014 follows the financial crisis which hit both labour and housing markets in the same periods.
 
-From the middle panel, which shows the seasonal differences, we see that the year on year changes are negative from January 2009 with a recovery in 2012 and a new dip in 2013 before a real recovery from 2014. Interestingly the lower-panel figure reveals that the year on year changes become negative from medio 2017. This is also reported by Statistics Netherlands:\footnote{\url{https://www.cbs.nl/nl-nl/nieuws/2018/26/minder-mensen-verhuisd-in-eerste-kwartaal-2018}} in 2018 there were 5 \% fewer moves than in 2017, with the decline concentrated primarily among people younger than 50 years old. This reflects thus an end of an increasing trend from 2014 onwards. This shows that our suspicions of a peak in mobility frequency at the end of 2016 were not far off the mark. As suggested by the lower panel, the monthly differences of the frequency of mobility approximates a random walk. The visual inspection of this figure reveals a fairly unpredictable long-term pattern, with jumps hovering around zero. The moving averages suggest indeed that the medium-term average monthly change of the series is zero.
+From the middle panel, which shows the seasonal differences, we see that the year on year changes are negative from January 2009 with a recovery in 2012 and a new dip in 2013 before a real recovery from 2014. Interestingly the lower-panel figure reveals that the year on year changes become negative from medio 2017. This is also reported by Statistics Netherlands:\footnote{\url{https://www.cbs.nl/nl-nl/nieuws/2018/26/minder-mensen-verhuisd-in-eerste-kwartaal-2018}} in 2018 there were 5 \% fewer moves than in 2017, with the decline concentrated primarily among people younger than 50 years old. This reflects thus an end of an increasing trend from 2014 onwards. This shows that our suspicions of a peak in mobility frequency at the end of 2016 were not far off the mark. As suggested by the lower panel, the monthly differences of the moves approximates a random walk. The visual inspection of this figure reveals a fairly unpredictable long-term pattern, with jumps hovering around zero. The moving averages suggest indeed that the medium-term average monthly change of the series is zero.
 
 
 Summing up, the decomposition of the time series suggests that there is no linear trend, rather a cycle with peaks roughly every 10 years. There are furthermore strong seasonal effects with variations between the years, meaning the seasonality contains noise. Furthermore, the seasonality and the trend-cycle lead to autocorrelation. The next section shows how these elements are adressed in the state space model.
@@ -547,7 +574,7 @@ Summing up, the decomposition of the time series suggests that there is no linea
 
 The "state" is state space models is an unobserved dynamic process $\theta_{t}$ for which only a noisy measurement $y_{t}$ can be observered. State space models are modular in the sense that the state vector $\theta_{t}$ is constructed by adding components deemed necessary to characterise the time series. As mentioned in the Introduction, DLMs are a special case of state space models with Gaussian and independent errors. Forecasting and inference is carried out with the recursive Kalman filter algorithm [@kalman1960contributions]. Residuals are calculated by comparing the one-step ahead predictions from the Kalman filter with the observed values. There are many ways of describing state space models; the model is implemented in *R* using the *dlm* package, therefore the description in this section follows the notation used in @petris2009dynamic.
 
-Let $y_{t}$ denote the logarithm of the frequency of mobility in month $t$, where $y_{t}$ are the observed values of underlying (unobserved) vector of states $\theta_{t}$. $y_{t}$ are conditionally independent given the state $\theta_{t}$. The state represents a latent Markov process, meaning that the probability of moving to the next state depends only on the previous state. We can write this DLM as:
+Let $y_{t}$ denote the logarithm of the moves in month $t$, where $y_{t}$ are the observed values of underlying (unobserved) vector of states $\theta_{t}$. $y_{t}$ are conditionally independent given the state $\theta_{t}$. The state represents a latent Markov process, meaning that the probability of moving to the next state depends only on the previous state. We can write this DLM as:
 
 $$
 \begin{aligned}
@@ -647,25 +674,43 @@ The estimated parameters are shown in Table \@ref(tab:estimated-parameters). We 
 
 ```{r estimated-parameters, results='show', fig.cap = 'Estimated parameters'}
 
-#Construct 95% confidence interval for the estimated measurement variance
-##seParms <- sqrt(diag(solve(fit[[mod]]$hessian)))
-##exp(fit[[mod]]$par[c(1:4)] + qnorm(.05/2)*seParms[c(1:4)]%o%c(1,-1))
-##fit[[mod]]$par[5:6] + qnorm(.05/2)*seParms[5:6]%o%c(1,-1)
+# Estimate standard errors with Delta method
+mle_se <- lapply(c('lt_arma2', 'lt_arma3'),
+                 function(x) {
+                    ar_par_idx <- seq(5, 8)
+                    ## ar parameter
+                    avar <- solve(fit[[x]]$hessian)
+                    ar_se <- sqrt(diag(avar)[ar_par_idx])
+                    ## non-ar parameters
+                    tmp <- diag(exp(fit[[x]]$par[-ar_par_idx])) %*% avar[-ar_par_idx, -ar_par_idx] %*% + diag(exp(fit[[x]]$par[-ar_par_idx]))
+                    non_ar_se <- sqrt(diag(tmp))
+                    if (x == 'lt_arma2') {
+                      out <- c(non_ar_se[1], 0, non_ar_se[c(2:4)], ar_se)
+                    } else {
+                      out <- c(non_ar_se[c(1:2)], 0, non_ar_se[c(3:4)], ar_se)
+                    }
+                    return(out)
+                  })
 
+## Parameters
 dlm1_pars <- c(exp(fit[['lt_arma2']]$par[1]), 0, exp(fit[['lt_arma2']]$par[2:4]),
                fit[['lt_arma2']]$par[5:8])
 
 dlm2_pars <- c(exp(fit[['lt_arma3']]$par[1:2]), 0, exp(fit[['lt_arma3']]$par[3:4]),
                fit[['lt_arma3']]$par[5:8])
 
-est_tbl <- data.table(Parameter = c("$\\sigma_{v}^{2}$", "$\\sigma_{\\mu}^{2}$",
+
+est_tbl <- data.table(Parameter = c('', "$\\sigma_{v}^{2}$", "$\\sigma_{\\mu}^{2}$",
                               "$\\sigma_{\\beta}^{2}$",
                               "$\\sigma_{S_{2}}^{2}$", "$\\sigma^{2}_{u}$",
                               "$\\phi_{1}$", "$\\phi_{2}$",
                               "$\\phi_{7}$", "$\\phi_{12}$"),
-                           DLM1 = as.character(signif(dlm1_pars, 4)),
-                           DLM2 = as.character(signif(dlm2_pars, 4))
+                      DLM1 = c('Estimate', as.character(signif(dlm1_pars, 4))),
+                      ` ` = c('SE', as.character(signif(mle_se[[1]], 4))),
+                      DlM2 = c('Estimate', as.character(signif(dlm2_pars, 4))),
+                      ` ` = c('SE', as.character(signif(mle_se[[2]], 4)))
                       )
+
 
 knitr::kable(est_tbl,
              booktabs = T, escape = F,
@@ -676,7 +721,7 @@ knitr::kable(est_tbl,
 
 ```
 
-## Filtering and smoothing estimates of the frequency of mobility
+## Filtering and smoothing estimates of the moves
 
 With estimates of the unknown parameters we use the Kalman filter to obtain the filtered distribution of $\theta_{t}$ conditional on the observed series up to *t*, $\theta_{t} | y_{1}, y_{2},...,y_{t}$. Forecasts of the next observation $y_{t+1}$ based on observations up to $t$, are produced by first computing the state vector $\theta_{t+1}$ and then predicting $Y_{t+1}$. Similarly, an n-step ahead forecast $Y_{t+n}$ is based on calculation of the n-step ahead state vector $\theta_{t+n}$. We can write the forecast function as $f_{t} = E(Y_{t+n} | y_{1}, y_{2}, ....y_{t})$. In addition we estimate a smoothing distribution of the components, representing the past values of the states given all observed values $\theta_{t} | y_{1}, y_{2},...,y_{s}$ where $s \ge t$.
 
@@ -705,7 +750,7 @@ ggplot(rbindlist(list(filt_plot_dt(freq_filt[['lt_arma2']])[t >= 1998][,mod:='DL
               ##x = 2012, y = 10, size = 3.5, col = 'grey40') +
               x = 2012, y = 180000, size = 3.5, col = 'grey40') +
     facet_grid(mod~.) + 
-    ylab('frequency of mobility') +
+    ylab('moves') +
     xlab('month') + 
     scale_x_continuous(breaks = seq(1998, 2020, by = 2),
                        labels = paste('Jan', seq(1998, 2020, by = 2), sep = '\n')
@@ -714,7 +759,7 @@ ggplot(rbindlist(list(filt_plot_dt(freq_filt[['lt_arma2']])[t >= 1998][,mod:='DL
        
 ```
 
-Figure \@ref(fig:ci-comparison) shows the one-step ahead predictions along with the 95 percent prediction intervals of DLM1 and DLM2 for the months between January 2010 and December 2018. The interval is calculated using the standard deviation of the filtered values [@petris2009dynamic, ch. 3]. From this plot we clearly see that DLM1 systematically predicts a higher frequency of mobility than DLM2 from 2014 to about 2017. Athough barely visible in the figure, the prediction interval of DLM1 is slightly smaller than that of DLM2.
+Figure \@ref(fig:ci-comparison) shows the one-step ahead predictions along with the 95 percent prediction intervals of DLM1 and DLM2 for the months between January 2010 and December 2018. The interval is calculated using the standard deviation of the filtered values [@petris2009dynamic, ch. 3]. From this plot we clearly see that DLM1 systematically predicts a higher moves than DLM2 from 2014 to about 2017. Athough barely visible in the figure, the prediction interval of DLM1 is slightly smaller than that of DLM2.
 
 ```{r ci-comparison, fig.cap = "Filtering estimate and 95 percent prediction intervals"}
 
@@ -726,7 +771,7 @@ ggplot(rbindlist(list(filt_plot_dt(freq_filt[['lt_arma2']])[, mod := 'DLM1'],
     geom_ribbon(aes(ymin = pl, ymax = pu, fill = mod), alpha = 0.2) +
     geom_line(aes(col = mod)) +
     ##facet_wrap(~mod, ncol = 1) +
-    ylab('frequency of mobility') +
+    ylab('moves') +
     xlab('month') + 
     scale_x_continuous(breaks = seq(2010, 2020, by = 2),
                        labels = paste('Jan', seq(2010, 2020, by = 2), sep = '\n')
@@ -746,7 +791,7 @@ grid.arrange(
                       t = time(y_m)
                       ), aes(t, y)) +
     geom_line() +
-    ylab('frequency of mobility') +
+    ylab('moves') +
     xlab('month') + 
     scale_x_continuous(breaks = seq(1995, 2020, by = 4),
                        labels = paste('Jan', seq(1995, 2020, by = 4), sep = '\n')
@@ -757,7 +802,7 @@ grid.arrange(
                        t = time(y_m)
                        ), aes(t, y)) +
     geom_line() +
-    ylab('frequency of mobility') +
+    ylab('moves') +
     xlab('month') + 
     scale_x_continuous(breaks = seq(1995, 2020, by = 4),
                        labels = paste('Jan', seq(1995, 2020, by = 4), sep = '\n')
@@ -768,7 +813,7 @@ grid.arrange(
                       t = time(y_m)
                       ), aes(t, y)) +
     geom_line() +
-    ylab('frequency of mobility') +
+    ylab('moves') +
     xlab('month') + 
     scale_x_continuous(breaks = seq(1995, 2020, by = 4),
                        labels = paste('Jan', seq(1995, 2020, by = 4), sep = '\n')
@@ -779,7 +824,7 @@ grid.arrange(
                        t = time(y_m)
                        ), aes(t, y)) +
     geom_line() +
-    ylab('frequency of mobility') +
+    ylab('moves') +
     xlab('month') + 
     scale_x_continuous(breaks = seq(1995, 2020, by = 4),
                        labels = paste('Jan', seq(1995, 2020, by = 4), sep = '\n')
@@ -816,15 +861,15 @@ plot_dt <- melt(rbindlist(lapply(seq(2016, 2016.75, by = 0.25),
                                                           rep(NA, length(window(y_m, start = x + 1/12)))
                                                           ),
                                                 `N=6` = c(rep(NA, length(window(y_m, end = x))),
-                                                       rep(7, 6),
+                                                       rep(120000, 6),
                                                        rep(NA, length(window(y_m, start = x + 7/12)))
                                                        ),
                                                 `N=12` = c(rep(NA, length(window(y_m, end = x))),
-                                                        rep(7.3, 12),
+                                                        rep(125000, 12),
                                                         rep(NA, length(window(y_m, start = x + 13/12)))
                                                         ),
                                                 `N=18` = c(rep(NA, length(window(y_m, end = x))),
-                                                        rep(7.6, 18),
+                                                        rep(130000, 18),
                                                         rep(NA, length(window(y_m, start = x + 19/12)))
                                                         )
                                                 )
@@ -843,7 +888,7 @@ ggplot(plot_dt[t %between% c(2014, 2018)], aes(t, dt)) +
     scale_x_continuous(breaks = seq(2014, 2018),
                        labels = paste('Jan', seq(2014, 2018), sep = '\n')
                        ) + 
-    ylab('frequency of mobility') +
+    ylab('moves') +
     xlab('month')
 
 ## plot_dt <- rbindlist(lapply(2:6,
@@ -892,27 +937,29 @@ Table \@ref(tab:error-comparison) shows the overall forecast accuracy across all
 
 ```{r error-comparison, results = 'show'}
 
-rmse_mean <- rbindlist(
-    list(err_dt('rmse_6')[26:27],
-         err_dt('rmse_12')[26:27],
-         err_dt('rmse_18')[26:27]
-         ))
+## rmse_mean <- rbindlist(
+##     list(err_dt('rmse_6')[26:27],
+##          err_dt('rmse_12')[26:27],
+##          err_dt('rmse_18')[26:27]
+##          ),
+##   use.names = F)
 
-mape_mean <- rbindlist(
-    list(err_dt('mape_6')[26:27],
-         err_dt('mape_12')[26:27],
-         err_dt('mape_18')[26:27]
-         ))
+## mape_mean <- rbindlist(
+##     list(err_dt('mape_6')[26:27],
+##          err_dt('mape_12')[26:27],
+##          err_dt('mape_18')[26:27]
+##          ),
+##   use.names = F)
 
-error_dt <- cbind(t(data.frame(t(c('RMSE', rep('', nrow(rmse_mean)))),
-                               t(c('MAPE', rep('', nrow(rmse_mean)-1)))
-                               )),
-                  rbindlist(list(rmse_mean,
-                                 data.table(t(data.frame(rep('', ncol(rmse_mean))))),
-                                 mape_mean)
-                            ))
+## error_dt <- cbind(t(data.frame(t(c('RMSE', rep('', nrow(rmse_mean)))),
+##                                t(c('MAPE', rep('', nrow(rmse_mean)-1)))
+##                                )),
+##                   rbindlist(list(rmse_mean,
+##                                  data.table(t(data.frame(rep('', ncol(rmse_mean))))),
+##                                  mape_mean)
+##                             ))
       
-setnames(error_dt, c('', 'Forecast horizon', model_names))
+## setnames(error_dt, c('', 'Forecast horizon', model_names))
 
 ## rmse_mean <- lapply(c(1, 3, 5),
 ##                    function(x) {
@@ -924,10 +971,27 @@ setnames(error_dt, c('', 'Forecast horizon', model_names))
 ##                    })
 
 ##knitr::kable(cbind(rmse_mean[[1]], rmse_mean[[2]], rmse_mean[[3]]),
-knitr::kable(error_dt,
-             booktabs = T, escape = F, digits = 4,
-             caption = 'Mean (and standard deviation) of RMSE and MAPE'
-             )
+## knitr::kable(error_dt,
+##              booktabs = T, escape = F, digits = 4,
+##              caption = 'Mean (and standard deviation) of RMSE and MAPE'
+##              )
+
+measure_dict <- data.table(variable = c('rmse', 'mape', 'p_within_80', 'p_within_95'),
+                           measure = c('RMSE', 'MAPE', 'Coverage probability, 80 % PI', 'Coverage probability, 95% PI'))
+
+
+error_dt[cov_prob, on = c('type', 'n')] %>%
+  melt(, id.vars = c('type', 'n')) %>%
+  .[measure_dict, on = 'variable'] %>%
+  .[, `Forecast \n horizon` := factor(n)] %>%
+  ggplot(., aes(value, type, group = `Forecast \n horizon`, shape = `Forecast \n horizon`)) +
+  geom_point(size = 2) +
+  geom_point(size = 0.5, col = 'white') + 
+  facet_wrap(~measure, scales = 'free') +
+  ylab('') +
+  xlab('') + 
+  theme_bw()
+
 
 ```
 
@@ -978,9 +1042,9 @@ ggplot(melt(out,
 
 ```
 
-Figure \@ref(fig:rmse-origins) showed how the forecasting performance varied between origins; it suggested that the DLMs performed poorly, relative to other models, where a trend carried over from the training data to the test data and good relative to other models otherwise. Of course our initial interest in this exercise was motivated by a potential trend change. Therefore we zoom in on the forecasted values of the frequency of mobility around the changepoint. Figure \@ref(fig:forecast-2017-2018) compares the forecasts of all models in the period January 2017 to December 2018. The grey dots represent forecast from different origins, the solid line represents the average value of the forecasts across all origins and the dotted line is the data. The figure shows clearly the divergence in forecasting performance between the DLMs and the ARIMA and Holt-Winters models. The Holt-Winters model systematically overpredicts the migration frequency already from June 2017, meaning that the forecasted frequency exceeds the data for all origins. For the ARIMA model this occurs from October 2017. In the case of the DLMs the last forecasted point with a value lower than that of the data occurs in May 2018.
+Figure \@ref(fig:rmse-origins) showed how the forecasting performance varied between origins; it suggested that the DLMs performed poorly, relative to other models, where a trend carried over from the training data to the test data and good relative to other models otherwise. Of course our initial interest in this exercise was motivated by a potential trend change. Therefore we zoom in on the forecasted values of the moves around the changepoint. Figure \@ref(fig:forecast-2017-2018) compares the forecasts of all models in the period January 2017 to December 2018. The grey dots represent forecast from different origins, the solid line represents the average value of the forecasts across all origins and the dotted line is the data. The figure shows clearly the divergence in forecasting performance between the DLMs and the ARIMA and Holt-Winters models. The Holt-Winters model systematically overpredicts the migration frequency already from June 2017, meaning that the forecasted frequency exceeds the data for all origins. For the ARIMA model this occurs from October 2017. In the case of the DLMs the last forecasted point with a value lower than that of the data occurs in May 2018.
 
-```{r forecast-2017-2018, fig.cap = "Forecasted (light grey dots), forecast averaged over origins (black line) and observed (dark grey line) frequency of mobility"}
+```{r forecast-2017-2018, fig.cap = "Forecasted (light grey dots), forecast averaged over origins (black line) and observed (dark grey line) moves"}
 
 
 ggplot(rf_dt[t >= 2017 & t < 2019,
@@ -1001,7 +1065,7 @@ ggplot(rf_dt[t >= 2017 & t < 2019,
                                               })
                                        ))
                        ) +
-    ylab('frequency of mobility') +
+    ylab('moves') +
     xlab('month')
 
 
@@ -1010,20 +1074,20 @@ ggplot(rf_dt[t >= 2017 & t < 2019,
 
 ## Forecasting migration frequency from January 2017 onwards
 
-As mentioned in the Introduction, the realisation that 2017 possibly represented a turning point in the cycle of the frequency of mobility triggered our initial interest in developing the state space model. Then it is relevant to ask what the second state space model tell us about the development of the frequency of migration from 2017 onwards. In our case we were particularly interested in the development of the yearly frequency the coming couple of years. Figure \@ref(fig:forecast-2017) shows a two-year forecast of both the monthly and yearly frequency of mobility with their 95 percent prediction intervals, where the last period of the training data is December 2016. For simplicity, the yearly frequency is calculated by aggregating the monthly frequencies within that year. As a comparison, we also show results the same forecast using the ETS model discussed in the previous section. The automatic selection procedure results in an ETS(M, Ad, A): a model with multiplicative errors, damped additive trend and additive seasonal effects.
+As mentioned in the Introduction, the realisation that 2017 possibly represented a turning point in the cycle of the moves triggered our initial interest in developing the state space model. Then it is relevant to ask what the second state space model tell us about the development of the frequency of migration from 2017 onwards. In our case we were particularly interested in the development of the yearly frequency the coming couple of years. Figure \@ref(fig:forecast-2017) shows a two-year forecast of both the monthly and yearly moves with their 95 percent prediction intervals, where the last period of the training data is December 2016. For simplicity, the yearly frequency is calculated by aggregating the monthly frequencies within that year. As a comparison, we also show results the same forecast using the ETS model discussed in the previous section. The automatic selection procedure results in an ETS(M, Ad, A): a model with multiplicative errors, damped additive trend and additive seasonal effects.
 
-```{r forecast-2017, fig.cap = "Two-year forecast (black line) of monthly (left) and yearly (right) frequency of mobility and test data (dark grey line) and 95 percent prediction interval"}
+```{r forecast-2017, fig.cap = "Two-year forecast (black line) of monthly (left) and yearly (right) moves and test data (dark grey line) and 95 percent prediction interval"}
 
 p1 <- ggplot(two_year_fore[year >= 2010], aes(t, actual_value, group = type)) +
-    geom_ribbon(aes(ymin = forecast_pl, ymax = forecast_pu),
-                fill = 'grey80', alpha = 0.4) +
+     ## geom_ribbon(aes(ymin = forecast_pl, ymax = forecast_pu),
+     ##            fill = 'grey80', alpha = 0.4) +
     geom_line(col = 'grey50') +
 ##    geom_line(data = data.table()) +
     geom_line(aes(y = forecast)) +
     #scale_colour_manual(values = ) + 
     facet_wrap(~type, ncol = 1) +
     theme_bw() +
-    ylab('frequency of mobility (monthly)') +
+    ylab('moves (monthly)') +
     xlab('month') +
     scale_x_continuous(breaks = seq(2010,2019, by = 2),
                        labels = paste('Jan',
@@ -1032,9 +1096,9 @@ p1 <- ggplot(two_year_fore[year >= 2010], aes(t, actual_value, group = type)) +
 
 p2 <- ggplot(two_year_fore[,
               .(actual = sum(actual_value),
-                forecast = sum(forecast),
-                upper_bound = sum(forecast_pl),
-                lower_bound =  sum(forecast_pu)
+                forecast = sum(forecast)
+                #upper_bound = sum(forecast_pl),
+                #lower_bound =  sum(forecast_pu)
                 ),
               by = c('year', 'type')
               ][year >= 2010], aes(year, actual)) +
@@ -1044,7 +1108,7 @@ p2 <- ggplot(two_year_fore[,
     geom_line(aes(y = forecast)) +
     facet_wrap(~type, ncol = 1) +
     theme_bw() +
-    ylab('frequency of mobility (yearly)') +
+    ylab('moves (yearly)') +
     xlab('year')
 
 grid.arrange(p1, p2, ncol = 2)
@@ -1055,39 +1119,88 @@ grid.arrange(p1, p2, ncol = 2)
 ##     geom_ribbon(aes(ymin = pl, ymax = pu), fill = 'grey') +
 ##     geom_line() +
 ##     facet_wrap(~mod, ncol = 1) +
-##     ylab('Log(Frequency of mobility)') +
+##     ylab('Log(moves)') +
 ##     theme_bw()
 
 ```
 
 
-```{r mc-intervals, fig.cap = "Monte Carlo"}
+```{r mc-intervals-dlm, fig.cap = "Monte Carlo simulations of prediction intervals, DLM2"}
+
+anno_dt <- data.table(measure = rep(c('data', 'mean', '80 %', '95 %'), each = 2),
+                      anno = rep(rep(c('text', 'segment'), 4), 4),
+                      x = rep(c(2014.1, 2014.5), 4),
+                      y = rep(sapply(seq(0, 150, by = 50), function(x) 2040887 - x*1000), each = 2),
+                      origin_char = rep(unique(mc_out_dlm$origin_char), each = 8),
+                      lty = rep(c(rep('solid', 4), rep('dotted', 2), rep('dashed', 2)), 4)
+                      ) %>%
+  .[, col := ifelse(measure == 'data', 'grey50', 'black')]
+
 
 ggplot(data.table(year = floor(time(window(y_m, start = 2010))),
             as.numeric(window(y_m, start = 2010))
             )[, sum(V2), by = year
               ][year %between% c(2014, 2018)],
         aes(year, V1)) +
-     geom_line(data = mc_out[x %in% seq(1, 100)], aes(year, V2, group = x), col =  'grey80', alpha = 0.5) + 
-     geom_line(data = mc_out[x == 1], aes(year, mean_fore, group = x)) +
-     geom_line(data = mc_out[x ==1], aes(year, lo_fore, group = x), lty = 'dotted') +
-    geom_line(data = mc_out[x == 1], aes(year, up_fore, group = x), lty = 'dotted') +
+     geom_line(data = mc_out_dlm[x %in% seq(1, 100)], aes(year, V2, group = x), col =  'grey90', alpha = 0.5) + 
+     geom_line(data = mc_out_dlm[x == 1], aes(year, mean_fore, group = x)) +
+     geom_line(data = mc_out_dlm[x ==1], aes(year, lo_80_fore, group = x), lty = 'dotted') +
+  geom_line(data = mc_out_dlm[x == 1], aes(year, up_80_fore, group = x), lty = 'dotted') +
+  geom_line(data = mc_out_dlm[x ==1], aes(year, lo_95_fore, group = x), lty = 'dashed') +
+  geom_line(data = mc_out_dlm[x ==1], aes(year, up_95_fore, group = x), lty = 'dashed') +
     geom_line(col = 'grey50') +
     facet_wrap(~origin_char) + 
     xlab('year') +
-    ylab('frequency of mobility (yearly)') + 
-    theme_bw()
+    ylab('moves (yearly)') + 
+  theme_bw() +
+  geom_text(data = anno_dt[anno == 'text' & origin_char == 'Mar 2017'],
+            aes(x = x, y = y, label = measure, col = col)) +
+  geom_segment(data = anno_dt[anno == 'segment' & origin_char == 'Mar 2017'],
+               aes(x = x, xend = x + 0.5, y = y, yend = y, lty = lty, col = col)
+               ) +
+  scale_colour_identity() +
+  scale_linetype_identity()
+
 
 
 ```
 
-At first glance, the point forecast of the monthly frequency (left part of the figure) is quite similar across models, although the prediction interval of ETS is smaller. Both models forecast 2017 accurately, and they both systematically overestimate the test data in 2018. As the right left panels of Figure \@ref(fig:forecast-2017) shows, the yearly frequency of mobility actually declines between 2017 and 2018, and none of the models were able to capture this sudden decline. However, we see ETS is much more "positive" about (i.e., overestimates more substantially) the yearly frequency than DLM2. As we discussed earlier, both of these models can allow a short-run forecasts to diverge from a long-run trend growth. The figure thus suggests that the models produce quite similar short-run forecasts, but they differ in terms of their expected long-run growth. As a side note, the Naïve model would in fact predict the yearly frequency of 2018 very well. But a clock without battery also shows the right time twice a day.
+```{r mc-intervals-ets, fig.cap = "Monte Carlo simulations of prediction intervals, ETS"}
+
+ggplot(data.table(year = floor(time(window(y_m, start = 2010))),
+            as.numeric(window(y_m, start = 2010))
+            )[, sum(V2), by = year
+              ][year %between% c(2014, 2018)],
+        aes(year, V1)) +
+     geom_line(data = mc_out_ets[x %in% seq(1, 100)], aes(year, V2, group = x), col =  'grey90', alpha = 0.5) + 
+     geom_line(data = mc_out_ets[x == 1], aes(year, mean_fore, group = x)) +
+     geom_line(data = mc_out_ets[x ==1], aes(year, lo_80_fore, group = x), lty = 'dotted') +
+  geom_line(data = mc_out_ets[x == 1], aes(year, up_80_fore, group = x), lty = 'dotted') +
+  geom_line(data = mc_out_ets[x ==1], aes(year, lo_95_fore, group = x), lty = 'dashed') +
+  geom_line(data = mc_out_ets[x ==1], aes(year, up_95_fore, group = x), lty = 'dashed') +
+    geom_line(col = 'grey50') +
+    facet_wrap(~origin_char) + 
+    xlab('year') +
+    ylab('moves (yearly)') + 
+  theme_bw()  +
+  geom_text(data = anno_dt[anno == 'text' & origin_char == 'Mar 2017'],
+            aes(x = x, y = y, label = measure, col = col)) +
+  geom_segment(data = anno_dt[anno == 'segment' & origin_char == 'Mar 2017'],
+               aes(x = x, xend = x + 0.5, y = y, yend = y, lty = lty, col = col)
+               ) +
+  scale_colour_identity() +
+  scale_linetype_identity()
+
+
+```
+
+At first glance, the point forecast of the monthly frequency (left part of the figure) is quite similar across models, although the prediction interval of ETS is smaller. Both models forecast 2017 accurately, and they both systematically overestimate the test data in 2018. As the right left panels of Figure \@ref(fig:forecast-2017) shows, the yearly moves actually declines between 2017 and 2018, and none of the models were able to capture this sudden decline. However, we see ETS is much more "positive" about (i.e., overestimates more substantially) the yearly frequency than DLM2. As we discussed earlier, both of these models can allow a short-run forecasts to diverge from a long-run trend growth. The figure thus suggests that the models produce quite similar short-run forecasts, but they differ in terms of their expected long-run growth. As a side note, the Naïve model would in fact predict the yearly frequency of 2018 very well. But a clock without battery also shows the right time twice a day.
 
 # Conclusion
 
-In this paper we have developed a state space model for short-to medium term univariate forecast of monthly frequency of mobility in the Netherlands. The frequency of mobility is defined as the number of internally migrated persons countrywide (within- and between-municipality) per month divided by the population. This is an important input into the cohort-component model used for our regional population projections; the need for this modelling exercise arose as we suspected that the end of our yearly series represented the top of a cycle.
+In this paper we have developed a state space model for short-to medium term univariate forecast of monthly moves in the Netherlands. The moves is defined as the number of internally migrated persons countrywide (within- and between-municipality) per month divided by the population. This is an important input into the cohort-component model used for our regional population projections; the need for this modelling exercise arose as we suspected that the end of our yearly series represented the top of a cycle.
 
-The results presented in the previous section show that the state space model (DLM) quite accurately forecasts both monthly and yearly frequency of mobility until end 2018, based on data up to end 2016. In particular, the model would have given us a very accurate picture of the development of the frequency of mobility until end of 2017. More generally, the model performed comparably or even better than a number of popular univariate forecasting in a time interval between end of 2016 to end of 2017. One of the most remarkable feature about the forecasts of the DLM was the relatively limited deterioration in forecast accuracy as the forecast horizon increased. 
+The results presented in the previous section show that the state space model (DLM) quite accurately forecasts both monthly and yearly moves until end 2018, based on data up to end 2016. In particular, the model would have given us a very accurate picture of the development of the moves until end of 2017. More generally, the model performed comparably or even better than a number of popular univariate forecasting in a time interval between end of 2016 to end of 2017. One of the most remarkable feature about the forecasts of the DLM was the relatively limited deterioration in forecast accuracy as the forecast horizon increased. 
 
 The most important reason was that the local linear growth component ensured a certain "conservatism" for forecast horizons above 12 months. The high signal-to-noise rate implied that the estimated local growth rate evolved slowly over time. The only other model mimicking this behaviour was the ETS model - itself also a state space model. An easy critique of this result is that a model that predicts that 'what goes up must eventually come down' is of limited value. Yet such criticism misses the point that the local linear growth component in effect incorporates not only local, but to some extent global, characteristics of the time series. As such, this model also answers the question "come down to what?".
 
@@ -1100,7 +1213,7 @@ In addition to the cycle, there are strong seasonal patterns that seem to vary o
 Finally, we check whether there is a linear relationship between lagged variables of the time series (autocorrelation). Figure \@ref(fig:autocorr-plot) reveals a large and positive autocorrelation for small lags, since observations nearby in time tend to be similar in size. We also see that strong autocorrelation in lags that are multiples of the seasonal frequency (12, 24, and 36), which is due to the seasonality discussed above. The slow decline is related to the trend-cycle while the 'scalloped' pattern is related to the seasonality. In terms of lag selection for an ARIMA model, the significant spikes at the first and second lag in the partial autocorrelation plot in the lower figure suggests that we should include at least two autoregressive terms [@hyndman2018forecasting].
 
 
-```{r freq-month-plot, fig.cap = 'Seasonal subseries plot of the frequency of mobility'}
+```{r freq-month-plot, fig.cap = 'Seasonal subseries plot of the moves'}
 
 dat <- data.frame(y = as.numeric(y_m), year = trunc(time(y_m)),
                    season = as.numeric(cycle(y_m)))
@@ -1121,7 +1234,7 @@ xfreq <- frequency(y_m)
 xbreaks <- month.abb
 p <- p + ggplot2::scale_x_continuous(breaks = 0.5 + (1:xfreq), 
                                      labels = xbreaks) +
-    ylab('frequency of mobility') +
+    ylab('moves') +
     xlab('month') +
     theme_bw()
 p
@@ -1129,7 +1242,7 @@ p
 ``` 
 
 
-```{r autocorr-plot, fig.cap = 'Autocorrelation function of the frequency of mobility'}
+```{r autocorr-plot, fig.cap = 'Autocorrelation function of the moves'}
 
 # plot acf with ggplot
 gg_acf_pacf <- function(func = 'acf', series, n_lags) {
@@ -1218,7 +1331,7 @@ roll_pars <- rbindlist(lapply(1:n_fore,
                                         dlm1 = dlm1_pars,
                                         dlm2 = dlm2_pars
                                         )[,
-                                          V3 := est_tbl$Parameter
+                                          V3 := est_tbl$Parameter[-1]
                                           ]
                               })
                        )[,
