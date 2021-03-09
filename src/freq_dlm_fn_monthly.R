@@ -24,6 +24,11 @@ n_between_fn <- function(actual, upper, lower) {
   return(sum(tmp))
 }
 
+## find month from a vector of numerics
+find_month <- function(vec) {
+    ((vec - floor(vec)) + 1/12)*12
+}
+
 ## utility functions for model estimation
 freq_mod <- function(par, type, init_level, init_slope) {
     if (type == 'local_level') {

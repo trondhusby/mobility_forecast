@@ -100,6 +100,7 @@ mig_dt_hf2 <- data.table(cbs_get_data('84547NED',
                          )
 
 bev_dt_hf2 <- data.table(cbs_get_data('83474NED'))
+
 ```
 
 
@@ -364,11 +365,50 @@ error_dt <- lapply(c(6, 12, 18),
   rbindlist() %>%
   .[,
     .(mape = mape(V2, V3),
-      rmse = rmse(V2, V3)),
+      rmse = rmse(V2, V3),
+      mae = mean(abs(V2 - V3))),
     by = .(type, n)
     ]
 
-                 
+## MASE: first calculate within sample MAE
+within_sample_mae <- lapply(seq(begin_fore, end_fore),
+                            function(x) {
+                              tmp <- data.table(err = c(rep(NA, 12), abs(diff(y_m, 12))),
+                                                t = round(time(y_m), 3),
+                                                y = as.integer(floor(time(y_m))),
+                                                m = as.integer(find_month(time(y_m)))
+                                                )[13:begin_fore]
+                              tf <- time(y_m)[x]
+                              tf_year_month <- as.Date(paste(trunc(tf),
+                                                             round((tf-floor(tf)) * 12)+1,
+                                                             '01',
+                                                             sep = '-'),
+                                                       format = '%Y-%m-%d'
+                                                       )
+                              tmp[, mod := paste(year(tf_year_month), months(tf_year_month))]
+                              return(tmp)
+                            }) %>%
+  rbindlist()
+
+## add to prediction data
+rf_dt[within_sample_mae,
+      within_mae := i.err,
+      on = c('t', 'mod')
+      ]
+
+## calculat mase
+mase_dt <- lapply(c(6, 12, 18),
+                  function(x) {
+                    rf_dt[,
+                          .(n = x,
+                            mean(abs(as.numeric(forecast)[!is.na(as.numeric(forecast))][1:x] -
+                                     as.numeric(actual_value)[!is.na(as.numeric(forecast))][1:x]), na.rm = T) /
+                            mean(within_mae, na.rm = T)),
+                          by = .(mod, type)
+                          ]
+                  }) %>%
+  rbindlist() %>%
+  .[, mean(V2), by = .(n, type)]
 
 ## calculate forecast error
 rf_fit <- rbindlist(lapply(model_names,
@@ -976,22 +1016,23 @@ Table \@ref(tab:error-comparison) shows the overall forecast accuracy across all
 ##              caption = 'Mean (and standard deviation) of RMSE and MAPE'
 ##              )
 
-measure_dict <- data.table(variable = c('rmse', 'mape', 'p_within_80', 'p_within_95'),
-                           measure = c('RMSE', 'MAPE', 'Coverage probability, 80 % PI', 'Coverage probability, 95% PI'))
+measure_dict <- data.table(variable = c('mape', 'mase', 'p_within_80', 'p_within_95'),
+                           measure = c('MAPE', 'MASE', 'coverage probability, 80 % PI', 'coverage probability, 95% PI'))
 
 
-error_dt[cov_prob, on = c('type', 'n')] %>%
-  melt(, id.vars = c('type', 'n')) %>%
+cov_prob[mase_dt[,.(n,type,mase = V1)], on = c('type', 'n')] %>%
+  .[error_dt[,.(type, n, mape)], on = c('type', 'n')] %>%
+  melt(., id.vars = c('type', 'n')) %>%
   .[measure_dict, on = 'variable'] %>%
-  .[, `Forecast \n horizon` := factor(n)] %>%
-  ggplot(., aes(value, type, group = `Forecast \n horizon`, shape = `Forecast \n horizon`)) +
+  .[, horizon := factor(n)] %>%
+  ggplot(., aes(value, type, group = horizon, col = horizon)) +
   geom_point(size = 2) +
-  geom_point(size = 0.5, col = 'white') + 
+  ##scale_colour_brewer(palette = 'Greys') +
+  scale_colour_manual(values = RColorBrewer::brewer.pal(n = 4, name = 'Greys')[-1]) + 
   facet_wrap(~measure, scales = 'free') +
   ylab('') +
   xlab('') + 
   theme_bw()
-
 
 ```
 
@@ -1011,6 +1052,7 @@ out <- rbindlist(list(err_dt('mape_6')[-c(26:27)],
                        c(model_names) := lapply(.SD, function(x) as.numeric(as.character(x))),
                        .SDcols = model_names
                        ]
+                       
 
 ##library(stringr)
 ##unlist(str_split(as.character(out$Origin), '[[:digit:]]{4} '))
