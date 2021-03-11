@@ -495,16 +495,6 @@ two_year_fore <- merge(two_year_fore,
                                   ),
                        by = 't', all.x = T)
 
-#ets_yearly <- 
-## data.table(floor(time(window(y_m, end = 2016 + 11/12))),
-##            window(y_m, end = 2016 + 11/12)
-##            )[,
-##              .(y = sum(V2)),
-##              by = V1
-##              ]$y %>%
-##   ts(., start = 1995, end = 2016) %>%
-##   ets(.) %>%
-##   forecast(., h = 2)
 
 ## ## information about the selected ets model
 ## ets_fore_info <- ets(window(log(y_m), end = 2016 + 11/12))
@@ -1412,6 +1402,26 @@ ggplot(melt(beta_dt, id.vars = 't'),
                        labels = paste('Jan', seq(1998, 2018, by = 5), sep = '\n')
                        ) +
     theme_bw()
+
+```
+
+```{r mape-table, fig.cap = ''}
+
+lapply(c('mape_6', 'mape_12', 'mape_18'),
+       function(x){
+         dcast(rf_fit, 'mod ~ type', value.var = x)[,-1] %>%
+           apply(., 2, function(y) c(mean(y), sd(y), min(y), max(y))) %>%
+           cbind(data.table(.), c('mean', 'SD', 'min', 'max')) %>%
+           melt(., id.vars = 'V3', variable.name = 'model') %>%
+           dcast(., 'model ~ V3', mean) %>%
+           .[, horizon := c(gsub('mape_', '', x), rep('', .N-1))] %>%
+           setcolorder(., c(6, 1, 4, 2, 5, 3))  
+       }) %>%
+  rbindlist() %>%
+  knitr::kable(.,
+               booktabs = T, escape = F, digits = c(0, 0, 4, 4, 4, 4),
+               caption = 'Mean, standard deviation, min and max of prediction errors')
+
 
 ```
 
