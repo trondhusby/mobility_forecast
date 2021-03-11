@@ -1169,7 +1169,7 @@ grid.arrange(p1, p2, ncol = 2)
 
 ```{r mc-intervals-dlm, fig.cap = "Monte Carlo simulations of prediction intervals, DLM2"}
 
-anno_dt <- data.table(measure = rep(c('data', 'mean', '80 %', '95 %'), each = 2),
+anno_dt <- data.table(measure = rep(c('data', 'mean', '80% PI', '95% PI'), each = 2),
                       anno = rep(rep(c('text', 'segment'), 4), 4),
                       x = rep(c(2014.1, 2014.5), 4),
                       y = rep(sapply(seq(0, 150, by = 50), function(x) 2040887 - x*1000), each = 2),
@@ -1196,7 +1196,7 @@ ggplot(data.table(year = floor(time(window(y_m, start = 2010))),
     ylab('moves (yearly)') + 
   theme_bw() +
   geom_text(data = anno_dt[anno == 'text' & origin_char == 'Mar 2017'],
-            aes(x = x, y = y, label = measure, col = col)) +
+            aes(x = x, y = y, label = measure), size = 2.8) +
   geom_segment(data = anno_dt[anno == 'segment' & origin_char == 'Mar 2017'],
                aes(x = x, xend = x + 0.5, y = y, yend = y, lty = lty, col = col)
                ) +
@@ -1226,7 +1226,7 @@ ggplot(data.table(year = floor(time(window(y_m, start = 2010))),
     ylab('moves (yearly)') + 
   theme_bw()  +
   geom_text(data = anno_dt[anno == 'text' & origin_char == 'Mar 2017'],
-            aes(x = x, y = y, label = measure, col = col)) +
+            aes(x = x, y = y, label = measure, col = col), size = 2.8) +
   geom_segment(data = anno_dt[anno == 'segment' & origin_char == 'Mar 2017'],
                aes(x = x, xend = x + 0.5, y = y, yend = y, lty = lty, col = col)
                ) +
