@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.20 (TeX Live 2019) (preloaded format=pdflatex 2020.2.7)  10 MAR 2021 18:13
+This is pdfTeX, Version 3.14159265-2.6-1.40.20 (TeX Live 2019) (preloaded format=pdflatex 2020.2.7)  17 MAR 2021 09:47
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -829,49 +829,55 @@ e.11}) has been already used, duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.943 
+l.983 
        <../figs/freq--freq-month-plot-1.pdf>] [20pdfTeX warning (ext4): destina
 tion with the same identifier (name{figure.12}) has been already used, duplicat
 e ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.943 
+l.983 
        <../figs/freq--autocorr-plot-1.pdf>] [21pdfTeX warning (ext4): destinati
 on with the same identifier (name{figure.13}) has been already used, duplicate 
 ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.943 
+l.983 
        <../figs/freq--residual-autocorr-1.pdf>] [22pdfTeX warning (ext4): desti
 nation with the same identifier (name{figure.14}) has been already used, duplic
 ate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.943 
+l.983 
        <../figs/freq--qqnorm-1.pdf>] [23pdfTeX warning (ext4): destination with
  the same identifier (name{figure.15}) has been already used, duplicate ignored
 
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.943 
+l.983 
        <../figs/freq--trend-growth-1.pdf>] [24pdfTeX warning (ext4): destinatio
 n with the same identifier (name{table.2}) has been already used, duplicate ign
 ored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.1018 
+l.1058 
        ]
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 1020.
-[25]
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 1020.
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 1060.
+[25pdfTeX warning (ext4): destination with the same identifier (name{table.3}) 
+has been already used, duplicate ignored
+
+\AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
+                                                  \fi \fi 
+l.1060 \end{document}
+                     ]
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 1060.
 (./freq_article_monthly_rev.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 1020.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 1020.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 1060.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 1060.
 
 Package rerunfilecheck Info: File `freq_article_monthly_rev.out' has not change
 d.
@@ -879,13 +885,13 @@ d.
 
 LaTeX Warning: There were undefined references.
 
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 1020.
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 1060.
  ) 
 Here is how much of TeX's memory you used:
- 14136 strings out of 481248
- 209621 string characters out of 5918184
- 509258 words of memory out of 5000000
- 28886 multiletter control sequences out of 15000+600000
+ 14138 strings out of 481248
+ 209644 string characters out of 5918184
+ 509338 words of memory out of 5000000
+ 28887 multiletter control sequences out of 15000+600000
  598200 words of font info for 132 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  34i,12n,42p,987b,337s stack positions out of 5000i,500n,10000p,200000b,80000s
@@ -909,10 +915,10 @@ dist/fonts/type1/public/lm/lmri10.pfb></usr/local/texlive/2019/texmf-dist/fonts
 lic/lm/lmsy10.pfb></usr/local/texlive/2019/texmf-dist/fonts/type1/public/lm/lms
 y5.pfb></usr/local/texlive/2019/texmf-dist/fonts/type1/public/lm/lmsy7.pfb></us
 r/local/texlive/2019/texmf-dist/fonts/type1/public/lm/lmtt10.pfb>
-Output written on freq_article_monthly_rev.pdf (25 pages, 592633 bytes).
+Output written on freq_article_monthly_rev.pdf (25 pages, 593182 bytes).
 PDF statistics:
- 462 PDF objects out of 1000 (max. 8388607)
- 366 compressed objects within 4 object streams
- 77 named destinations out of 1000 (max. 500000)
+ 463 PDF objects out of 1000 (max. 8388607)
+ 367 compressed objects within 4 object streams
+ 78 named destinations out of 1000 (max. 500000)
  14521 words of extra memory for PDF output out of 17280 (max. 10000000)
 

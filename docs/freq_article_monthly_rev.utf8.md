@@ -459,4 +459,213 @@ Finally, we check whether there is a linear relationship between lagged variable
 <p class="caption">(\#fig:trend-growth)Filtering estimates of the slope ($\beta_t$)</p>
 </div>
 
+<table>
+<caption>(\#tab:mape-table)Mean, standard deviation, min and max of prediction errors</caption>
+ <thead>
+  <tr>
+   <th style="text-align:left;"> horizon </th>
+   <th style="text-align:left;"> model </th>
+   <th style="text-align:right;"> mean </th>
+   <th style="text-align:right;"> SD </th>
+   <th style="text-align:right;"> min </th>
+   <th style="text-align:right;"> max </th>
+  </tr>
+ </thead>
+<tbody>
+  <tr>
+   <td style="text-align:left;"> 6 </td>
+   <td style="text-align:left;"> ARIMA </td>
+   <td style="text-align:right;"> 0.0391 </td>
+   <td style="text-align:right;"> 0.0108 </td>
+   <td style="text-align:right;"> 0.0169 </td>
+   <td style="text-align:right;"> 0.0611 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:left;"> DLM1 </td>
+   <td style="text-align:right;"> 0.0427 </td>
+   <td style="text-align:right;"> 0.0171 </td>
+   <td style="text-align:right;"> 0.0103 </td>
+   <td style="text-align:right;"> 0.0689 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:left;"> DLM2 </td>
+   <td style="text-align:right;"> 0.0359 </td>
+   <td style="text-align:right;"> 0.0105 </td>
+   <td style="text-align:right;"> 0.0163 </td>
+   <td style="text-align:right;"> 0.0568 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:left;"> ETS </td>
+   <td style="text-align:right;"> 0.0366 </td>
+   <td style="text-align:right;"> 0.0107 </td>
+   <td style="text-align:right;"> 0.0136 </td>
+   <td style="text-align:right;"> 0.0573 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:left;"> Holt-Winters </td>
+   <td style="text-align:right;"> 0.0438 </td>
+   <td style="text-align:right;"> 0.0186 </td>
+   <td style="text-align:right;"> 0.0191 </td>
+   <td style="text-align:right;"> 0.0743 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:left;"> Naïve </td>
+   <td style="text-align:right;"> 0.0560 </td>
+   <td style="text-align:right;"> 0.0216 </td>
+   <td style="text-align:right;"> 0.0207 </td>
+   <td style="text-align:right;"> 0.0916 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:left;"> StructTS </td>
+   <td style="text-align:right;"> 0.0410 </td>
+   <td style="text-align:right;"> 0.0101 </td>
+   <td style="text-align:right;"> 0.0215 </td>
+   <td style="text-align:right;"> 0.0620 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:left;"> TBATS </td>
+   <td style="text-align:right;"> 0.0428 </td>
+   <td style="text-align:right;"> 0.0081 </td>
+   <td style="text-align:right;"> 0.0251 </td>
+   <td style="text-align:right;"> 0.0599 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> 12 </td>
+   <td style="text-align:left;"> ARIMA </td>
+   <td style="text-align:right;"> 0.0514 </td>
+   <td style="text-align:right;"> 0.0168 </td>
+   <td style="text-align:right;"> 0.0294 </td>
+   <td style="text-align:right;"> 0.0833 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:left;"> DLM1 </td>
+   <td style="text-align:right;"> 0.0577 </td>
+   <td style="text-align:right;"> 0.0264 </td>
+   <td style="text-align:right;"> 0.0233 </td>
+   <td style="text-align:right;"> 0.1029 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:left;"> DLM2 </td>
+   <td style="text-align:right;"> 0.0429 </td>
+   <td style="text-align:right;"> 0.0096 </td>
+   <td style="text-align:right;"> 0.0295 </td>
+   <td style="text-align:right;"> 0.0733 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:left;"> ETS </td>
+   <td style="text-align:right;"> 0.0453 </td>
+   <td style="text-align:right;"> 0.0162 </td>
+   <td style="text-align:right;"> 0.0241 </td>
+   <td style="text-align:right;"> 0.0744 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:left;"> Holt-Winters </td>
+   <td style="text-align:right;"> 0.0605 </td>
+   <td style="text-align:right;"> 0.0271 </td>
+   <td style="text-align:right;"> 0.0256 </td>
+   <td style="text-align:right;"> 0.1051 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:left;"> Naïve </td>
+   <td style="text-align:right;"> 0.0537 </td>
+   <td style="text-align:right;"> 0.0143 </td>
+   <td style="text-align:right;"> 0.0352 </td>
+   <td style="text-align:right;"> 0.0800 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:left;"> StructTS </td>
+   <td style="text-align:right;"> 0.0534 </td>
+   <td style="text-align:right;"> 0.0154 </td>
+   <td style="text-align:right;"> 0.0332 </td>
+   <td style="text-align:right;"> 0.0774 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:left;"> TBATS </td>
+   <td style="text-align:right;"> 0.0528 </td>
+   <td style="text-align:right;"> 0.0158 </td>
+   <td style="text-align:right;"> 0.0299 </td>
+   <td style="text-align:right;"> 0.0911 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> 18 </td>
+   <td style="text-align:left;"> ARIMA </td>
+   <td style="text-align:right;"> 0.0619 </td>
+   <td style="text-align:right;"> 0.0266 </td>
+   <td style="text-align:right;"> 0.0283 </td>
+   <td style="text-align:right;"> 0.1113 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:left;"> DLM1 </td>
+   <td style="text-align:right;"> 0.0756 </td>
+   <td style="text-align:right;"> 0.0411 </td>
+   <td style="text-align:right;"> 0.0340 </td>
+   <td style="text-align:right;"> 0.1524 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:left;"> DLM2 </td>
+   <td style="text-align:right;"> 0.0491 </td>
+   <td style="text-align:right;"> 0.0096 </td>
+   <td style="text-align:right;"> 0.0357 </td>
+   <td style="text-align:right;"> 0.0786 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:left;"> ETS </td>
+   <td style="text-align:right;"> 0.0526 </td>
+   <td style="text-align:right;"> 0.0226 </td>
+   <td style="text-align:right;"> 0.0254 </td>
+   <td style="text-align:right;"> 0.0963 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:left;"> Holt-Winters </td>
+   <td style="text-align:right;"> 0.0795 </td>
+   <td style="text-align:right;"> 0.0376 </td>
+   <td style="text-align:right;"> 0.0304 </td>
+   <td style="text-align:right;"> 0.1473 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:left;"> Naïve </td>
+   <td style="text-align:right;"> 0.0573 </td>
+   <td style="text-align:right;"> 0.0149 </td>
+   <td style="text-align:right;"> 0.0355 </td>
+   <td style="text-align:right;"> 0.0884 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:left;"> StructTS </td>
+   <td style="text-align:right;"> 0.0663 </td>
+   <td style="text-align:right;"> 0.0241 </td>
+   <td style="text-align:right;"> 0.0344 </td>
+   <td style="text-align:right;"> 0.1060 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:left;"> TBATS </td>
+   <td style="text-align:right;"> 0.0610 </td>
+   <td style="text-align:right;"> 0.0277 </td>
+   <td style="text-align:right;"> 0.0298 </td>
+   <td style="text-align:right;"> 0.1362 </td>
+  </tr>
+</tbody>
+</table>
+
+
 # Bibliography

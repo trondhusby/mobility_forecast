@@ -806,8 +806,10 @@ ggplot(rbindlist(list(filt_plot_dt(freq_filt[['lt_arma2']])[, mod := 'DLM1'],
     scale_x_continuous(breaks = seq(2010, 2020, by = 2),
                        labels = paste('Jan', seq(2010, 2020, by = 2), sep = '\n')
                        ) +
-    scale_colour_manual(values = wes_palette("Rushmore1")[c(3,5)], name = '') +
-    scale_fill_manual(values = wes_palette("Rushmore1")[c(3,5)], name = '' ) +
+    scale_colour_brewer(palette = 'Set2', name = '') +
+    scale_fill_brewer(palette = 'Set2', name = '') +
+    ## scale_colour_manual(values = wes_palette("Rushmore1")[c(3,5)], name = '') +
+    ## scale_fill_manual(values = wes_palette("Rushmore1")[c(3,5)], name = '' ) +
     theme_bw()
 
 ```
@@ -1216,7 +1218,7 @@ ggplot(data.table(year = floor(time(window(y_m, start = 2010))),
     ylab('moves (yearly)') + 
   theme_bw()  +
   geom_text(data = anno_dt[anno == 'text' & origin_char == 'Mar 2017'],
-            aes(x = x, y = y, label = measure, col = col), size = 2.8) +
+            aes(x = x, y = y, label = measure), size = 2.8) +
   geom_segment(data = anno_dt[anno == 'segment' & origin_char == 'Mar 2017'],
                aes(x = x, xend = x + 0.5, y = y, yend = y, lty = lty, col = col)
                ) +
@@ -1405,7 +1407,7 @@ ggplot(melt(beta_dt, id.vars = 't'),
 
 ```
 
-```{r mape-table, fig.cap = ''}
+```{r mape-table, results = 'show'}
 
 lapply(c('mape_6', 'mape_12', 'mape_18'),
        function(x){
@@ -1424,5 +1426,6 @@ lapply(c('mape_6', 'mape_12', 'mape_18'),
 
 
 ```
+
 
 # Bibliography

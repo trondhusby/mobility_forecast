@@ -921,6 +921,46 @@ $\phi_{12}$ & 0.4362 & 0.003087 & 0.4254 & 0.00258\\
 (\(\beta_t\))}
 \end{figure}
 
+\begin{table}[t]
+
+\caption{\label{tab:mape-table}Mean, standard deviation, min and max of prediction errors}
+\centering
+\begin{tabular}{llrrrr}
+\toprule
+horizon & model & mean & SD & min & max\\
+\midrule
+6 & ARIMA & 0.0391 & 0.0108 & 0.0169 & 0.0611\\
+ & DLM1 & 0.0427 & 0.0171 & 0.0103 & 0.0689\\
+ & DLM2 & 0.0359 & 0.0105 & 0.0163 & 0.0568\\
+ & ETS & 0.0366 & 0.0107 & 0.0136 & 0.0573\\
+ & Holt-Winters & 0.0438 & 0.0186 & 0.0191 & 0.0743\\
+\addlinespace
+ & Naïve & 0.0560 & 0.0216 & 0.0207 & 0.0916\\
+ & StructTS & 0.0410 & 0.0101 & 0.0215 & 0.0620\\
+ & TBATS & 0.0428 & 0.0081 & 0.0251 & 0.0599\\
+12 & ARIMA & 0.0514 & 0.0168 & 0.0294 & 0.0833\\
+ & DLM1 & 0.0577 & 0.0264 & 0.0233 & 0.1029\\
+\addlinespace
+ & DLM2 & 0.0429 & 0.0096 & 0.0295 & 0.0733\\
+ & ETS & 0.0453 & 0.0162 & 0.0241 & 0.0744\\
+ & Holt-Winters & 0.0605 & 0.0271 & 0.0256 & 0.1051\\
+ & Naïve & 0.0537 & 0.0143 & 0.0352 & 0.0800\\
+ & StructTS & 0.0534 & 0.0154 & 0.0332 & 0.0774\\
+\addlinespace
+ & TBATS & 0.0528 & 0.0158 & 0.0299 & 0.0911\\
+18 & ARIMA & 0.0619 & 0.0266 & 0.0283 & 0.1113\\
+ & DLM1 & 0.0756 & 0.0411 & 0.0340 & 0.1524\\
+ & DLM2 & 0.0491 & 0.0096 & 0.0357 & 0.0786\\
+ & ETS & 0.0526 & 0.0226 & 0.0254 & 0.0963\\
+\addlinespace
+ & Holt-Winters & 0.0795 & 0.0376 & 0.0304 & 0.1473\\
+ & Naïve & 0.0573 & 0.0149 & 0.0355 & 0.0884\\
+ & StructTS & 0.0663 & 0.0241 & 0.0344 & 0.1060\\
+ & TBATS & 0.0610 & 0.0277 & 0.0298 & 0.1362\\
+\bottomrule
+\end{tabular}
+\end{table}
+
 \section*{Bibliography}\label{bibliography}
 \addcontentsline{toc}{section}{Bibliography}
 
