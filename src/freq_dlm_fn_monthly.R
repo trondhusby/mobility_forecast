@@ -251,8 +251,8 @@ fore_plot_fn <- function(md='dlm1', err.fn = NULL) {
 
 filt_plot_dt <- function(dat) {
     data.table(f = exp(dat$f),
-               pl = exp(dat$f + qnorm(0.05, sd = residuals(dat)$sd)),
-               pu = exp(dat$f + qnorm(0.95, sd = residuals(dat)$sd)),
+               pl_80 = exp(dat$f + qnorm(0.1, sd = residuals(dat)$sd)),
+               pu_80 = exp(dat$f + qnorm(0.9, sd = residuals(dat)$sd)),
                         ## pl = exp(dat$f) + exp(qnorm(0.25) * residuals(dat)$sd),
                         ## pu = exp(dat$f) - exp(qnorm(0.25) * residuals(dat)$sd),
            t = as.numeric(time(y_m)),
@@ -260,7 +260,10 @@ filt_plot_dt <- function(dat) {
            m = mape(window(y_m, start = c(1998, 1)),
                     window(exp(dat$f), start = c(1998, 1))
                     )
-           )
+           )[,
+             cov_80 := round(length(y[as.numeric(y) > pl_80
+                                & as.numeric(y) < pu_80])/.N, 2)
+             ]
 }
 
 ## calculate errors

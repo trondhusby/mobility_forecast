@@ -793,24 +793,29 @@ Figure \@ref(fig:ci-comparison) shows the one-step ahead predictions along with 
 
 ```{r ci-comparison, fig.cap = "Filtering estimate and 95 percent prediction intervals"}
 
-
-ggplot(rbindlist(list(filt_plot_dt(freq_filt[['lt_arma2']])[, mod := 'DLM1'],
-          filt_plot_dt(freq_filt[['lt_arma3']])[, mod := 'DLM2']
-          ))[t > 2010], aes(t, f)) +
-    ## geom_ribbon(aes(ymin = pl, ymax = pu), fill = 'grey') +
-    geom_ribbon(aes(ymin = pl, ymax = pu, fill = mod), alpha = 0.2) +
-    geom_line(aes(col = mod)) +
-    ##facet_wrap(~mod, ncol = 1) +
-    ylab('moves') +
-    xlab('month') + 
-    scale_x_continuous(breaks = seq(2010, 2020, by = 2),
-                       labels = paste('Jan', seq(2010, 2020, by = 2), sep = '\n')
-                       ) +
-    scale_colour_brewer(palette = 'Set2', name = '') +
-    scale_fill_brewer(palette = 'Set2', name = '') +
-    ## scale_colour_manual(values = wes_palette("Rushmore1")[c(3,5)], name = '') +
-    ## scale_fill_manual(values = wes_palette("Rushmore1")[c(3,5)], name = '' ) +
-    theme_bw()
+ggplot(rbindlist(
+  list(
+    filt_plot_dt(freq_filt[['lt_arma2']])[, mod := 'DLM1'],
+    filt_plot_dt(freq_filt[['lt_arma3']])[, mod := 'DLM2']
+  ))[t > 2010], aes(t, f)) +
+  geom_ribbon(aes(ymin = pl_80, ymax = pu_80, fill = mod), alpha = 0.2) +
+  geom_line(aes(col = mod)) +
+  ylab('moves') +
+  xlab('month') +
+  scale_x_continuous(breaks = seq(2010, 2020, by = 2),
+                     labels = paste('Jan', seq(2010, 2020, by = 2), sep = '\n')
+                     ) +
+  geom_text(aes(label = ifelse(mod == 'DLM1',
+                               paste0('Coverage 80 % PI (DLM1) = ', cov_80),
+                               NA)),
+            x = 2012, y = 180000, size = 3.5, col = 'grey40') +
+  geom_text(aes(label = ifelse(mod == 'DLM2',
+                               paste0('Coverage 80 % PI (DLM2) = ', cov_80),
+                               NA)),
+            x = 2012, y = 175000, size = 3.5, col = 'grey40') +
+  scale_colour_brewer(palette = 'Set2', name = '') +
+  scale_fill_brewer(palette = 'Set2', name = '') +
+  theme_bw()
 
 ```
 

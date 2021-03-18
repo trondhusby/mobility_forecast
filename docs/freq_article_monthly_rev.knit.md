@@ -183,30 +183,30 @@ The estimated parameters are shown in Table \@ref(tab:estimated-parameters). We 
   <tr>
    <td style="text-align:left;"> $\sigma_{v}^{2}$ </td>
    <td style="text-align:left;"> 1.523e-08 </td>
-   <td style="text-align:left;"> 5.047e-07 </td>
+   <td style="text-align:left;"> 2.433e-07 </td>
    <td style="text-align:left;"> 1.523e-08 </td>
-   <td style="text-align:left;"> NaN </td>
+   <td style="text-align:left;"> 1.893e-07 </td>
   </tr>
   <tr>
    <td style="text-align:left;"> $\sigma_{\mu}^{2}$ </td>
    <td style="text-align:left;"> 0 </td>
    <td style="text-align:left;"> 0 </td>
    <td style="text-align:left;"> 0.0001427 </td>
-   <td style="text-align:left;"> 3.319e-05 </td>
+   <td style="text-align:left;"> 3.318e-05 </td>
   </tr>
   <tr>
    <td style="text-align:left;"> $\sigma_{\beta}^{2}$ </td>
-   <td style="text-align:left;"> 2.471e-06 </td>
-   <td style="text-align:left;"> 1.024e-06 </td>
+   <td style="text-align:left;"> 2.467e-06 </td>
+   <td style="text-align:left;"> 1.023e-06 </td>
    <td style="text-align:left;"> 0 </td>
    <td style="text-align:left;"> 0 </td>
   </tr>
   <tr>
    <td style="text-align:left;"> $\sigma_{S_{2}}^{2}$ </td>
-   <td style="text-align:left;"> 7.618e-06 </td>
-   <td style="text-align:left;"> 4.098e-06 </td>
-   <td style="text-align:left;"> 7.602e-06 </td>
-   <td style="text-align:left;"> 3.808e-06 </td>
+   <td style="text-align:left;"> 7.622e-06 </td>
+   <td style="text-align:left;"> 4.102e-06 </td>
+   <td style="text-align:left;"> 7.603e-06 </td>
+   <td style="text-align:left;"> 3.807e-06 </td>
   </tr>
   <tr>
    <td style="text-align:left;"> $\sigma^{2}_{u}$ </td>
@@ -217,22 +217,22 @@ The estimated parameters are shown in Table \@ref(tab:estimated-parameters). We 
   </tr>
   <tr>
    <td style="text-align:left;"> $\phi_{1}$ </td>
-   <td style="text-align:left;"> -0.637 </td>
-   <td style="text-align:left;"> 0.2356 </td>
+   <td style="text-align:left;"> -0.6373 </td>
+   <td style="text-align:left;"> 0.2355 </td>
    <td style="text-align:left;"> -0.6904 </td>
-   <td style="text-align:left;"> 0.2311 </td>
+   <td style="text-align:left;"> 0.231 </td>
   </tr>
   <tr>
    <td style="text-align:left;"> $\phi_{2}$ </td>
-   <td style="text-align:left;"> 0.03081 </td>
-   <td style="text-align:left;"> 0.1221 </td>
-   <td style="text-align:left;"> -0.05365 </td>
+   <td style="text-align:left;"> 0.03097 </td>
+   <td style="text-align:left;"> 0.122 </td>
+   <td style="text-align:left;"> -0.05369 </td>
    <td style="text-align:left;"> 0.1274 </td>
   </tr>
   <tr>
    <td style="text-align:left;"> $\phi_{7}$ </td>
-   <td style="text-align:left;"> -0.4415 </td>
-   <td style="text-align:left;"> 0.09384 </td>
+   <td style="text-align:left;"> -0.4417 </td>
+   <td style="text-align:left;"> 0.09375 </td>
    <td style="text-align:left;"> -0.4879 </td>
    <td style="text-align:left;"> 0.09533 </td>
   </tr>
@@ -391,65 +391,65 @@ Finally, we check whether there is a linear relationship between lagged variable
   <tr>
    <td style="text-align:left;"> $\sigma_{v}^{2}$ </td>
    <td style="text-align:left;"> 1.523e-08 </td>
-   <td style="text-align:left;"> 5.472e-13 </td>
+   <td style="text-align:left;"> 4.903e-13 </td>
    <td style="text-align:left;"> 1.523e-08 </td>
-   <td style="text-align:left;"> 1.067e-13 </td>
+   <td style="text-align:left;"> 1.081e-13 </td>
   </tr>
   <tr>
    <td style="text-align:left;"> $\sigma_{\mu}^{2}$ </td>
    <td style="text-align:left;"> 0 </td>
    <td style="text-align:left;"> 0 </td>
    <td style="text-align:left;"> 0.0001497 </td>
-   <td style="text-align:left;"> 5.09e-06 </td>
+   <td style="text-align:left;"> 5.091e-06 </td>
   </tr>
   <tr>
    <td style="text-align:left;"> $\sigma_{\beta}^{2}$ </td>
    <td style="text-align:left;"> 1.805e-06 </td>
-   <td style="text-align:left;"> 2.72e-07 </td>
+   <td style="text-align:left;"> 2.719e-07 </td>
    <td style="text-align:left;"> 0 </td>
    <td style="text-align:left;"> 0 </td>
   </tr>
   <tr>
    <td style="text-align:left;"> $\sigma_{S_{2}}^{2}$ </td>
-   <td style="text-align:left;"> 7.888e-06 </td>
-   <td style="text-align:left;"> 2.822e-07 </td>
+   <td style="text-align:left;"> 7.889e-06 </td>
+   <td style="text-align:left;"> 2.83e-07 </td>
    <td style="text-align:left;"> 7.665e-06 </td>
-   <td style="text-align:left;"> 2.578e-07 </td>
+   <td style="text-align:left;"> 2.577e-07 </td>
   </tr>
   <tr>
    <td style="text-align:left;"> $\sigma^{2}_{u}$ </td>
    <td style="text-align:left;"> 0.001343 </td>
-   <td style="text-align:left;"> 1.922e-05 </td>
+   <td style="text-align:left;"> 1.919e-05 </td>
    <td style="text-align:left;"> 0.001031 </td>
-   <td style="text-align:left;"> 1.291e-05 </td>
+   <td style="text-align:left;"> 1.292e-05 </td>
   </tr>
   <tr>
    <td style="text-align:left;"> $\phi_{1}$ </td>
-   <td style="text-align:left;"> -0.6695 </td>
-   <td style="text-align:left;"> 0.01417 </td>
+   <td style="text-align:left;"> -0.6694 </td>
+   <td style="text-align:left;"> 0.0142 </td>
    <td style="text-align:left;"> -0.7352 </td>
-   <td style="text-align:left;"> 0.01313 </td>
+   <td style="text-align:left;"> 0.01314 </td>
   </tr>
   <tr>
    <td style="text-align:left;"> $\phi_{2}$ </td>
-   <td style="text-align:left;"> 0.073 </td>
-   <td style="text-align:left;"> 0.008182 </td>
+   <td style="text-align:left;"> 0.07296 </td>
+   <td style="text-align:left;"> 0.008196 </td>
    <td style="text-align:left;"> -0.03058 </td>
-   <td style="text-align:left;"> 0.005848 </td>
+   <td style="text-align:left;"> 0.005849 </td>
   </tr>
   <tr>
    <td style="text-align:left;"> $\phi_{7}$ </td>
    <td style="text-align:left;"> -0.4449 </td>
    <td style="text-align:left;"> 0.005153 </td>
    <td style="text-align:left;"> -0.5015 </td>
-   <td style="text-align:left;"> 0.005443 </td>
+   <td style="text-align:left;"> 0.005446 </td>
   </tr>
   <tr>
    <td style="text-align:left;"> $\phi_{12}$ </td>
    <td style="text-align:left;"> 0.4362 </td>
-   <td style="text-align:left;"> 0.003087 </td>
+   <td style="text-align:left;"> 0.003091 </td>
    <td style="text-align:left;"> 0.4254 </td>
-   <td style="text-align:left;"> 0.00258 </td>
+   <td style="text-align:left;"> 0.002579 </td>
   </tr>
 </tbody>
 </table>
