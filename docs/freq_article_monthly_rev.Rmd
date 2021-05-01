@@ -769,8 +769,8 @@ The one-step ahead predictions from the Kalman filter, or filtered values, from 
 ##         pl <- fore + qnorm(0.05, sd = fsd)
 ##         pu <- fore + qnorm(0.95, sd = fsd)
 
-ggplot(rbindlist(list(filt_plot_dt(freq_filt[['lt_arma2']])[t >= 1998][,mod:='DLM1'],
-                filt_plot_dt(freq_filt[['lt_arma3']])[t >= 1998][,mod:='DLM2']
+ggplot(rbindlist(list(filt_plot_dt(freq_filt[['lt_arma2']])[,mod:='DLM1'],
+                filt_plot_dt(freq_filt[['lt_arma3']])[,mod:='DLM2']
                 )),
        aes(t, y)) +
     geom_line(col = 'grey60') + 
